@@ -1,0 +1,58 @@
+"use client";
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { Language } from "@/lib/i18n";
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguageState] = useState<Language>("en");
+
+  useEffect(() => {
+    // Load language from localStorage
+    const stored = localStorage.getItem("language") as Language;
+    if (stored === "ar" || stored === "en") {
+      setLanguageState(stored);
+      updateDocumentLang(stored);
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem("language", lang);
+    updateDocumentLang(lang);
+  };
+
+  const updateDocumentLang = (lang: Language) => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    }
+  };
+
+  const t = (key: string): string => {
+    // Dynamic import would be better, but for simplicity:
+    const { translations } = require("@/lib/i18n");
+    return translations[language]?.[key] || translations.en[key] || key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("useLanguage must be used within LanguageProvider");
+  }
+  return context;
+}

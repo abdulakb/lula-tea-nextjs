@@ -1,0 +1,21 @@
+{
+  "name": "Lula Tea",
+  "short_name": "Lula Tea",
+  "description": "Premium loose leaf tea blends, handcrafted with love",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f1e8",
+  "theme_color": "#7a9b76",
+  "icons": [
+    {
+      "src": "/images/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/images/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

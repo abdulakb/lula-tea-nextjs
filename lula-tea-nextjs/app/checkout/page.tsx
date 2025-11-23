@@ -38,6 +38,71 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [qualifiesForFreeDelivery, setQualifiesForFreeDelivery] = useState(false);
+  const [distanceFromWarehouse, setDistanceFromWarehouse] = useState<number | null>(null);
+  const [deliveryCity, setDeliveryCity] = useState<string>("");
+
+  // Warehouse location: VJFG+67J, Al Aarid, Riyadh 13338
+  const WAREHOUSE_LAT = 24.773125;
+  const WAREHOUSE_LNG = 46.725625;
+  const FREE_DELIVERY_RADIUS_KM = 20; // ~20 minutes drive from warehouse
+  const MIN_PACKS_FOR_FREE_DELIVERY_NEAR = 3; // 3 packs within 20km
+  const MIN_PACKS_FOR_FREE_DELIVERY_CITY = 5; // 5 packs anywhere in Riyadh or Jeddah
+
+  // Major city boundaries (approximate)
+  const RIYADH_BOUNDS = {
+    minLat: 24.4, maxLat: 25.0,
+    minLng: 46.3, maxLng: 47.0
+  };
+  const JEDDAH_BOUNDS = {
+    minLat: 21.3, maxLat: 21.8,
+    minLng: 39.0, maxLng: 39.4
+  };
+
+  const isInCity = (lat: number, lng: number): string => {
+    if (lat >= RIYADH_BOUNDS.minLat && lat <= RIYADH_BOUNDS.maxLat &&
+        lng >= RIYADH_BOUNDS.minLng && lng <= RIYADH_BOUNDS.maxLng) {
+      return "Riyadh";
+    }
+    if (lat >= JEDDAH_BOUNDS.minLat && lat <= JEDDAH_BOUNDS.maxLat &&
+        lng >= JEDDAH_BOUNDS.minLng && lng <= JEDDAH_BOUNDS.maxLng) {
+      return "Jeddah";
+    }
+    return "";
+  };
+
+  // Calculate distance between two coordinates using Haversine formula
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const checkFreeDeliveryEligibility = (latitude: number, longitude: number) => {
+    const distance = calculateDistance(latitude, longitude, WAREHOUSE_LAT, WAREHOUSE_LNG);
+    setDistanceFromWarehouse(distance);
+    
+    const totalPacks = items.reduce((sum, item) => sum + item.quantity, 0);
+    const city = isInCity(latitude, longitude);
+    setDeliveryCity(city);
+    
+    // Check eligibility:
+    // 1. Within 20km radius AND 3+ packs
+    // 2. OR within Riyadh/Jeddah AND 5+ packs
+    const nearWarehouse = distance <= FREE_DELIVERY_RADIUS_KM && totalPacks >= MIN_PACKS_FOR_FREE_DELIVERY_NEAR;
+    const inMajorCity = !!city && totalPacks >= MIN_PACKS_FOR_FREE_DELIVERY_CITY;
+    
+    const qualifies = nearWarehouse || inMajorCity;
+    setQualifiesForFreeDelivery(qualifies);
+    
+    return { qualifies, distance, totalPacks, city, nearWarehouse, inMajorCity };
+  };
 
   const handleGetLocation = async () => {
     if (!navigator.geolocation) {
@@ -53,17 +118,33 @@ export default function CheckoutPage() {
         const { latitude, longitude } = position.coords;
         
         try {
-          // Use Google Maps Geocoding API (you can also use other services)
-          // For now, just show coordinates - you can integrate a geocoding service later
-          const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+          // Check free delivery eligibility
+          const eligibility = checkFreeDeliveryEligibility(latitude, longitude);
           
-          // Try to get address using reverse geocoding (optional - requires API key)
-          // For now, just use coordinates
+          const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
           setDeliveryAddress(locationString);
-          setDeliveryNotes(
-            (deliveryNotes ? deliveryNotes + "\n" : "") + 
-            `Location: https://maps.google.com/?q=${latitude},${longitude}`
-          );
+          
+          let notesText = `Location: https://maps.google.com/?q=${latitude},${longitude}`;
+          
+          // Add eligibility info to notes
+          if (eligibility.qualifies) {
+            notesText += `\n✅ FREE DELIVERY QUALIFIED`;
+            if (eligibility.nearWarehouse) {
+              notesText += ` (Within ${eligibility.distance.toFixed(1)}km from warehouse)`;
+            } else if (eligibility.inMajorCity) {
+              notesText += ` (${eligibility.city} - ${eligibility.totalPacks} packs)`;
+            }
+          } else {
+            if (eligibility.city) {
+              const needed = MIN_PACKS_FOR_FREE_DELIVERY_CITY - eligibility.totalPacks;
+              notesText += `\n📦 Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery in ${eligibility.city}`;
+            } else if (eligibility.distance <= FREE_DELIVERY_RADIUS_KM) {
+              const needed = MIN_PACKS_FOR_FREE_DELIVERY_NEAR - eligibility.totalPacks;
+              notesText += `\n📦 Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery (${eligibility.distance.toFixed(1)}km from warehouse)`;
+            }
+          }
+          
+          setDeliveryNotes(notesText);
           
         } catch (err) {
           console.error("Geocoding error:", err);
@@ -171,6 +252,72 @@ export default function CheckoutPage() {
           </h1>
           <p className="text-xl text-tea-brown">{t("checkoutDescription")}</p>
         </div>
+
+        {/* Free Delivery Banner */}
+        <div className="mb-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white">
+          <div className="flex items-center gap-4">
+            <div className="text-5xl">🎁</div>
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold mb-2">
+                {language === "ar" ? "توصيل مجاني!" : "FREE Delivery!"}
+              </h3>
+              <div className="space-y-1 text-sm">
+                <p className="flex items-center gap-2">
+                  <span className="text-xl">📍</span>
+                  <span>
+                    {language === "ar" 
+                      ? "احصل على توصيل مجاني بمشاركة موقعك!"
+                      : "Get FREE delivery by sharing your location!"}
+                  </span>
+                </p>
+                <p className="flex items-center gap-2 opacity-90">
+                  <span>✓</span>
+                  <span>
+                    {language === "ar"
+                      ? "3 علب أو أكثر - في نطاق 20 كم من المستودع"
+                      : "3+ packs - Within 20km from warehouse"}
+                  </span>
+                </p>
+                <p className="flex items-center gap-2 opacity-90">
+                  <span>✓</span>
+                  <span>
+                    {language === "ar"
+                      ? "5 علب أو أكثر - في الرياض أو جدة"
+                      : "5+ packs - Anywhere in Riyadh or Jeddah"}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Qualification Status Banner */}
+        {qualifiesForFreeDelivery && (
+          <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 animate-pulse">
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">🎉</span>
+              <div>
+                <p className="text-xl font-bold text-green-800">
+                  {language === "ar" 
+                    ? "مبروك! أنت مؤهل للتوصيل المجاني!" 
+                    : "Congratulations! You qualify for FREE delivery!"}
+                </p>
+                <p className="text-green-700">
+                  {deliveryCity && (
+                    language === "ar"
+                      ? `موقعك في ${deliveryCity} - التوصيل مجاني!`
+                      : `Your location in ${deliveryCity} - Delivery is FREE!`
+                  )}
+                  {!deliveryCity && distanceFromWarehouse && (
+                    language === "ar"
+                      ? `موقعك على بُعد ${distanceFromWarehouse.toFixed(1)} كم - التوصيل مجاني!`
+                      : `Your location is ${distanceFromWarehouse.toFixed(1)}km away - Delivery is FREE!`
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Order Summary */}

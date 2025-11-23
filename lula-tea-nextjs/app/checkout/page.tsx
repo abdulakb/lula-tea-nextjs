@@ -36,6 +36,59 @@ export default function CheckoutPage() {
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [loadingLocation, setLoadingLocation] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+  const handleGetLocation = async () => {
+    if (!navigator.geolocation) {
+      alert(language === "ar" ? "المتصفح لا يدعم تحديد الموقع" : "Browser doesn't support geolocation");
+      return;
+    }
+
+    setLoadingLocation(true);
+    setError("");
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        try {
+          // Use Google Maps Geocoding API (you can also use other services)
+          // For now, just show coordinates - you can integrate a geocoding service later
+          const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+          
+          // Try to get address using reverse geocoding (optional - requires API key)
+          // For now, just use coordinates
+          setDeliveryAddress(locationString);
+          setDeliveryNotes(
+            (deliveryNotes ? deliveryNotes + "\n" : "") + 
+            `Location: https://maps.google.com/?q=${latitude},${longitude}`
+          );
+          
+        } catch (err) {
+          console.error("Geocoding error:", err);
+          const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+          setDeliveryAddress(locationString);
+        } finally {
+          setLoadingLocation(false);
+        }
+      },
+      (err) => {
+        console.error("Location error:", err);
+        setError(
+          language === "ar" 
+            ? "فشل الحصول على الموقع. يرجى السماح بالوصول إلى الموقع." 
+            : "Failed to get location. Please allow location access."
+        );
+        setLoadingLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
 
   const handleWhatsAppCheckout = () => {
     openWhatsApp(items, subtotal, language);
@@ -273,13 +326,40 @@ export default function CheckoutPage() {
                     <label className="block text-sm font-medium text-deep-brown mb-2">
                       {t("deliveryAddress")} *
                     </label>
-                    <textarea
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      required
-                      rows={3}
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green resize-none"
-                    />
+                    <div className="flex gap-2">
+                      <textarea
+                        value={deliveryAddress}
+                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                        required
+                        rows={3}
+                        className="flex-1 px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                        placeholder={language === "ar" ? "أدخل عنوانك أو استخدم موقعك" : "Enter your address or use your location"}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleGetLocation}
+                      disabled={loadingLocation}
+                      className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:bg-gray-400"
+                    >
+                      {loadingLocation ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                          </svg>
+                          <span>{language === "ar" ? "جاري تحديد الموقع..." : "Getting location..."}</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>{language === "ar" ? "📍 استخدم موقعي الحالي" : "📍 Use My Current Location"}</span>
+                        </>
+                      )}
+                    </button>
                   </div>
 
                   <div>

@@ -33,6 +33,13 @@ function generateMockResponse(userMessage: string, language: "en" | "ar"): strin
       : "Hello! I'm the Lula Tea assistant 🍵\n\nHow can I help you today? I can assist with:\n- Product information\n- Pricing and ordering\n- Tea brewing tips\n- Contact information\n\n📱 Contact us directly: " + lulaTeaKnowledge.contact.phone;
   }
   
+  // Brewing tips (check early to avoid conflicts with other patterns)
+  if (lowerMessage.match(/(brew|preparation|make tea|making tea|how.*prepare|prepare.*tea|كيف احضر|طريقة التحضير|تحضير الشاي|اعداد الشاي|تحضير)/i)) {
+    return language === "ar"
+      ? `خطوات التحضير: ☕️\n\n١. اخلط خلطة الشاي جيداً قبل كل استخدام\n\n٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء\n\n٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته\n\nوبالعافية.. 🍵✨\n\n💡 نصيحة: يمكنك التحكم في قوة النكهة حسب رغبتك\n\nهل تريد معرفة المزيد؟`
+      : `Brewing Steps: ☕️\n\n1. Mix the tea blend well before each use\n\n2. Take the appropriate amount of tea blend, then rinse it lightly with water\n\n3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor\n\nEnjoy! 🍵✨\n\n💡 Tip: You can control the strength of the flavor to your preference\n\nWould you like to know more?`;
+  }
+  
   // Contact / Phone / WhatsApp questions
   if (lowerMessage.match(/(contact|phone|call|whatsapp|reach|تواصل|اتصال|رقم|واتساب)/i)) {
     return language === "ar"
@@ -52,13 +59,6 @@ function generateMockResponse(userMessage: string, language: "en" | "ar"): strin
     return language === "ar"
       ? `سعر مزيج الشاي المميز ${lulaTeaKnowledge.product.weight} هو ${lulaTeaKnowledge.product.price} 💰\n\nيمكنك الطلب عبر:\n📱 واتساب: ${lulaTeaKnowledge.contact.phone}\n🛒 سلة التسوق في الموقع\n\nهل تريد إضافته إلى السلة؟`
       : `Our Premium Tea Blend ${lulaTeaKnowledge.product.weight} costs ${lulaTeaKnowledge.product.price} 💰\n\nYou can order via:\n📱 WhatsApp: ${lulaTeaKnowledge.contact.phone}\n🛒 Website cart\n\nWould you like to add it to your cart?`;
-  }
-  
-  // Brewing tips (check before ordering to avoid conflict)
-  if (lowerMessage.match(/(brew|preparation|make tea|making tea|how.*prepare.*tea|how.*make.*tea|prepare.*tea|كيف احضر|طريقة التحضير|تحضير الشاي|اعداد الشاي|تحضير)/i)) {
-    return language === "ar"
-      ? `خطوات التحضير: ☕️\n\n١. اخلط خلطة الشاي جيداً قبل كل استخدام\n\n٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء\n\n٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته\n\nوبالعافية.. 🍵✨\n\n💡 نصيحة: يمكنك التحكم في قوة النكهة حسب رغبتك\n\nهل تريد معرفة المزيد؟`
-      : `Brewing Steps: ☕️\n\n1. Mix the tea blend well before each use\n\n2. Take the appropriate amount of tea blend, then rinse it lightly with water\n\n3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor\n\nEnjoy! 🍵✨\n\n💡 Tip: You can control the strength of the flavor to your preference\n\nWould you like to know more?`;
   }
   
   // Ordering questions

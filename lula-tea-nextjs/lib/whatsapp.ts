@@ -19,7 +19,7 @@ export interface WhatsAppMessageOptions {
 
 export function buildWhatsAppMessage(options: WhatsAppMessageOptions): string {
   const { items, subtotal, language, customerName, deliveryAddress, deliveryTime, gpsCoordinates } = options;
-  const currency = process.env.NEXT_PUBLIC_CURRENCY || "SAR";
+  const currency = "SAR";
   
   if (language === "ar") {
     const itemsList = items
@@ -57,9 +57,9 @@ export function buildWhatsAppMessage(options: WhatsAppMessageOptions): string {
 }
 
 export function getWhatsAppURL(message: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_WHATSAPP_URL || "https://wa.me/";
+  const whatsappNumber = "966539666654";
   const encodedMessage = encodeURIComponent(message);
-  return `${baseUrl}?text=${encodedMessage}`;
+  return `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 }
 
 export function openWhatsApp(options: WhatsAppMessageOptions) {

@@ -12,6 +12,7 @@ const AnalyticsContext = createContext<AnalyticsContextType | undefined>(undefin
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const [visitorId, setVisitorId] = useState<string>("");
+  const [sessionStart, setSessionStart] = useState<number>(Date.now());
 
   useEffect(() => {
     // Get or create visitor ID
@@ -22,12 +23,40 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     }
     setVisitorId(id);
 
+    // Track session start
+    const start = Date.now();
+    setSessionStart(start);
+    localStorage.setItem("session_start", start.toString());
+
     // Track page view
     trackPageView();
+
+    // Track session end on page unload
+    const handleBeforeUnload = () => {
+      const sessionDuration = Math.floor((Date.now() - start) / 1000); // in seconds
+      trackEvent("session_end", { 
+        duration_seconds: sessionDuration,
+        pages_visited: getVisitedPages().length 
+      });
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
 
   const trackPageView = () => {
     if (typeof window === "undefined") return;
+    
+    // Store visited pages
+    const visitedPages = getVisitedPages();
+    visitedPages.push({
+      url: window.location.pathname,
+      timestamp: new Date().toISOString()
+    });
+    localStorage.setItem("visited_pages", JSON.stringify(visitedPages));
     
     const event = {
       event_type: "page_view",
@@ -39,13 +68,29 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     saveEvent(event);
   };
 
+  const getVisitedPages = () => {
+    try {
+      return JSON.parse(localStorage.getItem("visited_pages") || "[]");
+    } catch {
+      return [];
+    }
+  };
+
   const trackEvent = (eventType: string, data: any = {}) => {
     if (!visitorId) return;
+
+    // Add session duration to all events
+    const sessionDuration = Math.floor((Date.now() - sessionStart) / 1000);
 
     const event = {
       visitor_id: visitorId,
       event_type: eventType,
-      event_data: data,
+      event_data: {
+        ...data,
+        session_duration_seconds: sessionDuration,
+        time_of_day: new Date().getHours(), // 0-23
+        day_of_week: new Date().getDay(), // 0-6 (Sunday-Saturday)
+      },
       page_url: window.location.pathname,
       timestamp: new Date().toISOString(),
       user_agent: navigator.userAgent,

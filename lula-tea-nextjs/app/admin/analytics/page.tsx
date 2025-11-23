@@ -28,6 +28,12 @@ interface AnalyticsMetrics {
   purchases: number;
   conversionRate: string;
   cartConversionRate: string;
+  checkoutAbandonmentRate: string;
+  abandonedCheckouts: number;
+  visitorsWithoutPurchase: number;
+  avgSessionDuration: number;
+  timeOfDayData: { [key: number]: number };
+  dayOfWeekData: { [key: number]: number };
 }
 
 interface AnalyticsEvent {
@@ -50,6 +56,12 @@ export default function AnalyticsDashboard() {
     purchases: 0,
     conversionRate: "0",
     cartConversionRate: "0",
+    checkoutAbandonmentRate: "0",
+    abandonedCheckouts: 0,
+    visitorsWithoutPurchase: 0,
+    avgSessionDuration: 0,
+    timeOfDayData: {},
+    dayOfWeekData: {},
   });
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
 
@@ -358,6 +370,103 @@ export default function AnalyticsDashboard() {
               />
             </LineChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* Behavior Insights - New Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Session & Engagement Metrics */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-deep-brown mb-6">
+              Session & Engagement
+            </h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 bg-warm-cream rounded-lg">
+                <div>
+                  <p className="text-tea-brown font-medium">Avg Session Duration</p>
+                  <p className="text-sm text-tea-brown/70">Time spent on site</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-deep-brown">
+                    {Math.floor(metrics.avgSessionDuration / 60)}m {metrics.avgSessionDuration % 60}s
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-warm-cream rounded-lg">
+                <div>
+                  <p className="text-tea-brown font-medium">Visitors Without Orders</p>
+                  <p className="text-sm text-tea-brown/70">Browse but didn't buy</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-deep-brown">
+                    {metrics.visitorsWithoutPurchase}
+                  </p>
+                  <p className="text-sm text-tea-brown/70">
+                    {metrics.uniqueVisitors > 0 ? ((metrics.visitorsWithoutPurchase / metrics.uniqueVisitors) * 100).toFixed(1) : 0}%
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-warm-cream rounded-lg">
+                <div>
+                  <p className="text-tea-brown font-medium">Abandoned Checkouts</p>
+                  <p className="text-sm text-tea-brown/70">Started but didn't complete</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold text-red-500">
+                    {metrics.abandonedCheckouts}
+                  </p>
+                  <p className="text-sm text-tea-brown/70">
+                    {metrics.checkoutAbandonmentRate}% abandonment
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Time of Day Activity */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-deep-brown mb-6">
+              Peak Activity Hours
+            </h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={Object.entries(metrics.timeOfDayData || {}).map(([hour, count]) => ({
+                hour: `${hour}:00`,
+                activity: count
+              })).sort((a, b) => parseInt(a.hour) - parseInt(b.hour))}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="activity" fill="#7a9b76" name="Events" />
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-sm text-tea-brown text-center mt-4">
+              Track when visitors are most active throughout the day
+            </p>
+          </div>
+        </div>
+
+        {/* Day of Week Activity */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold text-deep-brown mb-6">
+            Activity by Day of Week
+          </h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={Object.entries(metrics.dayOfWeekData || {}).map(([day, count]) => ({
+              day: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][parseInt(day)],
+              activity: count
+            }))}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="activity" fill="#6b4423" name="Events" />
+            </BarChart>
+          </ResponsiveContainer>
+          <p className="text-sm text-tea-brown text-center mt-4">
+            Identify which days drive the most traffic and conversions
+          </p>
         </div>
 
         {/* User Journey Stats */}

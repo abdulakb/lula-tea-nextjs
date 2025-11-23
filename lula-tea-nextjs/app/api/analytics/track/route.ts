@@ -65,9 +65,51 @@ export async function GET(request: NextRequest) {
     const addToCartEvents = events.filter((e) => e.event_type === "add_to_cart").length;
     const checkoutStarts = events.filter((e) => e.event_type === "checkout_start").length;
     const purchases = events.filter((e) => e.event_type === "purchase").length;
+    const sessionEnds = events.filter((e) => e.event_type === "session_end");
+
+    // Calculate abandoned carts (checkout started but no purchase)
+    const checkoutVisitors = new Set(
+      events.filter((e) => e.event_type === "checkout_start").map((e) => e.visitor_id)
+    );
+    const purchaseVisitors = new Set(
+      events.filter((e) => e.event_type === "purchase").map((e) => e.visitor_id)
+    );
+    const abandonedCheckouts = Array.from(checkoutVisitors).filter(
+      (id) => !purchaseVisitors.has(id)
+    ).length;
+
+    // Calculate average session duration
+    const sessionDurations = sessionEnds
+      .map((e) => e.event_data?.duration_seconds)
+      .filter((d) => d !== undefined && d !== null);
+    const avgSessionDuration = sessionDurations.length > 0
+      ? sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length
+      : 0;
+
+    // Time of day analysis (0-23 hours)
+    const timeOfDayData: { [key: number]: number } = {};
+    events.forEach((e) => {
+      const hour = e.event_data?.time_of_day;
+      if (hour !== undefined && hour !== null) {
+        timeOfDayData[hour] = (timeOfDayData[hour] || 0) + 1;
+      }
+    });
+
+    // Day of week analysis (0-6)
+    const dayOfWeekData: { [key: number]: number } = {};
+    events.forEach((e) => {
+      const day = e.event_data?.day_of_week;
+      if (day !== undefined && day !== null) {
+        dayOfWeekData[day] = (dayOfWeekData[day] || 0) + 1;
+      }
+    });
+
+    // Visitors who never ordered
+    const visitorsWithoutPurchase = uniqueVisitors - purchaseVisitors.size;
 
     const conversionRate = uniqueVisitors > 0 ? (purchases / uniqueVisitors) * 100 : 0;
     const cartConversionRate = addToCartEvents > 0 ? (purchases / addToCartEvents) * 100 : 0;
+    const checkoutAbandonmentRate = checkoutStarts > 0 ? (abandonedCheckouts / checkoutStarts) * 100 : 0;
 
     return NextResponse.json({
       success: true,
@@ -79,6 +121,12 @@ export async function GET(request: NextRequest) {
         purchases,
         conversionRate: conversionRate.toFixed(2),
         cartConversionRate: cartConversionRate.toFixed(2),
+        checkoutAbandonmentRate: checkoutAbandonmentRate.toFixed(2),
+        abandonedCheckouts,
+        visitorsWithoutPurchase,
+        avgSessionDuration: Math.round(avgSessionDuration),
+        timeOfDayData,
+        dayOfWeekData,
       },
       events,
     });

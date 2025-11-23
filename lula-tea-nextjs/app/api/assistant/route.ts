@@ -62,10 +62,10 @@ function generateMockResponse(userMessage: string, language: "en" | "ar"): strin
   }
   
   // Brewing tips
-  if (lowerMessage.match(/(brew|prepare|make|how to make|كيف احضر|طريقة التحضير)/i)) {
+  if (lowerMessage.match(/(brew|prepare|make|how to make|كيف احضر|طريقة التحضير|تحضير)/i)) {
     return language === "ar"
-      ? `نصائح تحضير الشاي المثالي ☕️\n\n1. استخدم ماء نقي مغلي\n2. أضف ملعقة صغيرة من الشاي لكل كوب\n3. اتركه ينقع 3-5 دقائق\n4. صفّيه واستمتع!\n\n💡 نصيحة: يمكنك تعديل وقت النقع حسب قوة النكهة المفضلة لديك\n\nهل تريد معرفة المزيد؟`
-      : `Perfect Tea Brewing Tips ☕️\n\n1. Use fresh boiled water\n2. Add 1 teaspoon per cup\n3. Steep for 3-5 minutes\n4. Strain and enjoy!\n\n💡 Tip: Adjust steeping time for your preferred strength\n\nWould you like to know more?`;
+      ? `خطوات التحضير: ☕️\n\n١. اخلط خلطة الشاي جيداً قبل كل استخدام\n\n٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء\n\n٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته\n\nوبالعافية.. 🍵✨\n\n💡 نصيحة: يمكنك التحكم في قوة النكهة حسب رغبتك\n\nهل تريد معرفة المزيد؟`
+      : `Brewing Steps: ☕️\n\n1. Mix the tea blend well before each use\n\n2. Take the appropriate amount of tea blend, then rinse it lightly with water\n\n3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor\n\nEnjoy! 🍵✨\n\n💡 Tip: You can control the strength of the flavor to your preference\n\nWould you like to know more?`;
   }
   
   // Ingredients

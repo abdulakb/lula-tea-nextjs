@@ -147,27 +147,63 @@ export default function ChatWidget() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-warm-cream/30" style={{ maxHeight: "400px" }}>
             {messages.length === 0 && (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-tea-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-tea-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                    />
-                  </svg>
+              <div className="py-4">
+                <div className="text-center mb-4">
+                  <div className="w-16 h-16 bg-tea-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-8 h-8 text-tea-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-tea-brown text-sm font-semibold">
+                    {language === "ar"
+                      ? "مرحباً! كيف يمكنني مساعدتك اليوم؟"
+                      : "Hi! How can I help you today?"}
+                  </p>
                 </div>
-                <p className="text-tea-brown text-sm">
-                  {language === "ar"
-                    ? "مرحباً! كيف يمكنني مساعدتك اليوم؟"
-                    : "Hi! How can I help you today?"}
-                </p>
-                <p className="text-tea-brown/60 text-xs mt-2">
-                  {language === "ar"
-                    ? "اسأل عن منتجاتنا، الأسعار، أو طريقة الطلب"
-                    : "Ask about our products, pricing, or how to order"}
-                </p>
+                
+                {/* Suggested Questions */}
+                <div className="space-y-2">
+                  <p className="text-xs text-tea-brown/70 px-1 mb-2">
+                    {language === "ar" ? "أسئلة مقترحة:" : "Suggested questions:"}
+                  </p>
+                  <button
+                    onClick={() => setInput(language === "ar" ? "ما هو منتجكم؟" : "What is your product?")}
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                  >
+                    <span className="font-medium">
+                      {language === "ar" ? "🍵 ما هو منتجكم؟" : "🍵 What is your product?"}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setInput(language === "ar" ? "كم السعر؟" : "What's the price?")}
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                  >
+                    <span className="font-medium">
+                      {language === "ar" ? "💰 كم السعر؟" : "💰 What's the price?"}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setInput(language === "ar" ? "طريقة التحضير" : "How to prepare the tea?")}
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                  >
+                    <span className="font-medium">
+                      {language === "ar" ? "☕ طريقة التحضير" : "☕ How to prepare the tea?"}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setInput(language === "ar" ? "كيف أطلب؟" : "How to order?")}
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                  >
+                    <span className="font-medium">
+                      {language === "ar" ? "📱 كيف أطلب؟" : "📱 How to order?"}
+                    </span>
+                  </button>
+                </div>
               </div>
             )}
 

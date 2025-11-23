@@ -79,7 +79,7 @@ export default function Home() {
               {/* Product Image */}
               <div className="relative h-80 md:h-auto">
                 <Image
-                  src="/images/logo.jpg"
+                  src="/images/product.jpg"
                   alt="Lula Tea Premium Blend"
                   fill
                   className="object-cover"

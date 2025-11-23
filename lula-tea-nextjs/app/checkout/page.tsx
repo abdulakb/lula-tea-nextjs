@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "whatsapp">("cod");
   const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
@@ -47,6 +48,7 @@ export default function CheckoutPage() {
 
       const orderData = {
         customerName,
+        customerEmail,
         customerPhone,
         customerAddress: deliveryAddress,
         deliveryNotes,
@@ -211,6 +213,22 @@ export default function CheckoutPage() {
                       required
                       className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                      {language === "ar" ? "البريد الإلكتروني (اختياري)" : "Email (Optional)"}
+                    </label>
+                    <input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder={language === "ar" ? "your@email.com" : "your@email.com"}
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                    />
+                    <p className="text-xs text-tea-brown mt-1">
+                      {language === "ar" ? "لتلقي تأكيد الطلب عبر البريد الإلكتروني" : "To receive order confirmation via email"}
+                    </p>
                   </div>
 
                   <div>

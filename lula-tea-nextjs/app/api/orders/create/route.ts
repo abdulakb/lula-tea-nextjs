@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 import { generateInvoice, InvoiceData } from "@/lib/invoiceGenerator";
+import { generateOrderConfirmationEmail } from "@/lib/emailTemplates";
 
 export async function POST(request: NextRequest) {
   try {
@@ -96,6 +97,33 @@ export async function POST(request: NextRequest) {
         invoiceBase64: base64Invoice,
         warning: "Order saved locally but database sync failed",
       });
+    }
+
+    // Send confirmation email (if configured)
+    try {
+      if (process.env.RESEND_API_KEY && body.customerEmail) {
+        const { subject, html } = generateOrderConfirmationEmail({
+          orderId,
+          customerName,
+          items,
+          total,
+          paymentMethod,
+          language,
+        });
+
+        await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/emails/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: body.customerEmail,
+            subject,
+            html,
+          }),
+        });
+      }
+    } catch (emailError) {
+      console.error("Email send error:", emailError);
+      // Don't fail the order if email fails
     }
 
     return NextResponse.json({

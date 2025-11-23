@@ -102,8 +102,17 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
             </div>
           </div>
 
-          <div className="text-2xl font-bold text-deep-brown mb-6">
-            {language === "ar" ? `٣٠ ريال` : `${product.price} ${product.currency}`}
+          <div className="mb-6">
+            <div className="text-3xl font-bold text-deep-brown mb-1">
+              {language === "ar" 
+                ? `${(product.price * quantity).toFixed(0)} ريال` 
+                : `${(product.price * quantity).toFixed(0)} ${product.currency}`}
+            </div>
+            <p className="text-sm text-tea-brown/70">
+              {language === "ar" 
+                ? `${product.price} ريال للعلبة • ٢٥٠ جرام لكل علبة`
+                : `${product.price} ${product.currency} per pack • 250g per pack`}
+            </p>
           </div>
 
           {showActions && (

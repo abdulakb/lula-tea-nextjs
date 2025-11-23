@@ -19,6 +19,15 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-20 px-4 sm:px-6 lg:px-8">
+        {/* Soft Opening Banner */}
+        <div className="max-w-7xl mx-auto mb-6">
+          <div className="bg-accent-gold/10 border-2 border-accent-gold/30 rounded-2xl px-6 py-3 text-center">
+            <p className="text-deep-brown font-semibold text-lg">
+              {t('softOpening')}
+            </p>
+          </div>
+        </div>
+
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}

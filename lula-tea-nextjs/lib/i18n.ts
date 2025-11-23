@@ -10,6 +10,7 @@ export const translations = {
     heroTitle: "Homemade with Love",
     heroSubtitle: "Experience the finest blend of loose leaf teas",
     heroDescription: "Our unique blend is carefully calculated with the finest ingredients, crafted with love to give you an unforgettable taste experience.",
+    softOpening: "🌟 Soft Opening - Beta Version",
     orderNow: "Order Now",
     contactUs: "Contact Us",
     
@@ -140,6 +141,7 @@ export const translations = {
     heroTitle: "محضّر بحب في المنزل",
     heroSubtitle: "اختبر أفضل مزيج من أوراق الشاي الفاخرة",
     heroDescription: "مزيجنا الفريد مُحسوب بعناية بأجود المكونات، مُحضّر بحب ليمنحك تجربة طعم لا تُنسى.",
+    softOpening: "🌟 تحت التجربة - نسخة تجريبية",
     orderNow: "اطلب الآن",
     contactUs: "تواصل معنا",
     

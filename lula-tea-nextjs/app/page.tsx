@@ -7,7 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function Home() {
   const [quantity, setQuantity] = useState(1);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleWhatsAppOrder = () => {
     const message = `${t('orderNow')} - ${quantity} x ${t('productName')}`;

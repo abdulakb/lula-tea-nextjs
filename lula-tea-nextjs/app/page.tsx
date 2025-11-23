@@ -51,7 +51,7 @@ export default function Home() {
             {/* Right Image */}
             <div className="relative h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
               <Image
-                src="/images/logo.jpg"
+                src="/images/product.jpg"
                 alt="Lula Tea Premium Blend"
                 fill
                 className="object-cover"

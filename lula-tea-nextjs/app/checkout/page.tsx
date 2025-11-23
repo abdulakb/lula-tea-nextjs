@@ -121,10 +121,67 @@ export default function CheckoutPage() {
           // Check free delivery eligibility
           const eligibility = checkFreeDeliveryEligibility(latitude, longitude);
           
-          const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-          setDeliveryAddress(locationString);
+          // Get full address using reverse geocoding
+          let fullAddress = "";
+          try {
+            // Using Nominatim (OpenStreetMap) - Free, no API key required
+            const geocodeResponse = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=${language === "ar" ? "ar" : "en"}`,
+              {
+                headers: {
+                  'User-Agent': 'LulaTeaApp/1.0'
+                }
+              }
+            );
+            
+            if (geocodeResponse.ok) {
+              const geocodeData = await geocodeResponse.json();
+              const addr = geocodeData.address;
+              
+              // Build formatted address
+              const addressParts = [];
+              
+              // Add building/house number
+              if (addr.house_number) addressParts.push(addr.house_number);
+              
+              // Add road/street
+              if (addr.road) addressParts.push(addr.road);
+              
+              // Add suburb/district
+              if (addr.suburb) addressParts.push(addr.suburb);
+              else if (addr.neighbourhood) addressParts.push(addr.neighbourhood);
+              else if (addr.quarter) addressParts.push(addr.quarter);
+              
+              // Add city
+              if (addr.city) addressParts.push(addr.city);
+              else if (addr.town) addressParts.push(addr.town);
+              
+              // Add postcode
+              if (addr.postcode) addressParts.push(addr.postcode);
+              
+              fullAddress = addressParts.join(", ");
+              
+              // If we got a good address, use it
+              if (fullAddress && fullAddress.length > 10) {
+                setDeliveryAddress(fullAddress);
+              } else {
+                // Fallback to display_name
+                fullAddress = geocodeData.display_name || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                setDeliveryAddress(fullAddress);
+              }
+            } else {
+              // Fallback to coordinates if geocoding fails
+              fullAddress = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+              setDeliveryAddress(fullAddress);
+            }
+          } catch (geocodeError) {
+            console.error("Geocoding error:", geocodeError);
+            // Fallback to coordinates
+            fullAddress = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+            setDeliveryAddress(fullAddress);
+          }
           
-          let notesText = `Location: https://maps.google.com/?q=${latitude},${longitude}`;
+          let notesText = `GPS: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}\nMaps: https://maps.google.com/?q=${latitude},${longitude}`;
           
           // Add eligibility info to notes
           if (eligibility.qualifies) {
@@ -147,7 +204,7 @@ export default function CheckoutPage() {
           setDeliveryNotes(notesText);
           
         } catch (err) {
-          console.error("Geocoding error:", err);
+          console.error("Location processing error:", err);
           const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
           setDeliveryAddress(locationString);
         } finally {

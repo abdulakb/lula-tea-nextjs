@@ -57,7 +57,7 @@ export default function Footer() {
               {t("getInTouchDescription")}
             </p>
             <a 
-              href={process.env.NEXT_PUBLIC_WHATSAPP_URL}
+              href="https://wa.me/966539666654"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-[#25D366] hover:bg-[#22c55e] text-white px-6 py-2 rounded-full text-sm font-medium transition-colors"

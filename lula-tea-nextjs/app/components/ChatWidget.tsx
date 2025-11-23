@@ -249,7 +249,7 @@ export default function ChatWidget() {
                 placeholder={
                   language === "ar" ? "اكتب رسالتك..." : "Type your message..."
                 }
-                className="flex-1 px-4 py-2 rounded-full border border-tea-brown/20 focus:border-tea-green focus:outline-none focus:ring-2 focus:ring-tea-green/20 text-sm"
+                className="flex-1 px-4 py-2 rounded-full border border-tea-brown/20 focus:border-tea-green focus:outline-none focus:ring-2 focus:ring-tea-green/20 text-sm text-black"
                 disabled={isLoading}
               />
               <button

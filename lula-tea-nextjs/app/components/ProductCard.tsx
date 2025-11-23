@@ -110,7 +110,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
             </div>
             <p className="text-sm text-tea-brown/70">
               {language === "ar" 
-                ? `${product.price} ريال للعلبة • ٢٥٠ جرام لكل علبة`
+                ? `${product.price} ريال للعلبة • ٢٥٠ جرام`
                 : `${product.price} ${product.currency} per pack • 250g per pack`}
             </p>
           </div>

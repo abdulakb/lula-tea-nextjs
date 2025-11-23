@@ -54,18 +54,18 @@ function generateMockResponse(userMessage: string, language: "en" | "ar"): strin
       : `Our Premium Tea Blend ${lulaTeaKnowledge.product.weight} costs ${lulaTeaKnowledge.product.price} 💰\n\nYou can order via:\n📱 WhatsApp: ${lulaTeaKnowledge.contact.phone}\n🛒 Website cart\n\nWould you like to add it to your cart?`;
   }
   
-  // Ordering questions
-  if (lowerMessage.match(/(order|buy|purchase|how to|طلب|شراء|كيف اطلب)/i)) {
-    return language === "ar"
-      ? `يمكنك طلب شاي لولا بطريقتين سهلتين:\n\n1️⃣ 📱 عبر واتساب: ${lulaTeaKnowledge.contact.phone}\n   (انقر زر واتساب في أي صفحة)\n\n2️⃣ 🛒 عبر الموقع:\n   - أضف المنتج للسلة\n   - انتقل للسلة\n   - أكمل الطلب عبر واتساب\n\nنحن هنا لمساعدتك! 💚`
-      : `You can order Lula Tea in two easy ways:\n\n1️⃣ 📱 Via WhatsApp: ${lulaTeaKnowledge.contact.phone}\n   (Click the WhatsApp button on any page)\n\n2️⃣ 🛒 Through the website:\n   - Add product to cart\n   - Go to cart\n   - Complete order via WhatsApp\n\nWe're here to help! 💚`;
-  }
-  
-  // Brewing tips
-  if (lowerMessage.match(/(brew|prepare|make|how to make|كيف احضر|طريقة التحضير|تحضير)/i)) {
+  // Brewing tips (check before ordering to avoid conflict)
+  if (lowerMessage.match(/(brew|prepare|make tea|how to make tea|how to prepare|preparation|كيف احضر|طريقة التحضير|تحضير الشاي|اعداد)/i)) {
     return language === "ar"
       ? `خطوات التحضير: ☕️\n\n١. اخلط خلطة الشاي جيداً قبل كل استخدام\n\n٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء\n\n٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته\n\nوبالعافية.. 🍵✨\n\n💡 نصيحة: يمكنك التحكم في قوة النكهة حسب رغبتك\n\nهل تريد معرفة المزيد؟`
       : `Brewing Steps: ☕️\n\n1. Mix the tea blend well before each use\n\n2. Take the appropriate amount of tea blend, then rinse it lightly with water\n\n3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor\n\nEnjoy! 🍵✨\n\n💡 Tip: You can control the strength of the flavor to your preference\n\nWould you like to know more?`;
+  }
+  
+  // Ordering questions
+  if (lowerMessage.match(/(order|buy|purchase|how to order|طلب|شراء|كيف اطلب)/i)) {
+    return language === "ar"
+      ? `يمكنك طلب شاي لولا بطريقتين سهلتين:\n\n1️⃣ 📱 عبر واتساب: ${lulaTeaKnowledge.contact.phone}\n   (انقر زر واتساب في أي صفحة)\n\n2️⃣ 🛒 عبر الموقع:\n   - أضف المنتج للسلة\n   - انتقل للسلة\n   - أكمل الطلب عبر واتساب\n\nنحن هنا لمساعدتك! 💚`
+      : `You can order Lula Tea in two easy ways:\n\n1️⃣ 📱 Via WhatsApp: ${lulaTeaKnowledge.contact.phone}\n   (Click the WhatsApp button on any page)\n\n2️⃣ 🛒 Through the website:\n   - Add product to cart\n   - Go to cart\n   - Complete order via WhatsApp\n\nWe're here to help! 💚`;
   }
   
   // Ingredients

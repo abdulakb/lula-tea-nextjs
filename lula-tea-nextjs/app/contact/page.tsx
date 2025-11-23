@@ -56,7 +56,7 @@ export default function ContactPage() {
                 Or click the button below to start a conversation
               </p>
               <a
-                href="https://wa.me/"
+                href="https://wa.me/966539666654"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#22c55e] text-white px-8 py-4 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl"

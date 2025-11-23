@@ -125,6 +125,20 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Price with dynamic calculation */}
+                <div className="mb-6">
+                  <div className="text-3xl font-bold text-deep-brown mb-1">
+                    {language === "ar" 
+                      ? `${(30 * quantity)} ريال` 
+                      : `${(30 * quantity)} SAR`}
+                  </div>
+                  <p className="text-sm text-tea-brown/70">
+                    {language === "ar" 
+                      ? `٣٠ ريال للكيس • ٢٥٠ جرام`
+                      : `30 SAR per pack • 250g per pack`}
+                  </p>
+                </div>
+
                 {/* Quantity Selector */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-deep-brown mb-2">

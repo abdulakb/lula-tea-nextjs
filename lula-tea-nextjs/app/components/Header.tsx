@@ -3,11 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
-import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const { language, setLanguage, t } = useLanguage();
-  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 bg-warm-cream/95 backdrop-blur-sm border-b border-tea-brown/20">
@@ -79,22 +77,6 @@ export default function Header() {
                 className="text-deep-brown hover:text-tea-green transition-colors font-medium"
               >
                 {t("account")}
-              </Link>
-              
-              {/* Cart Icon with Badge */}
-              <Link 
-                href="/cart"
-                className="relative p-2 text-deep-brown hover:text-tea-green transition-colors"
-                aria-label={t("cart")}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-tea-green text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
-                    {itemCount}
-                  </span>
-                )}
               </Link>
             </div>
 

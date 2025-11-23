@@ -1,7 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
   <rect width="900" height="600" fill="#165B33"/>
   <g fill="#fff">
-    <path d="M150 200h600v200H150z"/>
-    <text x="450" y="320" font-family="Arial" font-size="80" text-anchor="middle" font-weight="bold">السعودية</text>
+    <!-- Shahada (Islamic creed) in Arabic calligraphy -->
+    <text x="450" y="280" font-family="Traditional Arabic, Arabic Typesetting, Arial" font-size="60" text-anchor="middle" font-weight="bold">لا إله إلا الله محمد رسول الله</text>
+    <!-- Sword -->
+    <g transform="translate(450, 350)">
+      <rect x="-200" y="-5" width="400" height="10" rx="2"/>
+      <path d="M 200,-10 L 220,0 L 200,10 Z"/>
+      <rect x="-210" y="-15" width="20" height="30" rx="3"/>
+    </g>
   </g>
 </svg>

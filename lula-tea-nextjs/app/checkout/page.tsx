@@ -34,6 +34,8 @@ export default function CheckoutPage() {
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
+  const [deliveryTime, setDeliveryTime] = useState("");
+  const [gpsCoordinates, setGpsCoordinates] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -181,7 +183,10 @@ export default function CheckoutPage() {
             setDeliveryAddress(fullAddress);
           }
           
-          let notesText = `GPS: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}\nMaps: https://maps.google.com/?q=${latitude},${longitude}`;
+          const coordsString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+          setGpsCoordinates(coordsString);
+          
+          let notesText = `GPS: ${coordsString}\nMaps: https://maps.google.com/?q=${latitude},${longitude}`;
           
           // Add eligibility info to notes
           if (eligibility.qualifies) {
@@ -229,7 +234,15 @@ export default function CheckoutPage() {
   };
 
   const handleWhatsAppCheckout = () => {
-    openWhatsApp(items, subtotal, language);
+    openWhatsApp({
+      items,
+      subtotal,
+      language,
+      customerName,
+      deliveryAddress,
+      deliveryTime,
+      gpsCoordinates,
+    });
   };
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
@@ -237,7 +250,7 @@ export default function CheckoutPage() {
     setError("");
     
     // Validate required fields
-    if (!customerName || !customerPhone || !deliveryAddress) {
+    if (!customerName || !customerPhone || !deliveryAddress || !deliveryTime) {
       setError(language === "ar" ? "يرجى ملء جميع الحقول المطلوبة" : "Please fill all required fields");
       return;
     }
@@ -259,6 +272,8 @@ export default function CheckoutPage() {
         customerPhone,
         customerAddress: deliveryAddress,
         deliveryNotes,
+        deliveryTime,
+        gpsCoordinates,
         items: orderItems,
         subtotal,
         deliveryFee: 0,
@@ -582,6 +597,24 @@ export default function CheckoutPage() {
                         </>
                       )}
                     </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                      {t("deliveryTime")} *
+                    </label>
+                    <select
+                      value={deliveryTime}
+                      onChange={(e) => setDeliveryTime(e.target.value)}
+                      required
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                    >
+                      <option value="">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                      <option value={t("deliveryTimeMorning")}>{t("deliveryTimeMorning")}</option>
+                      <option value={t("deliveryTimeAfternoon")}>{t("deliveryTimeAfternoon")}</option>
+                      <option value={t("deliveryTimeEvening")}>{t("deliveryTimeEvening")}</option>
+                      <option value={t("deliveryTimeAnytime")}>{t("deliveryTimeAnytime")}</option>
+                    </select>
                   </div>
 
                   <div>

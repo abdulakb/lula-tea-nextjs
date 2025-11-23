@@ -7,20 +7,53 @@ export interface CartItem {
   image: string;
 }
 
-export function buildWhatsAppMessage(items: CartItem[], subtotal: number, language: "en" | "ar"): string {
+export interface WhatsAppMessageOptions {
+  items: CartItem[];
+  subtotal: number;
+  language: "en" | "ar";
+  customerName?: string;
+  deliveryAddress?: string;
+  deliveryTime?: string;
+  gpsCoordinates?: string;
+}
+
+export function buildWhatsAppMessage(options: WhatsAppMessageOptions): string {
+  const { items, subtotal, language, customerName, deliveryAddress, deliveryTime, gpsCoordinates } = options;
   const currency = process.env.NEXT_PUBLIC_CURRENCY || "SAR";
   
   if (language === "ar") {
     const itemsList = items
       .map((item) => `${item.nameAr} x${item.quantity}`)
       .join("\n");
-    return `مرحباً! أود طلب:\n\n${itemsList}\n\nالمجموع: ${subtotal} ${currency}`;
+    
+    let message = `مرحباً! 👋\n\n`;
+    if (customerName) message += `الاسم: ${customerName}\n\n`;
+    
+    message += `📦 *طلبي:*\n${itemsList}\n\n💰 *المجموع:* ${subtotal} ${currency}\n\n`;
+    
+    if (deliveryAddress) message += `📍 *عنوان التوصيل:*\n${deliveryAddress}\n\n`;
+    if (gpsCoordinates) message += `🗺️ *الموقع:* ${gpsCoordinates}\n\n`;
+    if (deliveryTime) message += `🕐 *وقت التوصيل المفضل:* ${deliveryTime}\n\n`;
+    
+    message += `شكراً! 🌟`;
+    return message;
   }
   
   const itemsList = items
     .map((item) => `${item.name} x${item.quantity}`)
     .join("\n");
-  return `Hi! I'd like to order:\n\n${itemsList}\n\nTotal: ${subtotal} ${currency}`;
+  
+  let message = `Hi! 👋\n\n`;
+  if (customerName) message += `Name: ${customerName}\n\n`;
+  
+  message += `📦 *My Order:*\n${itemsList}\n\n💰 *Total:* ${subtotal} ${currency}\n\n`;
+  
+  if (deliveryAddress) message += `📍 *Delivery Address:*\n${deliveryAddress}\n\n`;
+  if (gpsCoordinates) message += `🗺️ *Location:* ${gpsCoordinates}\n\n`;
+  if (deliveryTime) message += `🕐 *Preferred Delivery Time:* ${deliveryTime}\n\n`;
+  
+  message += `Thank you! 🌟`;
+  return message;
 }
 
 export function getWhatsAppURL(message: string): string {
@@ -29,8 +62,8 @@ export function getWhatsAppURL(message: string): string {
   return `${baseUrl}?text=${encodedMessage}`;
 }
 
-export function openWhatsApp(items: CartItem[], subtotal: number, language: "en" | "ar") {
-  const message = buildWhatsAppMessage(items, subtotal, language);
+export function openWhatsApp(options: WhatsAppMessageOptions) {
+  const message = buildWhatsAppMessage(options);
   const url = getWhatsAppURL(message);
   window.open(url, "_blank");
 }

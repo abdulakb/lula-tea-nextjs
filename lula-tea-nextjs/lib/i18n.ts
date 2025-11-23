@@ -108,6 +108,11 @@ export const translations = {
     deliveryAddress: "Delivery Address",
     deliveryNotes: "Delivery Notes (Optional)",
     deliveryNotesPlaceholder: "e.g., Building number, floor, special instructions",
+    deliveryTime: "Preferred Delivery Time",
+    deliveryTimeMorning: "Morning (9 AM - 12 PM)",
+    deliveryTimeAfternoon: "Afternoon (12 PM - 4 PM)",
+    deliveryTimeEvening: "Evening (4 PM - 8 PM)",
+    deliveryTimeAnytime: "Anytime",
     confirmOrder: "Confirm Order",
     
     // Order Confirmation
@@ -238,7 +243,12 @@ export const translations = {
     phoneNumber: "رقم الهاتف",
     deliveryAddress: "عنوان التوصيل",
     deliveryNotes: "ملاحظات التوصيل (اختياري)",
-    deliveryNotesPlaceholder: "مثال: رقم المبنى، الدور، تعليمات خاصة",
+    deliveryNotesPlaceholder: "مثل: رقم المبنى، الدور، تعليمات خاصة",
+    deliveryTime: "وقت التوصيل المفضل",
+    deliveryTimeMorning: "صباحاً (9 ص - 12 م)",
+    deliveryTimeAfternoon: "ظهراً (12 م - 4 م)",
+    deliveryTimeEvening: "مساءً (4 م - 8 م)",
+    deliveryTimeAnytime: "أي وقت",
     confirmOrder: "تأكيد الطلب",
     
     // Order Confirmation

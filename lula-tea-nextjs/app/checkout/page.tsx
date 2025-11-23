@@ -310,70 +310,88 @@ export default function CheckoutPage() {
           <p className="text-xl text-tea-brown">{t("checkoutDescription")}</p>
         </div>
 
-        {/* Free Delivery Banner */}
-        <div className="mb-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white">
-          <div className="flex items-center gap-4">
-            <div className="text-5xl">🎁</div>
-            <div className="flex-1">
-              <h3 className="text-2xl font-bold mb-2">
-                {language === "ar" ? "توصيل مجاني!" : "FREE Delivery!"}
-              </h3>
-              <div className="space-y-1 text-sm">
-                <p className="flex items-center gap-2">
-                  <span className="text-xl">📍</span>
-                  <span>
-                    {language === "ar" 
-                      ? "احصل على توصيل مجاني بمشاركة موقعك!"
-                      : "Get FREE delivery by sharing your location!"}
-                  </span>
-                </p>
-                <p className="flex items-center gap-2 opacity-90">
-                  <span>✓</span>
-                  <span>
-                    {language === "ar"
-                      ? "3 علب أو أكثر - في نطاق 20 كم من المستودع"
-                      : "3+ packs - Within 20km from warehouse"}
-                  </span>
-                </p>
-                <p className="flex items-center gap-2 opacity-90">
-                  <span>✓</span>
-                  <span>
-                    {language === "ar"
-                      ? "5 علب أو أكثر - في الرياض أو جدة"
-                      : "5+ packs - Anywhere in Riyadh or Jeddah"}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Qualification Status Banner */}
-        {qualifiesForFreeDelivery && (
-          <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 animate-pulse">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">🎉</span>
-              <div>
-                <p className="text-xl font-bold text-green-800">
+        {/* Free Delivery Teaser - Before location shared */}
+        {distanceFromWarehouse === null && (
+          <div className="mb-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
+            <div className="flex items-center gap-4">
+              <div className="text-5xl">📍</div>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold mb-2">
+                  {language === "ar" ? "قد تكون مؤهلاً للتوصيل المجاني!" : "You might qualify for FREE delivery!"}
+                </h3>
+                <p className="text-white/90">
                   {language === "ar" 
-                    ? "مبروك! أنت مؤهل للتوصيل المجاني!" 
-                    : "Congratulations! You qualify for FREE delivery!"}
-                </p>
-                <p className="text-green-700">
-                  {deliveryCity && (
-                    language === "ar"
-                      ? `موقعك في ${deliveryCity} - التوصيل مجاني!`
-                      : `Your location in ${deliveryCity} - Delivery is FREE!`
-                  )}
-                  {!deliveryCity && distanceFromWarehouse && (
-                    language === "ar"
-                      ? `موقعك على بُعد ${distanceFromWarehouse.toFixed(1)} كم - التوصيل مجاني!`
-                      : `Your location is ${distanceFromWarehouse.toFixed(1)}km away - Delivery is FREE!`
-                  )}
+                    ? "شارك موقعك لنتحقق من أهليتك للتوصيل المجاني"
+                    : "Share your location to check if you qualify for free delivery"}
                 </p>
               </div>
             </div>
           </div>
+        )}
+
+        {/* Eligibility Result - After location shared */}
+        {distanceFromWarehouse !== null && (
+          <>
+            {qualifiesForFreeDelivery ? (
+              <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 animate-pulse">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">🎉</span>
+                  <div>
+                    <p className="text-xl font-bold text-green-800">
+                      {language === "ar" 
+                        ? "مبروك! أنت مؤهل للتوصيل المجاني!" 
+                        : "Congratulations! You qualify for FREE delivery!"}
+                    </p>
+                    <p className="text-green-700">
+                      {deliveryCity && (
+                        language === "ar"
+                          ? `موقعك في ${deliveryCity} - التوصيل مجاني!`
+                          : `Your location in ${deliveryCity} - Delivery is FREE!`
+                      )}
+                      {!deliveryCity && distanceFromWarehouse && (
+                        language === "ar"
+                          ? `موقعك على بُعد ${distanceFromWarehouse.toFixed(1)} كم - التوصيل مجاني!`
+                          : `Your location is ${distanceFromWarehouse.toFixed(1)}km away - Delivery is FREE!`
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-8 bg-amber-100 border-2 border-amber-500 rounded-2xl p-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">📦</span>
+                  <div>
+                    <p className="text-xl font-bold text-amber-800">
+                      {language === "ar" 
+                        ? "رسوم التوصيل: 25 ريال" 
+                        : "Delivery Fee: 25 SAR"}
+                    </p>
+                    <p className="text-amber-700 text-sm mt-1">
+                      {(() => {
+                        const totalPacks = items.reduce((sum, item) => sum + item.quantity, 0);
+                        if (deliveryCity) {
+                          const needed = MIN_PACKS_FOR_FREE_DELIVERY_CITY - totalPacks;
+                          return language === "ar"
+                            ? `أضف ${needed} علبة أخرى للحصول على توصيل مجاني في ${deliveryCity}`
+                            : `Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery in ${deliveryCity}`;
+                        } else if (distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
+                          const needed = MIN_PACKS_FOR_FREE_DELIVERY_NEAR - totalPacks;
+                          return language === "ar"
+                            ? `أضف ${needed} علبة أخرى للحصول على توصيل مجاني (${distanceFromWarehouse.toFixed(1)} كم من المستودع)`
+                            : `Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery (${distanceFromWarehouse.toFixed(1)}km from warehouse)`;
+                        } else {
+                          return language === "ar"
+                            ? "موقعك خارج نطاق التوصيل المجاني"
+                            : "Your location is outside the free delivery area";
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

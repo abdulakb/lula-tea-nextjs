@@ -163,6 +163,105 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Brewing Tips Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Image */}
+            <div className="relative h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl order-2 lg:order-1">
+              <Image
+                src="/images/Teapot.png"
+                alt="Lula Tea Brewing"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="order-1 lg:order-2">
+              <h2 className="text-4xl md:text-5xl font-bold text-deep-brown mb-6">
+                {language === "ar" ? "خطوات التحضير" : "How to Brew"}
+              </h2>
+              <p className="text-xl text-tea-brown mb-8">
+                {language === "ar" 
+                  ? "اتبع هذه الخطوات البسيطة للحصول على كوب الشاي المثالي"
+                  : "Follow these simple steps for the perfect cup of tea"}
+              </p>
+
+              <div className="space-y-6">
+                {/* Step 1 */}
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-tea-green/20 rounded-full flex items-center justify-center">
+                    <span className="text-tea-green font-bold text-xl">
+                      {language === "ar" ? "١" : "1"}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-deep-brown mb-2">
+                      {language === "ar" ? "اخلط الشاي جيداً" : "Mix Well"}
+                    </h3>
+                    <p className="text-tea-brown">
+                      {language === "ar" 
+                        ? "اخلط خلطة الشاي جيداً قبل كل استخدام لضمان توزيع متساوي للنكهات"
+                        : "Mix the tea blend well before each use to ensure even distribution of flavors"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-tea-green/20 rounded-full flex items-center justify-center">
+                    <span className="text-tea-green font-bold text-xl">
+                      {language === "ar" ? "٢" : "2"}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-deep-brown mb-2">
+                      {language === "ar" ? "اغسله برفق" : "Rinse Gently"}
+                    </h3>
+                    <p className="text-tea-brown">
+                      {language === "ar" 
+                        ? "خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء"
+                        : "Take the appropriate amount of tea blend, then rinse it lightly with water"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-tea-green/20 rounded-full flex items-center justify-center">
+                    <span className="text-tea-green font-bold text-xl">
+                      {language === "ar" ? "٣" : "3"}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-deep-brown mb-2">
+                      {language === "ar" ? "اتركه ينضج" : "Let it Steep"}
+                    </h3>
+                    <p className="text-tea-brown">
+                      {language === "ar" 
+                        ? "اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته"
+                        : "Pour boiling water over it and leave it on low heat until the tea gets its color and flavor"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 p-6 bg-warm-cream rounded-2xl border-l-4 border-tea-green">
+                <p className="text-tea-brown">
+                  <span className="font-semibold text-deep-brown">
+                    {language === "ar" ? "💡 نصيحة: " : "💡 Tip: "}
+                  </span>
+                  {language === "ar" 
+                    ? "يمكنك التحكم في قوة النكهة حسب رغبتك عن طريق تعديل وقت النقع"
+                    : "You can control the strength of the flavor to your preference by adjusting the steeping time"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-soft-sage/20 to-warm-cream">
         <div className="max-w-7xl mx-auto">

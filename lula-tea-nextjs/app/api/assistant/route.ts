@@ -55,7 +55,7 @@ function generateMockResponse(userMessage: string, language: "en" | "ar"): strin
   }
   
   // Brewing tips (check before ordering to avoid conflict)
-  if (lowerMessage.match(/(brew|prepare|make tea|how to make tea|how to prepare|preparation|كيف احضر|طريقة التحضير|تحضير الشاي|اعداد)/i)) {
+  if (lowerMessage.match(/(brew|preparation|make tea|making tea|how.*prepare.*tea|how.*make.*tea|prepare.*tea|كيف احضر|طريقة التحضير|تحضير الشاي|اعداد الشاي|تحضير)/i)) {
     return language === "ar"
       ? `خطوات التحضير: ☕️\n\n١. اخلط خلطة الشاي جيداً قبل كل استخدام\n\n٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء\n\n٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته\n\nوبالعافية.. 🍵✨\n\n💡 نصيحة: يمكنك التحكم في قوة النكهة حسب رغبتك\n\nهل تريد معرفة المزيد؟`
       : `Brewing Steps: ☕️\n\n1. Mix the tea blend well before each use\n\n2. Take the appropriate amount of tea blend, then rinse it lightly with water\n\n3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor\n\nEnjoy! 🍵✨\n\n💡 Tip: You can control the strength of the flavor to your preference\n\nWould you like to know more?`;

@@ -96,6 +96,38 @@ export const translations = {
     ctaTitle: "Ready to Experience Lula Tea?",
     ctaDescription: "Order online or contact us via WhatsApp for personalized service",
     shopNow: "Shop Now",
+    
+    // Checkout Payment
+    paymentMethod: "Payment Method",
+    cashOnDelivery: "Cash on Delivery",
+    whatsappOrder: "WhatsApp Order",
+    customerInformation: "Customer Information",
+    fullName: "Full Name",
+    phoneNumber: "Phone Number",
+    deliveryAddress: "Delivery Address",
+    deliveryNotes: "Delivery Notes (Optional)",
+    deliveryNotesPlaceholder: "e.g., Building number, floor, special instructions",
+    confirmOrder: "Confirm Order",
+    
+    // Order Confirmation
+    orderConfirmed: "Order Confirmed!",
+    orderNumber: "Order Number",
+    orderSuccessMessage: "Thank you for your order! We'll contact you soon to confirm delivery details.",
+    downloadInvoice: "Download Invoice",
+    nextSteps: "What's Next?",
+    nextStep1: "We'll contact you within 24 hours to confirm your order",
+    nextStep2: "Your tea will be carefully prepared and packaged with love",
+    nextStep3: "Delivery typically takes 2-3 business days",
+    questionsContact: "Questions? Contact us anytime:",
+    backToHome: "Back to Home",
+    
+    // Brewing Tips
+    brewingTipsTitle: "How to Brew the Perfect Cup",
+    brewingTipsSubtitle: "Follow these simple steps for the best tea experience",
+    brewingStep1: "Heat water to 85-90°C",
+    brewingStep2: "Add 1 teaspoon per cup",
+    brewingStep3: "Steep for 3-5 minutes",
+    brewingStep4: "Enjoy your perfect cup!",
   },
   ar: {
     // Header & Navigation
@@ -194,6 +226,38 @@ export const translations = {
     ctaTitle: "مستعد لتجربة لولا تي؟",
     ctaDescription: "اطلب عبر الإنترنت أو تواصل معنا عبر واتساب للحصول على خدمة شخصية",
     shopNow: "تسوق الآن",
+    
+    // Checkout Payment
+    paymentMethod: "طريقة الدفع",
+    cashOnDelivery: "الدفع عند الاستلام",
+    whatsappOrder: "طلب عبر واتساب",
+    customerInformation: "معلومات العميل",
+    fullName: "الاسم الكامل",
+    phoneNumber: "رقم الهاتف",
+    deliveryAddress: "عنوان التوصيل",
+    deliveryNotes: "ملاحظات التوصيل (اختياري)",
+    deliveryNotesPlaceholder: "مثال: رقم المبنى، الدور، تعليمات خاصة",
+    confirmOrder: "تأكيد الطلب",
+    
+    // Order Confirmation
+    orderConfirmed: "تم تأكيد الطلب!",
+    orderNumber: "رقم الطلب",
+    orderSuccessMessage: "شكراً لطلبك! سنتواصل معك قريباً لتأكيد تفاصيل التوصيل.",
+    downloadInvoice: "تحميل الفاتورة",
+    nextSteps: "ما التالي؟",
+    nextStep1: "سنتواصل معك خلال ٢٤ ساعة لتأكيد طلبك",
+    nextStep2: "سيتم تحضير الشاي وتعبئته بعناية وحب",
+    nextStep3: "التوصيل عادة يستغرق ٢-٣ أيام عمل",
+    questionsContact: "لديك أسئلة؟ تواصل معنا في أي وقت:",
+    backToHome: "العودة للرئيسية",
+    
+    // Brewing Tips
+    brewingTipsTitle: "كيفية تحضير كوب الشاي المثالي",
+    brewingTipsSubtitle: "اتبع هذه الخطوات البسيطة للحصول على أفضل تجربة شاي",
+    brewingStep1: "سخّن الماء إلى ٨٥-٩٠ درجة مئوية",
+    brewingStep2: "أضف ملعقة صغيرة لكل كوب",
+    brewingStep3: "انقع لمدة ٣-٥ دقائق",
+    brewingStep4: "استمتع بكوبك المثالي!",
   },
 };
 
@@ -202,4 +266,8 @@ export type TranslationKey = keyof typeof translations.en;
 
 export function getTranslation(lang: Language, key: TranslationKey): string {
   return translations[lang][key] || translations.en[key];
+}
+
+export function t(key: TranslationKey, lang: Language): string {
+  return getTranslation(lang, key);
 }

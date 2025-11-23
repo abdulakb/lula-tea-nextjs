@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useAnalytics } from "@/context/AnalyticsContext";
 import { product } from "@/lib/productData";
 
 interface ProductCardProps {
@@ -14,6 +15,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const { language, t } = useLanguage();
   const { addItem } = useCart();
+  const { trackEvent } = useAnalytics();
 
   const handleAddToCart = () => {
     addItem(
@@ -26,6 +28,16 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
       },
       quantity
     );
+    
+    // Track add to cart event
+    trackEvent("add_to_cart", {
+      product_id: product.id,
+      product_name: product.name,
+      quantity,
+      price: product.price,
+      total_value: product.price * quantity,
+    });
+    
     // Show toast notification (placeholder)
     alert(language === "ar" ? "تمت الإضافة إلى السلة!" : "Added to cart!");
   };

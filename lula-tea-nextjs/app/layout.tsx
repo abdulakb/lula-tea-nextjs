@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
+import { AnalyticsProvider } from "@/context/AnalyticsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,14 +34,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LanguageProvider>
-          <CartProvider>
-            <Header />
-            {children}
-            <Footer />
-            <ChatWidget />
-          </CartProvider>
-        </LanguageProvider>
+        <AnalyticsProvider>
+          <LanguageProvider>
+            <CartProvider>
+              <Header />
+              {children}
+              <Footer />
+              <ChatWidget />
+            </CartProvider>
+          </LanguageProvider>
+        </AnalyticsProvider>
       </body>
     </html>
   );

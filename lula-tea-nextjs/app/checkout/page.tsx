@@ -1,16 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useAnalytics } from "@/context/AnalyticsContext";
 import { openWhatsApp } from "@/lib/whatsapp";
 
 export default function CheckoutPage() {
   const { t, language } = useLanguage();
   const { items, subtotal } = useCart();
+  const { trackEvent } = useAnalytics();
   const router = useRouter();
+
+  // Track checkout start
+  useEffect(() => {
+    trackEvent("checkout_start", {
+      cart_value: subtotal,
+      item_count: items.length,
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    });
+  }, []);
   
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "whatsapp">("cod");
   const [customerName, setCustomerName] = useState("");
@@ -74,6 +90,15 @@ export default function CheckoutPage() {
       if (!response.ok) {
         throw new Error(result.error || "Failed to create order");
       }
+
+      // Track purchase completion
+      trackEvent("purchase", {
+        order_id: result.orderId,
+        total_value: subtotal,
+        payment_method: paymentMethod,
+        item_count: items.length,
+        items: orderItems,
+      });
 
       // Redirect to confirmation page with order details
       router.push(`/order-confirmation?orderId=${result.orderId}&invoice=${result.invoiceBase64}`);

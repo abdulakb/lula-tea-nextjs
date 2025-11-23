@@ -186,7 +186,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
             href="/admin/orders"
             className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow"
@@ -208,10 +208,13 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
-          <div className="bg-white rounded-lg shadow-lg p-8 opacity-60">
+          <Link
+            href="/admin/analytics"
+            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow"
+          >
             <div className="flex items-center gap-4">
-              <div className="bg-tea-brown/10 p-4 rounded-lg">
-                <svg className="w-8 h-8 text-tea-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-blue-500/10 p-4 rounded-lg">
+                <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
@@ -220,7 +223,25 @@ export default function AdminDashboard() {
                   Analytics
                 </h3>
                 <p className="text-tea-brown">
-                  Coming soon: Sales reports and insights
+                  Track visitors, clicks, and conversions
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <div className="bg-white rounded-lg shadow-lg p-8 opacity-60">
+            <div className="flex items-center gap-4">
+              <div className="bg-tea-brown/10 p-4 rounded-lg">
+                <svg className="w-8 h-8 text-tea-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-deep-brown mb-1">
+                  Inventory
+                </h3>
+                <p className="text-tea-brown">
+                  Coming soon: Stock management
                 </p>
               </div>
             </div>

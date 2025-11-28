@@ -1,59 +1,63 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const { language, setLanguage, t } = useLanguage();
+  const { itemCount } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-warm-cream/95 backdrop-blur-sm border-b border-tea-brown/20">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <Image
-              src="/images/logo.jpg"
-              alt="Lula Tea Logo"
-              width={60}
-              height={60}
-              className="rounded-full object-cover"
-              priority
-            />
-            <div>
-              <h1 className="text-2xl font-bold text-deep-brown">Lula Tea</h1>
-              <p className="text-xs text-tea-brown italic">{language === "ar" ? "محضّر بحب" : "Homemade with Love"}</p>
-            </div>
-          </Link>
+    <>
+      <header className="sticky top-0 z-50 bg-warm-cream/95 backdrop-blur-sm border-b border-tea-brown/20 shadow-sm">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16 md:h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3" onClick={() => setMobileMenuOpen(false)}>
+              <Image
+                src="/images/logo.jpg"
+                alt="Lula Tea Logo"
+                width={50}
+                height={50}
+                className="rounded-full object-cover sm:w-[60px] sm:h-[60px]"
+                priority
+              />
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-deep-brown">Lula Tea</h1>
+                <p className="text-xs text-tea-brown italic hidden sm:block">{language === "ar" ? "محضّر بحب" : "Homemade with Love"}</p>
+              </div>
+            </Link>
 
-          {/* Navigation */}
-          <div className="flex items-center space-x-6">
-            {/* Language Toggle */}
-            <div className="flex items-center gap-2 bg-white rounded-full p-1 shadow-sm">
-              <button
-                onClick={() => setLanguage("en")}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-colors ${
-                  language === "en" ? "bg-tea-green text-white" : "text-deep-brown hover:bg-tea-green/10"
-                }`}
-                aria-label="English"
-              >
-                <Image src="/icons/uk.svg" alt="EN" width={20} height={20} />
-                <span className="text-sm font-medium hidden sm:inline">EN</span>
-              </button>
-              <button
-                onClick={() => setLanguage("ar")}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-colors ${
-                  language === "ar" ? "bg-tea-green text-white" : "text-deep-brown hover:bg-tea-green/10"
-                }`}
-                aria-label="العربية"
-              >
-                <Image src="/icons/sa.svg" alt="AR" width={20} height={20} />
-                <span className="text-sm font-medium hidden sm:inline">AR</span>
-              </button>
-            </div>
-
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
+              {/* Language Toggle */}
+              <div className="flex items-center gap-2 bg-white rounded-full p-1 shadow-sm">
+                <button
+                  onClick={() => setLanguage("en")}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 ${
+                    language === "en" ? "bg-tea-green text-white shadow-md" : "text-deep-brown hover:bg-tea-green/10"
+                  }`}
+                  aria-label="English"
+                >
+                  <Image src="/icons/uk.svg" alt="EN" width={20} height={20} />
+                  <span className="text-sm font-medium">EN</span>
+                </button>
+                <button
+                  onClick={() => setLanguage("ar")}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 ${
+                    language === "ar" ? "bg-tea-green text-white shadow-md" : "text-deep-brown hover:bg-tea-green/10"
+                  }`}
+                  aria-label="العربية"
+                >
+                  <Image src="/icons/sa.svg" alt="AR" width={20} height={20} />
+                  <span className="text-sm font-medium">AR</span>
+                </button>
+              </div>
+
               <Link 
                 href="/" 
                 className="text-deep-brown hover:text-tea-green transition-colors font-medium"
@@ -78,17 +82,123 @@ export default function Header() {
               >
                 {t("account")}
               </Link>
+              
+              {/* Cart Icon */}
+              <Link 
+                href="/checkout" 
+                className="relative p-2 text-deep-brown hover:text-tea-green transition-colors"
+                aria-label="Shopping Cart"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-tea-green text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button className="md:hidden p-2 text-deep-brown">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+            {/* Mobile Right Side */}
+            <div className="flex md:hidden items-center gap-3">
+              {/* Language Toggle Mobile */}
+              <div className="flex items-center gap-1 bg-white rounded-full p-0.5 shadow-sm">
+                <button
+                  onClick={() => setLanguage("en")}
+                  className={`flex items-center px-2 py-1 rounded-full transition-all duration-200 ${
+                    language === "en" ? "bg-tea-green" : ""
+                  }`}
+                  aria-label="English"
+                >
+                  <Image src="/icons/uk.svg" alt="EN" width={18} height={18} />
+                </button>
+                <button
+                  onClick={() => setLanguage("ar")}
+                  className={`flex items-center px-2 py-1 rounded-full transition-all duration-200 ${
+                    language === "ar" ? "bg-tea-green" : ""
+                  }`}
+                  aria-label="العربية"
+                >
+                  <Image src="/icons/sa.svg" alt="AR" width={18} height={18} />
+                </button>
+              </div>
+
+              {/* Cart Icon Mobile */}
+              <Link 
+                href="/checkout" 
+                className="relative p-2 text-deep-brown hover:text-tea-green transition-colors"
+                aria-label="Shopping Cart"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-tea-green text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* Mobile Menu Button */}
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-deep-brown hover:text-tea-green transition-colors"
+                aria-label="Toggle menu"
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Mobile Menu */}
+        <div 
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="px-4 pt-2 pb-4 space-y-3 bg-white/50 backdrop-blur-sm border-t border-tea-brown/10">
+            <Link 
+              href="/" 
+              className="block py-2 text-deep-brown hover:text-tea-green transition-colors font-medium text-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("home")}
+            </Link>
+            <Link 
+              href="/product" 
+              className="block py-2 text-deep-brown hover:text-tea-green transition-colors font-medium text-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("product")}
+            </Link>
+            <Link 
+              href="/contact" 
+              className="block py-2 text-deep-brown hover:text-tea-green transition-colors font-medium text-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("contactUs")}
+            </Link>
+            <Link 
+              href="/account" 
+              className="block py-2 text-deep-brown hover:text-tea-green transition-colors font-medium text-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t("account")}
+            </Link>
           </div>
         </div>
-      </nav>
-    </header>
+      </header>
+    </>
   );
 }

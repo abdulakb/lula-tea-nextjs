@@ -19,7 +19,7 @@ export const product: Product = {
   descriptionAr: "مزيجنا المميز يحتوي على مكونات مُختارة بعناية تخلق طعماً فريداً لا يُنسى. كل دفعة مُحضّرة بحب واهتمام بالتفاصيل.",
   price: 60,
   currency: "SAR",
-  image: "/images/Product Image.jpg",
+  image: "/images/Product Image2.jpg",
   weight: "200g",
   inventory: 20,
 };

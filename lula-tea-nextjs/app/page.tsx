@@ -19,7 +19,7 @@ export default function Home() {
         name: "Premium Loose Leaf Blend",
         nameAr: "مزيج أوراق الشاي المميز",
         price: 60,
-        image: "/images/Product Image.jpg",
+        image: "/images/Product Image2.jpg",
       },
       quantity
     );
@@ -100,7 +100,7 @@ export default function Home() {
               {/* Product Image */}
               <div className="relative h-80 md:h-auto">
                 <Image
-                  src="/images/Product Image.jpg"
+                  src="/images/Product Image2.jpg"
                   alt="Lula Tea Premium Blend"
                   fill
                   className="object-cover"

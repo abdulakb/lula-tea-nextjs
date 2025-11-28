@@ -281,8 +281,8 @@ export default function Home() {
                     {language === "ar" ? "💡 نصيحة: " : "💡 Tip: "}
                   </span>
                   {language === "ar" 
-                    ? "يمكنك التحكم في قوة النكهة حسب رغبتك عن طريق تعديل وقت النقع"
-                    : "You can control the strength of the flavor to your preference by adjusting the steeping time"}
+                    ? "يمكنك التحكم في قوة النكهة حسب رغبتك عن طريق إضافة المزيد من أوراق الشاي"
+                    : "You can control the strength of the flavor to your preference by adding more tea leaves"}
                 </p>
               </div>
             </div>

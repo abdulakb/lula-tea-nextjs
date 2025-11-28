@@ -13,14 +13,16 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("en");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load language from localStorage
+    // Load language from localStorage on mount
     const stored = localStorage.getItem("language") as Language;
     if (stored === "ar" || stored === "en") {
       setLanguageState(stored);
       updateDocumentLang(stored);
     }
+    setIsLoaded(true);
   }, []);
 
   const setLanguage = (lang: Language) => {
@@ -42,6 +44,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return translations[language]?.[key] || translations.en[key] || key;
   };
 
+  // Show loading or return children immediately - both work
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}

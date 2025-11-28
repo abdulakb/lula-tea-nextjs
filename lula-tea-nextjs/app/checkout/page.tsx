@@ -26,6 +26,18 @@ export default function CheckoutPage() {
         price: item.price,
       })),
     });
+
+    // Auto-scroll to form on mobile to avoid confusion
+    // Wait for page to fully load before scrolling
+    const timer = setTimeout(() => {
+      const formSection = document.getElementById("checkout-form");
+      if (formSection && window.innerWidth < 1024) {
+        // Only auto-scroll on mobile/tablet (< 1024px)
+        formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, []);
   
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "whatsapp">("cod");
@@ -439,7 +451,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Checkout Form */}
-          <div className="bg-white rounded-3xl shadow-xl p-8">
+          <div id="checkout-form" className="bg-white rounded-3xl shadow-xl p-8">
             {/* Payment Method Selection */}
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-deep-brown mb-3">

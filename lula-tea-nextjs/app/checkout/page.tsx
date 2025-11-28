@@ -10,7 +10,7 @@ import { openWhatsApp } from "@/lib/whatsapp";
 
 export default function CheckoutPage() {
   const { t, language } = useLanguage();
-  const { items, subtotal } = useCart();
+  const { items, subtotal, updateQuantity, removeItem } = useCart();
   const { trackEvent } = useAnalytics();
   const router = useRouter();
 
@@ -428,18 +428,51 @@ export default function CheckoutPage() {
               {language === "ar" ? "ملخص الطلب" : "Order Summary"}
             </h2>
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between items-center mb-4 pb-4 border-b border-tea-brown/10">
-                <div>
-                  <p className="font-semibold text-deep-brown">
-                    {language === "ar" ? item.nameAr : item.name}
-                  </p>
-                  <p className="text-sm text-tea-brown">
-                    {language === "ar" ? `الكمية: ${item.quantity}` : `Qty: ${item.quantity}`}
-                  </p>
+              <div key={item.id} className="mb-4 pb-4 border-b border-tea-brown/10">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <p className="font-semibold text-deep-brown">
+                      {language === "ar" ? item.nameAr : item.name}
+                    </p>
+                    <p className="text-sm text-tea-brown">
+                      {language === "ar" ? `${item.price} ريال للكيس` : `${item.price} SAR per pack`}
+                    </p>
+                  </div>
+                  <span className="font-semibold text-deep-brown">
+                    {language === "ar" ? `${item.price * item.quantity} ريال` : `${item.price * item.quantity} SAR`}
+                  </span>
                 </div>
-                <span className="font-semibold text-deep-brown">
-                  {language === "ar" ? `${item.price * item.quantity} ريال` : `${item.price * item.quantity} SAR`}
-                </span>
+                {/* Quantity Controls */}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-tea-brown">
+                    {language === "ar" ? "الكمية:" : "Quantity:"}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="w-8 h-8 flex items-center justify-center bg-tea-brown/10 hover:bg-tea-brown/20 rounded-lg transition-colors text-deep-brown font-bold"
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className="w-12 text-center font-semibold text-deep-brown">
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="w-8 h-8 flex items-center justify-center bg-tea-green hover:bg-tea-green/90 rounded-lg transition-colors text-white font-bold"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="ml-auto text-red-600 hover:text-red-700 text-sm underline"
+                  >
+                    {language === "ar" ? "حذف" : "Remove"}
+                  </button>
+                </div>
               </div>
             ))}
             <div className="flex justify-between items-center pt-4 border-t-2 border-tea-green">
@@ -538,7 +571,7 @@ export default function CheckoutPage() {
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
                     />
                   </div>
 
@@ -551,7 +584,7 @@ export default function CheckoutPage() {
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
                       placeholder={language === "ar" ? "your@email.com" : "your@email.com"}
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
                     />
                     <p className="text-xs text-tea-brown mt-1">
                       {language === "ar" ? "لتلقي تأكيد الطلب عبر البريد الإلكتروني" : "To receive order confirmation via email"}
@@ -567,7 +600,7 @@ export default function CheckoutPage() {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
                     />
                   </div>
 
@@ -581,7 +614,7 @@ export default function CheckoutPage() {
                         onChange={(e) => setDeliveryAddress(e.target.value)}
                         required
                         rows={3}
-                        className="flex-1 px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                        className="flex-1 px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
                         placeholder={language === "ar" ? "أدخل عنوانك أو استخدم موقعك" : "Enter your address or use your location"}
                       />
                     </div>
@@ -619,7 +652,7 @@ export default function CheckoutPage() {
                       value={deliveryTime}
                       onChange={(e) => setDeliveryTime(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
                     >
                       <option value="">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
                       <option value={t("deliveryTimeMorning")}>{t("deliveryTimeMorning")}</option>
@@ -638,7 +671,7 @@ export default function CheckoutPage() {
                       onChange={(e) => setDeliveryNotes(e.target.value)}
                       rows={2}
                       placeholder={t("deliveryNotesPlaceholder")}
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green resize-none"
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green resize-none text-deep-brown"
                     />
                   </div>
 

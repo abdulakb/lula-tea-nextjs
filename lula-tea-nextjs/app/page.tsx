@@ -15,10 +15,10 @@ export default function Home() {
     // Add item to cart first
     addItem(
       {
-        id: "lula-tea-blend",
+        id: "lula-tea-premium-200g",
         name: "Premium Loose Leaf Blend",
-        nameAr: "مزيج أوراق الشاي الفاخرة",
-        price: 30,
+        nameAr: "مزيج أوراق الشاي المميز",
+        price: 60,
         image: "/images/Product Image.jpg",
       },
       quantity
@@ -141,13 +141,13 @@ export default function Home() {
                 <div className="mb-6">
                   <div className="text-3xl font-bold text-deep-brown mb-1">
                     {language === "ar" 
-                      ? `${(30 * quantity)} ريال` 
-                      : `${(30 * quantity)} SAR`}
+                      ? `${(60 * quantity)} ريال` 
+                      : `${(60 * quantity)} SAR`}
                   </div>
                   <p className="text-sm text-tea-brown/70">
                     {language === "ar" 
-                      ? `٣٠ ريال للكيس • ٢٥٠ جرام`
-                      : `30 SAR per pack • 250g per pack`}
+                      ? `٦٠ ريال للكيس • ٢٠٠ جرام`
+                      : `60 SAR per pack • 200g per pack`}
                   </p>
                 </div>
 

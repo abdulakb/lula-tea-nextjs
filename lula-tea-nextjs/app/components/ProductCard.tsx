@@ -115,8 +115,8 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
             </div>
             <p className="text-sm text-tea-brown/70">
               {language === "ar" 
-                ? `${product.price} ريال للكيس • ٢٥٠ جرام`
-                : `${product.price} ${product.currency} per pack • 250g per pack`}
+                ? `${product.price} ريال للكيس • ٢٠٠ جرام`
+                : `${product.price} ${product.currency} per pack • 200g per pack`}
             </p>
           </div>
 

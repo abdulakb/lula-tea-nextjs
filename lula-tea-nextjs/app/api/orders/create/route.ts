@@ -68,16 +68,24 @@ export async function POST(request: NextRequest) {
     const buffer = await invoiceBlob.arrayBuffer();
     const base64Invoice = Buffer.from(buffer).toString("base64");
 
-    // Save order to Supabase
+    // Calculate total quantity ordered
+    const quantityOrdered = items.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
+
+    // Save order to Supabase with all customer form data
     const { data: orderData, error: orderError } = await supabase
       .from("orders")
       .insert([
         {
           order_id: orderId,
           customer_name: customerName,
+          customer_email: body.customerEmail || null,
           customer_phone: customerPhone,
           customer_address: customerAddress,
-          delivery_notes: `${deliveryNotes || ''}${deliveryTime ? `\n⏰ Delivery Time: ${deliveryTime}` : ''}${gpsCoordinates ? `\n📍 GPS: ${gpsCoordinates}` : ''}`.trim() || null,
+          delivery_address_formatted: customerAddress,
+          gps_coordinates: gpsCoordinates || null,
+          delivery_time_preference: deliveryTime || null,
+          delivery_notes: deliveryNotes || null,
+          quantity_ordered: quantityOrdered,
           items: JSON.stringify(items),
           subtotal,
           delivery_fee: deliveryFee || 0,
@@ -85,6 +93,7 @@ export async function POST(request: NextRequest) {
           payment_method: paymentMethod,
           invoice_base64: base64Invoice,
           status: "pending",
+          order_date: new Date().toISOString(),
           created_at: new Date().toISOString(),
         },
       ])

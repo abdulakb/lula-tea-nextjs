@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
             language,
           });
 
-          const customerEmailResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/emails/send`, {
+          const customerEmailResponse = await fetch(`${process.env.SITE_URL || 'http://localhost:3000'}/api/emails/send`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
             qualifiesForFreeDelivery: qualifiesForFreeDelivery || false,
           });
 
-          const adminEmailResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/emails/send`, {
+          const adminEmailResponse = await fetch(`${process.env.SITE_URL || 'http://localhost:3000'}/api/emails/send`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

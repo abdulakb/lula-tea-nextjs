@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     // Test email
     const { data, error } = await resend.emails.send({
-      from: "Lula Tea <onboarding@resend.dev>",
+      from: "Lula Tea <orders@send.lulatee.com>",
       to: [testEmail],
       subject: "Test Email from Lula Tea",
       html: `

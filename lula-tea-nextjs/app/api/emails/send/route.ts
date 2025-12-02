@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Use Resend's default sending domain until custom domain is verified
-    const fromEmail = "Lula Tea <onboarding@resend.dev>";
+    // Use custom verified domain (subdomain from DNS records)
+    const fromEmail = "Lula Tea <orders@send.lulatee.com>";
 
     const { data, error} = await resend.emails.send({
       from: fromEmail,

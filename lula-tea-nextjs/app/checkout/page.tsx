@@ -10,7 +10,7 @@ import { openWhatsApp } from "@/lib/whatsapp";
 
 export default function CheckoutPage() {
   const { t, language } = useLanguage();
-  const { items, subtotal, updateQuantity, removeItem } = useCart();
+  const { items, subtotal, updateQuantity, removeItem, clearCart } = useCart();
   const { trackEvent } = useAnalytics();
   const router = useRouter();
 
@@ -325,8 +325,9 @@ export default function CheckoutPage() {
           throw new Error(result.error || "Failed to create checkout session");
         }
 
-        // Redirect to Stripe Checkout
+        // Clear cart and redirect to Stripe Checkout
         if (result.url) {
+          clearCart();
           window.location.href = result.url;
         }
         return;
@@ -355,6 +356,9 @@ export default function CheckoutPage() {
         item_count: items.length,
         items: orderItems,
       });
+
+      // Clear cart before redirecting
+      clearCart();
 
       // Redirect to confirmation page with order details
       router.push(`/order-confirmation?orderId=${result.orderId}&invoice=${result.invoiceBase64}`);

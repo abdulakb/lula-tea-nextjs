@@ -1,0 +1,39 @@
+<div class="search-page">
+    <div class="container">
+        <h1 class="page-title">Search Results</h1>
+        <p class="search-query">Showing results for: "<%= query %>"</p>
+        
+        <% if (results.length === 0) { %>
+            <div class="empty-state">
+                <i class="fas fa-search empty-icon"></i>
+                <h2>No results found</h2>
+                <p>Try different keywords or browse our product.</p>
+                <a href="/product" class="btn btn-primary">View Our Product</a>
+            </div>
+        <% } else { %>
+            <div class="search-results">
+                <% results.forEach(item => { %>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="<%= item.images[0] %>" alt="<%= item.name %>" onerror="this.src='https://via.placeholder.com/300x300?text=Tea'">
+                        </div>
+                        <div class="product-info">
+                            <h3><%= item.name %></h3>
+                            <div class="rating">
+                                <% for(let i = 0; i < 5; i++) { %>
+                                    <i class="fas fa-star <%= i < Math.floor(item.averageRating) ? 'filled' : '' %>"></i>
+                                <% } %>
+                                <span>(<%= item.reviews.length %>)</span>
+                            </div>
+                            <p><%= item.description %></p>
+                            <div class="product-footer">
+                                <span class="price"><%= item.price %> <%= item.currency %></span>
+                                <a href="/product" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+</div>

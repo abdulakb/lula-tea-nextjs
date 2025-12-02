@@ -1,0 +1,193 @@
+<div class="checkout-page">
+    <div class="container">
+        <h1 class="page-title">Checkout</h1>
+        
+        <div class="checkout-layout">
+            <!-- Order Summary -->
+            <div class="checkout-summary">
+                <h2>Order Summary</h2>
+                
+                <div class="summary-items">
+                    <% cart.forEach(item => { %>
+                        <div class="summary-item">
+                            <img src="<%= item.image %>" alt="<%= item.name %>" onerror="this.src='https://via.placeholder.com/80x80?text=Tea'">
+                            <div class="item-info">
+                                <h4><%= item.name %></h4>
+                                <p>Qty: <%= item.quantity %></p>
+                            </div>
+                            <div class="item-price">
+                                <%= item.price * item.quantity %> <%= item.currency %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+                
+                <div class="summary-totals">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span><%= subtotal %> SAR</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span><%= shipping %> SAR</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <span><%= total %> SAR</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Checkout Form -->
+            <div class="checkout-form">
+                <form id="checkoutForm">
+                    <!-- Shipping Information -->
+                    <div class="form-section">
+                        <h2>Shipping Information</h2>
+                        
+                        <% if (user.addresses && user.addresses.length > 0) { %>
+                            <div class="form-group">
+                                <label>Select Address:</label>
+                                <% user.addresses.forEach(addr => { %>
+                                    <div class="radio-option">
+                                        <input type="radio" id="addr-<%= addr.id %>" name="shippingAddress" value="<%= addr.address %>" <%= addr.isDefault ? 'checked' : '' %> required>
+                                        <label for="addr-<%= addr.id %>">
+                                            <%= addr.address %>
+                                            <% if (addr.isDefault) { %>
+                                                <span class="badge">Default</span>
+                                            <% } %>
+                                        </label>
+                                    </div>
+                                <% }) %>
+                                <div class="radio-option">
+                                    <input type="radio" id="addr-new" name="shippingAddress" value="new">
+                                    <label for="addr-new">Use a different address</label>
+                                </div>
+                            </div>
+                            
+                            <div id="newAddressSection" style="display: none;">
+                                <div class="form-group">
+                                    <label for="newAddress">New Address:</label>
+                                    <textarea id="newAddress" rows="3" placeholder="Enter your delivery address"></textarea>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="form-group">
+                                <label for="shippingAddress">Delivery Address:</label>
+                                <textarea id="shippingAddress" name="shippingAddress" rows="3" placeholder="Enter your delivery address" required></textarea>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div class="form-section">
+                        <h2>Payment Method</h2>
+                        
+                        <div class="form-group">
+                            <div class="radio-option payment-option">
+                                <input type="radio" id="payment-stripe" name="paymentMethod" value="stripe" checked>
+                                <label for="payment-stripe">
+                                    <i class="fab fa-cc-stripe"></i>
+                                    Credit/Debit Card (Stripe)
+                                </label>
+                            </div>
+                            
+                            <div class="radio-option payment-option">
+                                <input type="radio" id="payment-cod" name="paymentMethod" value="cod">
+                                <label for="payment-cod">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Cash on Delivery
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="stripeSection">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <p>This is a demo. In production, you would enter your card details here using Stripe's secure payment form.</p>
+                                <p><strong>Demo mode:</strong> Payment will be simulated.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="placeOrderBtn">
+                            Place Order
+                        </button>
+                        <a href="/cart" class="btn btn-link btn-block">Back to Cart</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle new address selection
+document.querySelectorAll('input[name="shippingAddress"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const newAddressSection = document.getElementById('newAddressSection');
+        if (this.value === 'new') {
+            newAddressSection.style.display = 'block';
+            document.getElementById('newAddress').required = true;
+        } else {
+            newAddressSection.style.display = 'none';
+            document.getElementById('newAddress').required = false;
+        }
+    });
+});
+
+// Handle form submission
+document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const button = document.getElementById('placeOrderBtn');
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    
+    // Get form data
+    const formData = new FormData(this);
+    let shippingAddress = formData.get('shippingAddress');
+    
+    if (shippingAddress === 'new') {
+        shippingAddress = document.getElementById('newAddress').value;
+        if (!shippingAddress) {
+            alert('Please enter your delivery address');
+            button.disabled = false;
+            button.innerHTML = 'Place Order';
+            return;
+        }
+    }
+    
+    const paymentMethod = formData.get('paymentMethod');
+    
+    try {
+        const response = await fetch('/checkout/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                shippingAddress: shippingAddress,
+                paymentMethod: paymentMethod
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.href = data.redirectUrl;
+        } else {
+            alert(data.message || 'Payment failed. Please try again.');
+            button.disabled = false;
+            button.innerHTML = 'Place Order';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+        button.disabled = false;
+        button.innerHTML = 'Place Order';
+    }
+});
+</script>

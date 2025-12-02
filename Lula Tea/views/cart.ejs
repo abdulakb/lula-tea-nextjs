@@ -1,0 +1,125 @@
+<div class="cart-page">
+    <div class="container">
+        <h1 class="page-title">Shopping Cart</h1>
+        
+        <% if (cart.length === 0) { %>
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart empty-icon"></i>
+                <h2>Your cart is empty</h2>
+                <p>Add some premium tea to your cart!</p>
+                <a href="/product" class="btn btn-primary">Shop Now</a>
+            </div>
+        <% } else { %>
+            <div class="cart-content">
+                <div class="cart-items">
+                    <% cart.forEach(item => { %>
+                        <div class="cart-item" data-product-id="<%= item.id %>">
+                            <div class="item-image">
+                                <img src="<%= item.image %>" alt="<%= item.name %>" onerror="this.src='https://via.placeholder.com/150x150?text=Tea'">
+                            </div>
+                            <div class="item-info">
+                                <h3><%= item.name %></h3>
+                                <p class="item-price"><%= item.price %> <%= item.currency %></p>
+                            </div>
+                            <div class="item-quantity">
+                                <button class="qty-btn" onclick="updateQuantity('<%= item.id %>', <%= item.quantity - 1 %>)">-</button>
+                                <input type="number" value="<%= item.quantity %>" min="1" readonly>
+                                <button class="qty-btn" onclick="updateQuantity('<%= item.id %>', <%= item.quantity + 1 %>)">+</button>
+                            </div>
+                            <div class="item-total">
+                                <p class="total-price"><%= item.price * item.quantity %> <%= item.currency %></p>
+                            </div>
+                            <button class="remove-btn" onclick="removeFromCart('<%= item.id %>')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    <% }) %>
+                </div>
+                
+                <div class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal"><%= total %> SAR</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>50 SAR</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <span id="total"><%= total + 50 %> SAR</span>
+                    </div>
+                    
+                    <% if (user) { %>
+                        <a href="/checkout" class="btn btn-primary btn-block">Proceed to Checkout</a>
+                    <% } else { %>
+                        <a href="/auth/login?redirect=/checkout" class="btn btn-primary btn-block">Login to Checkout</a>
+                        <p class="text-center">or</p>
+                        <a href="/auth/register" class="btn btn-secondary btn-block">Create Account</a>
+                    <% } %>
+                    
+                    <a href="/product" class="btn btn-link btn-block">Continue Shopping</a>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+async function updateQuantity(productId, newQuantity) {
+    if (newQuantity < 1) {
+        return removeFromCart(productId);
+    }
+    
+    try {
+        const response = await fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: productId,
+                quantity: newQuantity
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            location.reload();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update cart. Please try again.');
+    }
+}
+
+async function removeFromCart(productId) {
+    if (!confirm('Remove this item from cart?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/cart/remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: productId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            location.reload();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to remove item. Please try again.');
+    }
+}
+</script>

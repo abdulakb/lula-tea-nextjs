@@ -1,0 +1,20 @@
+<!-- Logo Component -->
+<!-- This will display the logo image if available, otherwise show icon + text -->
+<% 
+const logoImagePath = '/images/lula-tea-logo.png';
+const useImageLogo = true; // Set to false to use icon+text logo
+%>
+
+<% if (useImageLogo) { %>
+    <img src="<%= logoImagePath %>" 
+         alt="Lula Tea Logo" 
+         class="logo-image"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div style="display: none; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-mug-hot"></i>
+        <span>Lula Tea</span>
+    </div>
+<% } else { %>
+    <i class="fas fa-mug-hot"></i>
+    <span>Lula Tea</span>
+<% } %>

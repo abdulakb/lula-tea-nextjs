@@ -1,0 +1,134 @@
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">🍵 Premium Saudi Tea Experience</div>
+        <h1 class="hero-title">Discover the Art of<br><span class="hero-highlight">ولول Lula Tea</span></h1>
+        <p class="hero-subtitle">Handcrafted blends of the world's finest tea leaves, delivered fresh to your door. Experience luxury in every sip.</p>
+        <div class="hero-buttons">
+            <a href="/product" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-bag"></i> Shop Now - 1,500 SAR
+            </a>
+            <a href="/about" class="btn btn-white btn-lg">
+                <i class="fas fa-info-circle"></i> Learn More
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">250g</span>
+                <span class="stat-label">Premium Blend</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">4.75★</span>
+                <span class="stat-label">Customer Rating</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Natural</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Why Choose Lula Tea</span>
+            <h2 class="section-title">Pure Excellence in Every Cup</h2>
+            <p class="section-subtitle">Discover what makes our tea blend truly exceptional</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-leaf feature-icon"></i>
+                </div>
+                <h3>100% Natural & Organic</h3>
+                <p>Pure, organic tea leaves with no additives or preservatives. Just nature's finest.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-award feature-icon"></i>
+                </div>
+                <h3>Premium Quality</h3>
+                <p>Hand-picked from the world's best tea gardens and expertly blended for perfection.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-shipping-fast feature-icon"></i>
+                </div>
+                <h3>Fast Delivery</h3>
+                <p>Quick and secure shipping across Saudi Arabia. Fresh tea delivered to your door.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                </div>
+                <h3>Secure Payment</h3>
+                <p>Safe and encrypted payment processing. Shop with complete confidence.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Product Showcase -->
+<section class="product-showcase">
+    <div class="container">
+        <h2 class="section-title">Our Premium Blend</h2>
+        <div class="showcase-content">
+            <div class="showcase-image">
+                <img src="/images/tea-product-1.jpg" alt="<%= product.name %>" onerror="this.src='https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&h=600&fit=crop&q=80'">
+            </div>
+            <div class="showcase-info">
+                <h3><%= product.name %></h3>
+                <div class="rating">
+                    <% for(let i = 0; i < 5; i++) { %>
+                        <i class="fas fa-star <%= i < Math.floor(product.averageRating) ? 'filled' : '' %>"></i>
+                    <% } %>
+                    <span>(<%= product.reviews.length %> reviews)</span>
+                </div>
+                <p class="price"><%= product.price %> <%= product.currency %></p>
+                <p><%= product.description %></p>
+                <div class="showcase-features">
+                    <% product.features.slice(0, 4).forEach(feature => { %>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span><%= feature %></span>
+                        </div>
+                    <% }) %>
+                </div>
+                <a href="/product" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <div class="testimonials-grid">
+            <% product.reviews.slice(0, 3).forEach(review => { %>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <% for(let i = 0; i < review.rating; i++) { %>
+                            <i class="fas fa-star"></i>
+                        <% } %>
+                    </div>
+                    <p class="testimonial-text">"<%= review.comment %>"</p>
+                    <p class="testimonial-author">- <%= review.userName %></p>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Experience Premium Tea?</h2>
+            <p>Order your 250g bag today and discover the difference quality makes</p>
+            <a href="/product" class="btn btn-white btn-lg">Shop Now</a>
+        </div>
+    </div>
+</section>

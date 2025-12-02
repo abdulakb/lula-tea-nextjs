@@ -1,0 +1,85 @@
+<div class="user-page">
+    <div class="container">
+        <div class="user-layout">
+            <!-- Sidebar -->
+            <div class="user-sidebar">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3><%= user.name %></h3>
+                    <p><%= user.email %></p>
+                </div>
+                <nav class="user-nav">
+                    <a href="/user/profile" class="active"><i class="fas fa-user"></i> Profile</a>
+                    <a href="/user/orders"><i class="fas fa-box"></i> Orders</a>
+                    <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </nav>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="user-content">
+                <h1>My Profile</h1>
+                
+                <!-- Profile Information -->
+                <div class="profile-section">
+                    <h2>Personal Information</h2>
+                    <form method="POST" action="/user/profile/update">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" value="<%= user.name %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" value="<%= user.phone || '' %>" placeholder="+966 XX XXX XXXX">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="<%= user.email %>" readonly disabled>
+                            <small>Email cannot be changed</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+                
+                <!-- Addresses -->
+                <div class="profile-section">
+                    <h2>Saved Addresses</h2>
+                    
+                    <% if (user.addresses && user.addresses.length > 0) { %>
+                        <div class="addresses-list">
+                            <% user.addresses.forEach(addr => { %>
+                                <div class="address-card">
+                                    <div class="address-content">
+                                        <p><%= addr.address %></p>
+                                        <% if (addr.isDefault) { %>
+                                            <span class="badge">Default</span>
+                                        <% } %>
+                                    </div>
+                                    <form method="POST" action="/user/address/delete" class="address-delete-form">
+                                        <input type="hidden" name="addressId" value="<%= addr.id %>">
+                                        <button type="submit" class="btn-icon" onclick="return confirm('Delete this address?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <p>No saved addresses yet.</p>
+                    <% } %>
+                    
+                    <form method="POST" action="/user/address/add" class="add-address-form">
+                        <div class="form-group">
+                            <label for="address">Add New Address</label>
+                            <textarea id="address" name="address" rows="3" placeholder="Enter your delivery address" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Add Address</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

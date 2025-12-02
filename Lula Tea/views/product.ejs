@@ -1,0 +1,201 @@
+<div class="product-page">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <span><%= product.name %></span>
+        </nav>
+        
+        <!-- Product Details -->
+        <div class="product-details">
+            <!-- Product Images -->
+            <div class="product-images">
+                <div class="main-image">
+                    <img id="mainProductImage" src="<%= product.images[0] %>" alt="<%= product.name %>" onerror="this.src='https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=700&h=700&fit=crop&q=80'">
+                </div>
+                <div class="image-thumbnails">
+                    <% product.images.forEach((image, index) => { %>
+                        <img src="<%= image %>" 
+                             alt="<%= product.name %> - Image <%= index + 1 %>" 
+                             class="thumbnail <%= index === 0 ? 'active' : '' %>"
+                             onclick="changeMainImage('<%= image %>')"
+                             onerror="this.src='https://images.unsplash.com/photo-1597318130293-c8eb5d0b922b?w=150&h=150&fit=crop&q=80'">
+                    <% }) %>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="product-info">
+                <h1 class="product-title"><%= product.name %></h1>
+                
+                <div class="product-rating">
+                    <div class="stars">
+                        <% for(let i = 0; i < 5; i++) { %>
+                            <i class="fas fa-star <%= i < Math.floor(product.averageRating) ? 'filled' : '' %>"></i>
+                        <% } %>
+                    </div>
+                    <span class="rating-text"><%= product.averageRating %> (<%= product.reviews.length %> reviews)</span>
+                </div>
+                
+                <div class="product-price">
+                    <span class="price"><%= product.price %> <%= product.currency %></span>
+                    <span class="price-info">/ <%= product.weight %> bag</span>
+                </div>
+                
+                <div class="product-description">
+                    <p><%= product.description %></p>
+                </div>
+                
+                <div class="product-features">
+                    <h3>Features:</h3>
+                    <ul>
+                        <% product.features.forEach(feature => { %>
+                            <li><i class="fas fa-check"></i> <%= feature %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+                
+                <div class="product-stock">
+                    <% if (product.inStock) { %>
+                        <span class="in-stock"><i class="fas fa-check-circle"></i> In Stock</span>
+                    <% } else { %>
+                        <span class="out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>
+                    <% } %>
+                </div>
+                
+                <div class="product-actions">
+                    <div class="quantity-selector">
+                        <button type="button" class="qty-btn" onclick="decreaseQuantity()">-</button>
+                        <input type="number" id="quantity" value="1" min="1" max="10">
+                        <button type="button" class="qty-btn" onclick="increaseQuantity()">+</button>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-lg add-to-cart-btn" onclick="addToCart()" <%= !product.inStock ? 'disabled' : '' %>>
+                        <i class="fas fa-shopping-cart"></i>
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Details Tabs -->
+        <div class="product-tabs">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('description')">Description</button>
+                <button class="tab-btn" onclick="showTab('reviews')">Reviews (<%= product.reviews.length %>)</button>
+            </div>
+            
+            <div class="tab-content">
+                <div id="description-tab" class="tab-pane active">
+                    <h2>Product Description</h2>
+                    <p><%= product.longDescription.split('\n').join('</p><p>') %></p>
+                </div>
+                
+                <div id="reviews-tab" class="tab-pane">
+                    <h2>Customer Reviews</h2>
+                    <div class="reviews-summary">
+                        <div class="average-rating">
+                            <div class="rating-number"><%= product.averageRating %></div>
+                            <div class="rating-stars">
+                                <% for(let i = 0; i < 5; i++) { %>
+                                    <i class="fas fa-star <%= i < Math.floor(product.averageRating) ? 'filled' : '' %>"></i>
+                                <% } %>
+                            </div>
+                            <div class="rating-count">Based on <%= product.reviews.length %> reviews</div>
+                        </div>
+                    </div>
+                    
+                    <div class="reviews-list">
+                        <% product.reviews.forEach(review => { %>
+                            <div class="review-card">
+                                <div class="review-header">
+                                    <div class="review-author"><%= review.userName %></div>
+                                    <div class="review-date"><%= new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+                                </div>
+                                <div class="review-rating">
+                                    <% for(let i = 0; i < review.rating; i++) { %>
+                                        <i class="fas fa-star"></i>
+                                    <% } %>
+                                </div>
+                                <p class="review-comment"><%= review.comment %></p>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeMainImage(imageSrc) {
+    document.getElementById('mainProductImage').src = imageSrc;
+    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function increaseQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.max) || 10;
+    if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('quantity');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function showTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(tabName + '-tab').classList.add('active');
+}
+
+async function addToCart() {
+    const quantity = document.getElementById('quantity').value;
+    const button = document.querySelector('.add-to-cart-btn');
+    
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+    
+    try {
+        const response = await fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: '<%= product.id %>',
+                quantity: parseInt(quantity)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            button.innerHTML = '<i class="fas fa-check"></i> Added!';
+            document.querySelector('.cart-badge').textContent = data.cartCount;
+            if (!document.querySelector('.cart-badge')) {
+                document.querySelector('.cart-icon').innerHTML += '<span class="cart-badge">' + data.cartCount + '</span>';
+            }
+            
+            setTimeout(() => {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
+        alert('Failed to add to cart. Please try again.');
+    }
+}
+</script>

@@ -1,0 +1,80 @@
+# 🚀 QUICK START - 3 Simple Steps!
+
+## Your project folder should now be open in File Explorer!
+
+---
+
+## Step 1: Close ALL PowerShell Windows ❌
+- Close every PowerShell/Command Prompt window you have open
+- This is IMPORTANT because they don't see the Node.js you just installed
+
+---
+
+## Step 2: Double-Click START-WEBSITE.bat 🖱️
+- In the File Explorer window that just opened
+- Find the file: **START-WEBSITE.bat**
+- **Double-click it!**
+
+It will:
+- Check if Node.js is installed ✓
+- Install dependencies automatically ✓
+- Start the website server ✓
+
+---
+
+## Step 3: Open Your Browser 🌐
+- Wait for the message: "Lula Tea Server running on http://localhost:3000"
+- Open your browser
+- Go to: **http://localhost:3000**
+- Your website is LIVE! 🎉
+
+---
+
+## ⚠️ Important Notes
+
+### Live Server vs Node.js Server
+
+**Live Server (VS Code extension):**
+- ❌ Does NOT work for this project
+- Only for static HTML files
+- Cannot run Node.js/Express applications
+
+**Node.js Server (what we're using):**
+- ✅ Runs your complete e-commerce website
+- Handles user login, shopping cart, payments
+- Uses Express, EJS templates, and database
+
+### If the batch file shows an error:
+
+**"Node.js is not found in PATH"**
+- Solution: **Restart your computer**
+- This ensures Node.js is properly registered
+- Then try again
+
+**Port 3000 is already in use**
+- Solution: Edit `.env` file
+- Change `PORT=3000` to `PORT=3001`
+- Try again
+
+---
+
+## 🎯 That's It!
+
+Just 3 steps:
+1. Close PowerShell windows
+2. Double-click `START-WEBSITE.bat`
+3. Open http://localhost:3000
+
+**The File Explorer window with your project should be open now!** 📁
+
+Look for **START-WEBSITE.bat** and double-click it! ✨
+
+---
+
+## 🔄 To Stop the Server
+
+When the server is running:
+- Press `Ctrl+C` in the window
+- Or just close the window
+
+To start it again, double-click `START-WEBSITE.bat`!

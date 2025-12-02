@@ -1,0 +1,55 @@
+<div class="order-confirmation-page">
+    <div class="container">
+        <div class="confirmation-card">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h1>Order Confirmed!</h1>
+            <p class="subtitle">Thank you for your order. We'll send you a confirmation email shortly.</p>
+            
+            <div class="order-details">
+                <div class="detail-row">
+                    <span class="label">Order Number:</span>
+                    <span class="value">#<%= order.id.substring(0, 8) %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Order Date:</span>
+                    <span class="value"><%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Tracking Number:</span>
+                    <span class="value"><%= order.trackingNumber %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Total Amount:</span>
+                    <span class="value total"><%= order.total %> SAR</span>
+                </div>
+            </div>
+            
+            <div class="order-items-summary">
+                <h2>Order Items</h2>
+                <% order.items.forEach(item => { %>
+                    <div class="item-row">
+                        <div class="item-info">
+                            <span><%= item.name %></span>
+                            <span class="quantity">x<%= item.quantity %></span>
+                        </div>
+                        <span class="item-price"><%= item.price * item.quantity %> <%= item.currency %></span>
+                    </div>
+                <% }) %>
+            </div>
+            
+            <div class="shipping-info">
+                <h3>Shipping Address</h3>
+                <p><%= order.shippingAddress %></p>
+            </div>
+            
+            <div class="confirmation-actions">
+                <a href="/order/track/<%= order.id %>" class="btn btn-primary">Track Order</a>
+                <a href="/user/orders" class="btn btn-secondary">View All Orders</a>
+                <a href="/" class="btn btn-link">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>

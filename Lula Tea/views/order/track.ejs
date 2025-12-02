@@ -1,0 +1,123 @@
+<% if (!order) { %>
+    <div class="track-order-page">
+        <div class="container">
+            <div class="track-form-card">
+                <h1>Track Your Order</h1>
+                <p class="subtitle">Enter your tracking number to see your order status.</p>
+                
+                <% if (locals.error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+                
+                <form method="POST" action="/order/track" class="track-form">
+                    <div class="form-group">
+                        <label for="trackingNumber">Tracking Number:</label>
+                        <input type="text" id="trackingNumber" name="trackingNumber" placeholder="Enter your tracking number" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Track Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<% } else { %>
+    <div class="track-order-page">
+        <div class="container">
+            <div class="tracking-card">
+                <h1>Order Tracking</h1>
+                
+                <div class="tracking-header">
+                    <div class="tracking-info">
+                        <div class="info-item">
+                            <span class="label">Tracking Number:</span>
+                            <span class="value"><%= order.trackingNumber %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Order Date:</span>
+                            <span class="value"><%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Status:</span>
+                            <span class="badge badge-<%= order.orderStatus %>"><%= order.orderStatus.toUpperCase() %></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tracking Timeline -->
+                <div class="tracking-timeline">
+                    <div class="timeline-item <%= order.orderStatus !== 'cancelled' ? 'completed' : '' %>">
+                        <div class="timeline-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Order Placed</h3>
+                            <p><%= new Date(order.createdAt).toLocaleString() %></p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item <%= ['shipped', 'delivered'].includes(order.orderStatus) ? 'completed' : order.orderStatus === 'processing' ? 'active' : '' %>">
+                        <div class="timeline-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Processing</h3>
+                            <p>Your order is being prepared</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item <%= order.orderStatus === 'delivered' ? 'completed' : order.orderStatus === 'shipped' ? 'active' : '' %>">
+                        <div class="timeline-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Shipped</h3>
+                            <p>Your order is on its way</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item <%= order.orderStatus === 'delivered' ? 'completed active' : '' %>">
+                        <div class="timeline-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Delivered</h3>
+                            <p>Order has been delivered</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Items -->
+                <div class="tracking-items">
+                    <h2>Order Items</h2>
+                    <% order.items.forEach(item => { %>
+                        <div class="tracking-item">
+                            <img src="<%= item.image %>" alt="<%= item.name %>" onerror="this.src='https://via.placeholder.com/80x80?text=Tea'">
+                            <div class="item-details">
+                                <h4><%= item.name %></h4>
+                                <p>Quantity: <%= item.quantity %></p>
+                            </div>
+                            <div class="item-price">
+                                <%= item.price * item.quantity %> <%= item.currency %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+                
+                <!-- Shipping Address -->
+                <div class="tracking-address">
+                    <h3>Shipping Address</h3>
+                    <p><%= order.shippingAddress %></p>
+                </div>
+                
+                <div class="tracking-actions">
+                    <% if (user && order.userId === user.id) { %>
+                        <a href="/user/orders" class="btn btn-secondary">View All Orders</a>
+                    <% } %>
+                    <a href="/" class="btn btn-link">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>

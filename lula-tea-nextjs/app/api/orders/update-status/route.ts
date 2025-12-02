@@ -82,7 +82,7 @@ async function sendStatusNotification(order: any, status: string) {
     if (status === "delivered") {
       message += `Enjoy your premium tea! ☕\n`;
       message += `استمتع بالشاي الفاخر! ☕\n\n`;
-      message += `Rate your experience: https://lula-tea-nextjs.vercel.app\n`;
+      message += `Rate your experience: https://lulatee.com\n`;
     }
     
     message += `\nQuestions? Reply to this message!\n`;

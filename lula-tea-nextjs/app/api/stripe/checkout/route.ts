@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
             product_data: {
               name: 'Lula Tea - Premium Loose Leaf Blend',
               description: `Order for ${orderDetails.quantity} pack(s)`,
-              images: ['https://lula-tea-nextjs.vercel.app/tea-product.jpg'],
+              images: ['https://lulatee.com/tea-product.jpg'],
             },
             unit_amount: Math.round(amount * 100), // Convert to cents
           },

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
             ? `مرحباً! 🌿\n\nطلبك #${order.order_id} في حالة: ${getStatusArabic(order.status)}\n\n${getStatusMessageArabic(order.status)}\n\nإذا كان لديك أي استفسار، نحن هنا للمساعدة! 💚`
             : `Hello! 🌿\n\nYour order #${order.order_id} status: ${order.status}\n\n${getStatusMessage(order.status)}\n\nIf you have any questions, we're here to help! 💚`;
         } else {
-          response = "Hello! 🌿 It looks like you don't have any recent orders. Would you like to place a new order?\n\nمرحباً! 🌿 لا يوجد لديك طلبات حديثة. هل ترغب في طلب جديد؟\n\nVisit: https://lula-tea-nextjs.vercel.app";
+          response = "Hello! 🌿 It looks like you don't have any recent orders. Would you like to place a new order?\n\nمرحباً! 🌿 لا يوجد لديك طلبات حديثة. هل ترغب في طلب جديد؟\n\nVisit: https://lulatee.com";
         }
       } else if (messageText.includes("status") || messageText.includes("حالة")) {
         if (recentOrders && recentOrders.length > 0) {
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           response = `📍 Order Tracking / تتبع الطلب\n\nOrder ID: ${order.order_id}\nStatus: ${order.status}\nPlaced: ${new Date(order.created_at).toLocaleDateString()}\n\nWe'll notify you when your order status changes! 🚚`;
         }
       } else if (messageText.includes("help") || messageText.includes("مساعدة")) {
-        response = `How can we help? / كيف يمكننا المساعدة؟\n\n📦 Type "order" for order status\n📍 Type "track" to track your order\n💬 Type "support" to talk to us\n\nOr visit: https://lula-tea-nextjs.vercel.app`;
+        response = `How can we help? / كيف يمكننا المساعدة؟\n\n📦 Type "order" for order status\n📍 Type "track" to track your order\n💬 Type "support" to talk to us\n\nOr visit: https://lulatee.com`;
       } else {
         // Default greeting
         response = `Welcome to Lula Tea! 🌿\n\nمرحباً بك في لولا تي!\n\nHow can we help you today?\n• Order status\n• New order\n• Support\n\nReply with what you need! 💚`;

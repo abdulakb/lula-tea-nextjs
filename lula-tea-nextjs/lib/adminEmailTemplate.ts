@@ -196,7 +196,7 @@ export function generateAdminOrderNotification(data: AdminNotificationData) {
 
               <!-- Quick Actions -->
               <div style="text-align: center; margin-top: 32px;">
-                <a href="https://lula-tea-nextjs.vercel.app/admin/orders" style="display: inline-block; background-color: #7a9b76; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 0 8px 8px 8px;">
+                <a href="https://lulatee.com/admin/orders" style="display: inline-block; background-color: #7a9b76; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 0 8px 8px 8px;">
                   View in Admin Panel
                 </a>
                 <a href="https://wa.me/${data.customerPhone.replace(/\D/g, '')}" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; margin: 0 8px 8px 8px;">

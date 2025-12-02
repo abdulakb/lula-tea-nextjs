@@ -31,22 +31,19 @@ function OrderConfirmationContent() {
 
   const handleDownloadInvoice = () => {
     if (!invoiceBase64) {
-      alert("Invoice not available");
+      alert(language === "ar" ? "الفاتورة غير متوفرة" : "Invoice not available");
       return;
     }
 
     try {
-      // Convert base64 to binary
+      // Method 1: Try Blob download (most reliable)
       const binaryString = window.atob(invoiceBase64);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
       
-      // Create blob from binary data
       const blob = new Blob([bytes], { type: 'application/pdf' });
-      
-      // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -56,25 +53,40 @@ function OrderConfirmationContent() {
       document.body.appendChild(link);
       link.click();
       
-      // Clean up
       setTimeout(() => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
     } catch (error) {
       console.error("PDF download error:", error);
-      // Fallback: open in new tab
+      
+      // Method 2: Try opening in new tab with data URL
       try {
         const dataUrl = `data:application/pdf;base64,${invoiceBase64}`;
-        const newWindow = window.open();
-        if (newWindow) {
-          newWindow.location.href = dataUrl;
-        } else {
-          alert("Please allow pop-ups to view the invoice");
+        const newWindow = window.open(dataUrl, '_blank');
+        if (!newWindow) {
+          // Method 3: If popup blocked, try iframe method
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = dataUrl;
+          document.body.appendChild(iframe);
+          
+          setTimeout(() => {
+            try {
+              iframe.contentWindow?.print();
+            } catch (e) {
+              document.body.removeChild(iframe);
+              alert(language === "ar" 
+                ? "يرجى السماح بالنوافذ المنبثقة لعرض الفاتورة. يمكنك أيضًا التواصل معنا على +966 53 966 6654" 
+                : "Please allow pop-ups to view the invoice, or contact us at +966 53 966 6654");
+            }
+          }, 1000);
         }
       } catch (fallbackError) {
-        console.error("Fallback error:", fallbackError);
-        alert("Failed to download invoice. Please contact support at +966 53 966 6654");
+        console.error("All methods failed:", fallbackError);
+        alert(language === "ar"
+          ? "فشل تحميل الفاتورة. يرجى التواصل معنا على +966 53 966 6654"
+          : "Failed to download invoice. Please contact us at +966 53 966 6654");
       }
     }
   };

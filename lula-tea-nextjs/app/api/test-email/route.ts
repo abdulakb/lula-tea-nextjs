@@ -4,17 +4,26 @@ import { Resend } from "resend";
 export async function GET(request: NextRequest) {
   try {
     console.log("=== Email Test Started ===");
-    console.log("Environment variables check:");
-    console.log("RESEND_API_KEY exists:", !!process.env.RESEND_API_KEY);
-    console.log("RESEND_API_KEY value:", process.env.RESEND_API_KEY?.substring(0, 10) + "...");
-    console.log("ADMIN_EMAIL:", process.env.ADMIN_EMAIL);
-    console.log("BUSINESS_EMAIL:", process.env.BUSINESS_EMAIL);
-    console.log("SITE_URL:", process.env.SITE_URL);
+    
+    // Check all environment variables
+    const envCheck = {
+      RESEND_API_KEY: process.env.RESEND_API_KEY ? 
+        `EXISTS (${process.env.RESEND_API_KEY.substring(0, 10)}...)` : 
+        "MISSING",
+      ADMIN_EMAIL: process.env.ADMIN_EMAIL || "MISSING",
+      BUSINESS_EMAIL: process.env.BUSINESS_EMAIL || "MISSING",
+      SITE_URL: process.env.SITE_URL || "MISSING",
+      NODE_ENV: process.env.NODE_ENV,
+    };
+    
+    console.log("Environment variables:", envCheck);
 
     if (!process.env.RESEND_API_KEY) {
       return NextResponse.json({
         success: false,
         error: "RESEND_API_KEY not configured",
+        envCheck,
+        hint: "Add RESEND_API_KEY to Vercel environment variables and redeploy"
       });
     }
 

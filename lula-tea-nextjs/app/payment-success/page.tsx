@@ -47,7 +47,7 @@ function PaymentSuccessContent() {
         if (orderData?.orderId) {
           // Redirect to order confirmation with invoice
           setTimeout(() => {
-            router.push(`/order-confirmation?orderId=${orderData.orderId}&invoice=${orderData.invoice}`);
+            router.push(`/order-confirmation?orderId=${orderData.orderId}&invoice=${orderData.invoiceBase64}`);
           }, 2000);
         }
       })

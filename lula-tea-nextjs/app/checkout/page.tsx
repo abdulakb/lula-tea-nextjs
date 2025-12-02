@@ -40,7 +40,7 @@ export default function CheckoutPage() {
     return () => clearTimeout(timer);
   }, []);
   
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "whatsapp">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "whatsapp" | "stripe">("cod");
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -304,7 +304,35 @@ export default function CheckoutPage() {
         qualifiesForFreeDelivery: deliveryEligibility?.qualifies || false,
       };
 
-      // Submit order to API
+      // If Stripe payment, redirect to Stripe Checkout
+      if (paymentMethod === "stripe") {
+        const response = await fetch("/api/stripe/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: subtotal,
+            customerEmail,
+            customerName,
+            orderDetails: orderData,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to create checkout session");
+        }
+
+        // Redirect to Stripe Checkout
+        if (result.url) {
+          window.location.href = result.url;
+        }
+        return;
+      }
+
+      // For COD, submit order to API
       const response = await fetch("/api/orders/create", {
         method: "POST",
         headers: {
@@ -513,6 +541,25 @@ export default function CheckoutPage() {
                   <span className="ml-3 text-deep-brown font-medium">
                     {t("cashOnDelivery")}
                   </span>
+                </label>
+                
+                <label className="flex items-center p-4 border-2 border-blue-500/30 rounded-lg cursor-pointer hover:bg-blue-500/5 transition-colors">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="stripe"
+                    checked={paymentMethod === "stripe"}
+                    onChange={(e) => setPaymentMethod(e.target.value as "stripe")}
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-600"
+                  />
+                  <div className="ml-3 flex items-center gap-2">
+                    <span className="text-deep-brown font-medium">
+                      {language === "ar" ? "الدفع الإلكتروني" : "Online Payment"}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {language === "ar" ? "(بطاقة ائتمان/مدى)" : "(Credit/Debit Card)"}
+                    </span>
+                  </div>
                 </label>
                 
                 <label className="flex items-center p-4 border-2 border-tea-green/30 rounded-lg cursor-pointer hover:bg-tea-green/5 transition-colors">

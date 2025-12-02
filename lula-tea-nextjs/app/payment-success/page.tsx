@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { CheckCircle, Loader2 } from 'lucide-react';
 
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
@@ -65,7 +64,7 @@ export default function PaymentSuccessPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-amber-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <Loader2 className="w-16 h-16 text-green-600 animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Processing Payment...</h2>
           <p className="text-gray-600">Please wait while we confirm your payment</p>
         </div>
@@ -96,7 +95,11 @@ export default function PaymentSuccessPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-amber-50 flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-6" />
+        <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-4">Payment Successful!</h1>
         <p className="text-gray-600 mb-2">Thank you for your purchase</p>
         {session?.amount_total && (

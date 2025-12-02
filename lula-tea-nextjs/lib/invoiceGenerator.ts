@@ -80,6 +80,8 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
   doc.text(displayName, rightCol, 68);
   doc.text(data.customerPhone, rightCol, 76);
   
+  let yPos = 84;
+  
   // Add note if Arabic characters were detected
   if (hasArabic(data.customerName) || hasArabic(data.customerAddress)) {
     doc.setFontSize(8);

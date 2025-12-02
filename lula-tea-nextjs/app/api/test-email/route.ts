@@ -29,8 +29,8 @@ export async function GET(request: NextRequest) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Force use Lula.Tea@outlook.com since Resend free tier only allows this
-    const testEmail = "Lula.Tea@outlook.com";
+    // Force use lula.tea@outlook.com (lowercase) since Resend free tier only allows this
+    const testEmail = "lula.tea@outlook.com";
     
     console.log("Sending test email to:", testEmail);
     console.log("ADMIN_EMAIL env var:", process.env.ADMIN_EMAIL);

@@ -29,10 +29,16 @@ export async function GET(request: NextRequest) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
+    // Force use Lula.Tea@outlook.com since Resend free tier only allows this
+    const testEmail = "Lula.Tea@outlook.com";
+    
+    console.log("Sending test email to:", testEmail);
+    console.log("ADMIN_EMAIL env var:", process.env.ADMIN_EMAIL);
+
     // Test email
     const { data, error } = await resend.emails.send({
       from: "Lula Tea <onboarding@resend.dev>",
-      to: [process.env.ADMIN_EMAIL || "ak.bahareth@gmail.com"],
+      to: [testEmail],
       subject: "Test Email from Lula Tea",
       html: `
         <h1>Test Email</h1>

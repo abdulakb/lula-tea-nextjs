@@ -24,6 +24,18 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
   const doc = new jsPDF();
   const isArabic = data.language === "ar";
 
+  // Helper function to check if text contains Arabic characters
+  const hasArabic = (text: string) => /[\u0600-\u06FF]/.test(text);
+  
+  // Helper function to sanitize text for PDF (remove Arabic characters that can't be rendered)
+  const sanitizeForPdf = (text: string) => {
+    if (hasArabic(text)) {
+      // Replace Arabic text with a note, keep only ASCII characters
+      return text.replace(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g, '*');
+    }
+    return text;
+  };
+
   // Use English only for PDF to avoid encoding issues
   // Arabic text in PDFs requires complex font handling that jsPDF doesn't support well
   
@@ -60,12 +72,26 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
   
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text(data.customerName, rightCol, 68);
+  
+  // Sanitize customer name and address to handle Arabic text
+  const displayName = sanitizeForPdf(data.customerName);
+  const displayAddress = sanitizeForPdf(data.customerAddress);
+  
+  doc.text(displayName, rightCol, 68);
   doc.text(data.customerPhone, rightCol, 76);
   
+  // Add note if Arabic characters were detected
+  if (hasArabic(data.customerName) || hasArabic(data.customerAddress)) {
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text("(Arabic text replaced with * - see order details)", rightCol, 82);
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    yPos = 90;
+  }
+  
   // Split address if too long
-  const addressLines = doc.splitTextToSize(data.customerAddress, 70);
-  let yPos = 84;
+  const addressLines = doc.splitTextToSize(displayAddress, 70);
   addressLines.forEach((line: string) => {
     doc.text(line, rightCol, yPos);
     yPos += 6;

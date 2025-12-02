@@ -36,26 +36,44 @@ function OrderConfirmationContent() {
     }
 
     try {
-      // Method 1: Direct data URL download
-      const dataUrl = `data:application/pdf;base64,${invoiceBase64}`;
-      const link = document.createElement("a");
-      link.href = dataUrl;
+      // Convert base64 to binary
+      const binaryString = window.atob(invoiceBase64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      // Create blob from binary data
+      const blob = new Blob([bytes], { type: 'application/pdf' });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
       link.download = `Lula-Tea-Invoice-${orderId}.pdf`;
-      link.style.display = "none";
+      link.style.display = 'none';
+      
       document.body.appendChild(link);
       link.click();
       
       // Clean up
       setTimeout(() => {
         document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
       }, 100);
     } catch (error) {
       console.error("PDF download error:", error);
       // Fallback: open in new tab
       try {
         const dataUrl = `data:application/pdf;base64,${invoiceBase64}`;
-        window.open(dataUrl, '_blank');
+        const newWindow = window.open();
+        if (newWindow) {
+          newWindow.location.href = dataUrl;
+        } else {
+          alert("Please allow pop-ups to view the invoice");
+        }
       } catch (fallbackError) {
+        console.error("Fallback error:", fallbackError);
         alert("Failed to download invoice. Please contact support at +966 53 966 6654");
       }
     }

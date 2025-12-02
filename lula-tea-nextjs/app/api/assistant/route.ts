@@ -5,8 +5,8 @@ const lulaTeaKnowledge = {
   product: {
     name: "Premium Loose Leaf Blend",
     nameAr: "مزيج أوراق الشاي المميز",
-    price: "30 SAR",
-    weight: "250g",
+    price: "60 SAR",
+    weight: "200g",
     description: "Handcrafted premium loose leaf tea blend made with carefully selected ingredients",
     descriptionAr: "مزيج أوراق شاي فاخر محضّر يدوياً بمكونات مُختارة بعناية",
   },
@@ -111,6 +111,9 @@ export async function POST(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
       },
     });
   } catch (error: any) {
@@ -120,7 +123,10 @@ export async function POST(request: Request) {
       "I apologize for the technical issue. Please contact us on WhatsApp: +966 53 966 6654 📱",
       {
         status: 200,
-        headers: { "Content-Type": "text/plain" },
+        headers: { 
+          "Content-Type": "text/plain",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
       }
     );
   }

@@ -44,6 +44,7 @@ export default function ChatWidget() {
       const response = await fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        cache: "no-store",
         body: JSON.stringify({
           messages: [...messages, userMessage].map((m) => ({
             role: m.role,

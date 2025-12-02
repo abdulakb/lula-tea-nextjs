@@ -15,11 +15,15 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const { data, error } = await resend.emails.send({
-      from: "Lula Tea <orders@lulatee.com>", // Replace with your verified domain
+    // Use Resend's default sending domain until custom domain is verified
+    const fromEmail = "Lula Tea <onboarding@resend.dev>";
+
+    const { data, error} = await resend.emails.send({
+      from: fromEmail,
       to: [to],
       subject,
       html,
+      replyTo: process.env.BUSINESS_EMAIL || undefined,
     });
 
     if (error) {

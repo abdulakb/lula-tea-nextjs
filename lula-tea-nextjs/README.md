@@ -123,8 +123,8 @@ To integrate a real AI assistant:
 
 ## 📄 Product
 
-- **Item**: 250g Premium Loose Leaf Tea Blend
-- **Price**: 30 SAR
+- **Item**: 200g Premium Loose Leaf Tea Blend
+- **Price**: 60 SAR
 - **Description**: Carefully crafted with the finest ingredients, made with love
 
 ## 📞 Contact

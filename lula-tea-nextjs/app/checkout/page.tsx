@@ -55,6 +55,14 @@ export default function CheckoutPage() {
   const [qualifiesForFreeDelivery, setQualifiesForFreeDelivery] = useState(false);
   const [distanceFromWarehouse, setDistanceFromWarehouse] = useState<number | null>(null);
   const [deliveryCity, setDeliveryCity] = useState<string>("");
+  const [deliveryEligibility, setDeliveryEligibility] = useState<{
+    qualifies: boolean;
+    distance: number;
+    city?: string;
+    totalPacks: number;
+    nearWarehouse: boolean;
+    inMajorCity: boolean;
+  } | null>(null);
 
   // Warehouse location: VJFG+67J, Al Aarid, Riyadh 13338
   const WAREHOUSE_LAT = 24.773125;
@@ -134,6 +142,7 @@ export default function CheckoutPage() {
         try {
           // Check free delivery eligibility
           const eligibility = checkFreeDeliveryEligibility(latitude, longitude);
+          setDeliveryEligibility(eligibility);
           
           // Get full address using reverse geocoding
           let fullAddress = "";
@@ -292,6 +301,7 @@ export default function CheckoutPage() {
         total: subtotal,
         paymentMethod,
         language,
+        qualifiesForFreeDelivery: deliveryEligibility?.qualifies || false,
       };
 
       // Submit order to API

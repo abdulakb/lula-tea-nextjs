@@ -41,7 +41,6 @@ function OrderConfirmationContent() {
     link.href = downloadUrl;
     link.download = `Lula-Tea-Invoice-${orderId}.pdf`;
     link.click();
-    }
   };
 
   if (!orderId) {

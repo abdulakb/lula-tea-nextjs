@@ -67,12 +67,10 @@ export async function POST(request: NextRequest) {
       total,
       paymentMethod:
         paymentMethod === "cod"
-          ? language === "ar"
-            ? "الدفع عند الاستلام"
-            : "Cash on Delivery"
-          : language === "ar"
-          ? "واتساب"
-          : "WhatsApp",
+          ? "Cash on Delivery"
+          : paymentMethod === "stripe"
+          ? "Online Payment (Stripe)"
+          : "WhatsApp Order",
       language,
     };
 

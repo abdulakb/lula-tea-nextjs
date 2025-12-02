@@ -24,45 +24,36 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
   const doc = new jsPDF();
   const isArabic = data.language === "ar";
 
-  // Set font for Arabic support
+  // Set font - use helvetica for English only
   doc.setFont("helvetica");
 
-  // Header - Company Info
+  // Header - Company Info (Bilingual)
   doc.setFontSize(24);
   doc.setTextColor(74, 94, 71); // tea-green color
-  doc.text(isArabic ? "لولا تي" : "Lula Tea", 105, 20, { align: "center" });
+  doc.text("Lula Tea", 105, 20, { align: "center" });
 
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
-  doc.text(
-    isArabic ? "محضّر بحب في المنزل" : "Homemade with Love",
-    105,
-    28,
-    { align: "center" }
-  );
+  doc.text("Homemade with Love", 105, 28, { align: "center" });
 
-  // Invoice Title
+  // Invoice Title (Bilingual)
   doc.setFontSize(18);
   doc.setTextColor(0, 0, 0);
-  doc.text(isArabic ? "فاتورة" : "INVOICE", 105, 45, { align: "center" });
+  doc.text("INVOICE", 105, 45, { align: "center" });
 
-  // Invoice Details
+  // Invoice Details (English only for clarity)
   doc.setFontSize(10);
-  const leftCol = isArabic ? 150 : 20;
-  const rightCol = isArabic ? 20 : 150;
+  const leftCol = 20;
+  const rightCol = 120;
 
-  doc.text(`${isArabic ? "رقم الطلب:" : "Order ID:"} ${data.orderId}`, leftCol, 60);
-  doc.text(`${isArabic ? "التاريخ:" : "Date:"} ${data.orderDate}`, leftCol, 68);
-  doc.text(
-    `${isArabic ? "طريقة الدفع:" : "Payment:"} ${data.paymentMethod}`,
-    leftCol,
-    76
-  );
+  doc.text(`Order ID: ${data.orderId}`, leftCol, 60);
+  doc.text(`Date: ${data.orderDate}`, leftCol, 68);
+  doc.text(`Payment: ${data.paymentMethod}`, leftCol, 76);
 
   // Customer Details
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
-  doc.text(isArabic ? "بيانات العميل:" : "Customer Details:", rightCol, 60);
+  doc.text("Customer Details:", rightCol, 60);
   
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
@@ -77,21 +68,18 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
     yPos += 6;
   });
 
-  // Items Table
+  // Items Table (Bilingual - English name with Arabic in parentheses)
   const tableStartY = Math.max(yPos + 10, 100);
   
-  const tableHeaders = isArabic
-    ? [["المجموع", "السعر", "الكمية", "المنتج"]]
-    : [["Item", "Quantity", "Price", "Total"]];
+  const tableHeaders = [["Item", "Qty", "Price", "Total"]];
 
   const tableData = data.items.map((item) => {
-    const itemName = isArabic ? item.nameAr : item.name;
-    const price = `${item.price} ${isArabic ? "ريال" : "SAR"}`;
-    const total = `${item.price * item.quantity} ${isArabic ? "ريال" : "SAR"}`;
+    // Show both English and Arabic names
+    const itemName = `${item.name}\n(${item.nameAr})`;
+    const price = `${item.price} SAR`;
+    const total = `${item.price * item.quantity} SAR`;
     
-    return isArabic
-      ? [total, price, item.quantity.toString(), itemName]
-      : [itemName, item.quantity.toString(), price, total];
+    return [itemName, item.quantity.toString(), price, total];
   });
 
   autoTable(doc, {
@@ -117,51 +105,29 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
   // Get Y position after table
   const finalY = (doc as any).lastAutoTable.finalY + 10;
 
-  // Totals
+  // Totals (English)
   doc.setFontSize(10);
-  const totalsX = isArabic ? 20 : 140;
+  const totalsX = 140;
   
-  doc.text(
-    `${isArabic ? "المجموع الفرعي:" : "Subtotal:"} ${data.subtotal} ${isArabic ? "ريال" : "SAR"}`,
-    totalsX,
-    finalY
-  );
+  doc.text(`Subtotal: ${data.subtotal} SAR`, totalsX, finalY);
 
   if (data.deliveryFee && data.deliveryFee > 0) {
-    doc.text(
-      `${isArabic ? "رسوم التوصيل:" : "Delivery Fee:"} ${data.deliveryFee} ${isArabic ? "ريال" : "SAR"}`,
-      totalsX,
-      finalY + 8
-    );
+    doc.text(`Delivery Fee: ${data.deliveryFee} SAR`, totalsX, finalY + 8);
   }
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text(
-    `${isArabic ? "الإجمالي:" : "Total:"} ${data.total} ${isArabic ? "ريال" : "SAR"}`,
-    totalsX,
-    finalY + 18
-  );
+  doc.text(`Total: ${data.total} SAR`, totalsX, finalY + 18);
 
-  // Footer
+  // Footer (English)
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(100, 100, 100);
   
   const footerY = 270;
-  doc.text(
-    isArabic ? "شكراً لطلبك من لولا تي!" : "Thank you for your order!",
-    105,
-    footerY,
-    { align: "center" }
-  );
+  doc.text("Thank you for your order!", 105, footerY, { align: "center" });
   
-  doc.text(
-    `${isArabic ? "للاستفسارات:" : "For inquiries:"} +966 53 966 6654`,
-    105,
-    footerY + 6,
-    { align: "center" }
-  );
+  doc.text("For inquiries: +966 53 966 6654", 105, footerY + 6, { align: "center" });
 
   return doc.output("blob");
 }

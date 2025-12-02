@@ -68,14 +68,14 @@ export async function generateInvoice(data: InvoiceData): Promise<Blob> {
     yPos += 6;
   });
 
-  // Items Table (Bilingual - English name with Arabic in parentheses)
+  // Items Table (English only)
   const tableStartY = Math.max(yPos + 10, 100);
   
   const tableHeaders = [["Item", "Qty", "Price", "Total"]];
 
   const tableData = data.items.map((item) => {
-    // Show both English and Arabic names
-    const itemName = `${item.name}\n(${item.nameAr})`;
+    // Show English name only
+    const itemName = item.name;
     const price = `${item.price} SAR`;
     const total = `${item.price * item.quantity} SAR`;
     

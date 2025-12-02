@@ -30,64 +30,17 @@ function OrderConfirmationContent() {
   }, [searchParams, router]);
 
   const handleDownloadInvoice = () => {
-    if (!invoiceBase64) {
+    if (!orderId) {
       alert(language === "ar" ? "الفاتورة غير متوفرة" : "Invoice not available");
       return;
     }
 
-    try {
-      // Method 1: Try Blob download (most reliable)
-      const binaryString = window.atob(invoiceBase64);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      
-      const blob = new Blob([bytes], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Lula-Tea-Invoice-${orderId}.pdf`;
-      link.style.display = 'none';
-      
-      document.body.appendChild(link);
-      link.click();
-      
-      setTimeout(() => {
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      }, 100);
-    } catch (error) {
-      console.error("PDF download error:", error);
-      
-      // Method 2: Try opening in new tab with data URL
-      try {
-        const dataUrl = `data:application/pdf;base64,${invoiceBase64}`;
-        const newWindow = window.open(dataUrl, '_blank');
-        if (!newWindow) {
-          // Method 3: If popup blocked, try iframe method
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          iframe.src = dataUrl;
-          document.body.appendChild(iframe);
-          
-          setTimeout(() => {
-            try {
-              iframe.contentWindow?.print();
-            } catch (e) {
-              document.body.removeChild(iframe);
-              alert(language === "ar" 
-                ? "يرجى السماح بالنوافذ المنبثقة لعرض الفاتورة. يمكنك أيضًا التواصل معنا على +966 53 966 6654" 
-                : "Please allow pop-ups to view the invoice, or contact us at +966 53 966 6654");
-            }
-          }, 1000);
-        }
-      } catch (fallbackError) {
-        console.error("All methods failed:", fallbackError);
-        alert(language === "ar"
-          ? "فشل تحميل الفاتورة. يرجى التواصل معنا على +966 53 966 6654"
-          : "Failed to download invoice. Please contact us at +966 53 966 6654");
-      }
+    // Use direct API endpoint to download PDF
+    const downloadUrl = `/api/invoice/${orderId}`;
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = `Lula-Tea-Invoice-${orderId}.pdf`;
+    link.click();
     }
   };
 

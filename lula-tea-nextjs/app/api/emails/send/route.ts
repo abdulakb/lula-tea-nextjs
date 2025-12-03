@@ -15,15 +15,18 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Use verified root domain
-    const fromEmail = "Lula Tea <orders@lulatee.com>";
+    // Use verified root domain with clear sender name
+    const fromEmail = "Lula Tea Orders <orders@lulatee.com>";
 
     const { data, error} = await resend.emails.send({
       from: fromEmail,
       to: [to],
       subject,
       html,
-      replyTo: process.env.BUSINESS_EMAIL || undefined,
+      replyTo: process.env.BUSINESS_EMAIL || "orders@lulatee.com",
+      headers: {
+        'X-Entity-Ref-ID': `lulatea-${Date.now()}`,
+      },
     });
 
     if (error) {

@@ -33,8 +33,8 @@ export function generateOrderConfirmationEmail(data: OrderEmailData) {
     .join("");
 
   const subject = isArabic
-    ? `تأكيد طلبك - ${data.orderId}`
-    : `Order Confirmation - ${data.orderId}`;
+    ? `تأكيد طلبك من لولا تي - ${data.orderId}`
+    : `Your Lula Tea Order Confirmation - ${data.orderId}`;
 
   const html = `
 <!DOCTYPE html>

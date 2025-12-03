@@ -13,11 +13,13 @@ interface Order {
   customer_name: string;
   customer_phone: string;
   customer_address: string;
+  email?: string;
   total: number;
   payment_method: string;
   status: string;
   created_at: string;
   items: any;
+  notes?: string;
 }
 
 export default function OrdersManagement() {
@@ -25,7 +27,13 @@ export default function OrdersManagement() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState("");
+  const [showBulkActions, setShowBulkActions] = useState(false);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -67,19 +75,19 @@ export default function OrdersManagement() {
 
       // Send email notification (if configured)
       const order = orders.find(o => o.id === orderId);
-      if (order && process.env.NEXT_PUBLIC_ENABLE_EMAILS === "true") {
+      if (order && order.email && process.env.NEXT_PUBLIC_ENABLE_EMAILS === "true") {
         const { subject, html } = generateOrderStatusEmail(
           order.order_id,
           order.customer_name,
           newStatus,
-          "en" // You can detect language from order data
+          "en"
         );
 
         await fetch("/api/emails/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            to: order.customer_phone + "@example.com", // Replace with actual email
+            to: order.email,
             subject,
             html,
           }),
@@ -93,13 +101,84 @@ export default function OrdersManagement() {
     }
   };
 
+  const handleBulkStatusUpdate = async () => {
+    if (selectedOrders.size === 0 || !bulkStatus) {
+      alert("Please select orders and a status");
+      return;
+    }
+
+    if (!confirm(`Update ${selectedOrders.size} orders to ${bulkStatus}?`)) {
+      return;
+    }
+
+    try {
+      const orderIds = Array.from(selectedOrders);
+      
+      const { error } = await supabase
+        .from("orders")
+        .update({ status: bulkStatus })
+        .in("id", orderIds);
+
+      if (error) throw error;
+
+      // Update local state
+      setOrders(orders.map(order => 
+        selectedOrders.has(order.id) ? { ...order, status: bulkStatus } : order
+      ));
+
+      setSelectedOrders(new Set());
+      setBulkStatus("");
+      setShowBulkActions(false);
+      alert(`Successfully updated ${orderIds.length} orders!`);
+    } catch (err) {
+      console.error("Error updating bulk status:", err);
+      alert("Failed to update orders");
+    }
+  };
+
+  const toggleOrderSelection = (orderId: string) => {
+    const newSelection = new Set(selectedOrders);
+    if (newSelection.has(orderId)) {
+      newSelection.delete(orderId);
+    } else {
+      newSelection.add(orderId);
+    }
+    setSelectedOrders(newSelection);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedOrders.size === filteredOrders.length) {
+      setSelectedOrders(new Set());
+    } else {
+      setSelectedOrders(new Set(filteredOrders.map(o => o.id)));
+    }
+  };
+
   const filteredOrders = orders.filter((order) => {
     const matchesFilter = filter === "all" || order.status === filter;
+    const matchesPaymentFilter = paymentFilter === "all" || order.payment_method === paymentFilter;
     const matchesSearch =
       order.order_id.toLowerCase().includes(search.toLowerCase()) ||
       order.customer_name.toLowerCase().includes(search.toLowerCase()) ||
       order.customer_phone.includes(search);
-    return matchesFilter && matchesSearch;
+    
+    // Date range filter
+    let matchesDateRange = true;
+    if (startDate || endDate) {
+      const orderDate = new Date(order.created_at);
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        matchesDateRange = matchesDateRange && orderDate >= start;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        matchesDateRange = matchesDateRange && orderDate <= end;
+      }
+    }
+    
+    return matchesFilter && matchesPaymentFilter && matchesSearch && matchesDateRange;
   });
 
   const getStatusColor = (status: string) => {
@@ -153,7 +232,7 @@ export default function OrdersManagement() {
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-deep-brown mb-2">
                 Search Orders
@@ -168,14 +247,14 @@ export default function OrdersManagement() {
             </div>
             <div>
               <label className="block text-sm font-medium text-deep-brown mb-2">
-                Filter by Status
+                Status
               </label>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white text-deep-brown"
               >
-                <option value="all">All Orders</option>
+                <option value="all">All Statuses</option>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="processing">Processing</option>
@@ -184,8 +263,105 @@ export default function OrdersManagement() {
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-deep-brown mb-2">
+                Payment Method
+              </label>
+              <select
+                value={paymentFilter}
+                onChange={(e) => setPaymentFilter(e.target.value)}
+                className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white text-deep-brown"
+              >
+                <option value="all">All Methods</option>
+                <option value="cod">Cash on Delivery</option>
+                <option value="whatsapp">WhatsApp</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-deep-brown mb-2">
+                Date Range
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="flex-1 px-2 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-sm"
+                  placeholder="From"
+                />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="flex-1 px-2 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-sm"
+                  placeholder="To"
+                />
+              </div>
+            </div>
           </div>
+          
+          {/* Clear Filters */}
+          {(search || filter !== "all" || paymentFilter !== "all" || startDate || endDate) && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setFilter("all");
+                  setPaymentFilter("all");
+                  setStartDate("");
+                  setEndDate("");
+                }}
+                className="text-sm text-tea-brown hover:text-deep-brown underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Bulk Actions */}
+        {selectedOrders.size > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <span className="font-semibold text-deep-brown">
+                  {selectedOrders.size} order{selectedOrders.size !== 1 ? 's' : ''} selected
+                </span>
+              </div>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <select
+                  value={bulkStatus}
+                  onChange={(e) => setBulkStatus(e.target.value)}
+                  className="flex-1 md:flex-initial px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-deep-brown"
+                >
+                  <option value="">Select Status...</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <button
+                  onClick={handleBulkStatusUpdate}
+                  disabled={!bulkStatus}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => setSelectedOrders(new Set())}
+                  className="px-4 py-2 text-tea-brown hover:text-deep-brown"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Orders Table */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -193,6 +369,14 @@ export default function OrdersManagement() {
             <table className="w-full">
               <thead className="bg-tea-green text-white">
                 <tr>
+                  <th className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedOrders.size === filteredOrders.length && filteredOrders.length > 0}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-white focus:ring-2 focus:ring-white cursor-pointer"
+                    />
+                  </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Order ID</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Customer</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Phone</th>
@@ -206,13 +390,21 @@ export default function OrdersManagement() {
               <tbody className="divide-y divide-gray-200">
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center text-tea-brown">
+                    <td colSpan={9} className="px-6 py-12 text-center text-tea-brown">
                       No orders found
                     </td>
                   </tr>
                 ) : (
                   filteredOrders.map((order) => (
                     <tr key={order.id} className="hover:bg-warm-cream/30">
+                      <td className="px-4 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedOrders.has(order.id)}
+                          onChange={() => toggleOrderSelection(order.id)}
+                          className="w-4 h-4 rounded border-gray-300 focus:ring-2 focus:ring-tea-green cursor-pointer"
+                        />
+                      </td>
                       <td className="px-6 py-4 text-sm font-medium text-deep-brown">
                         {order.order_id}
                       </td>
@@ -271,8 +463,14 @@ export default function OrdersManagement() {
         </div>
 
         {/* Summary */}
-        <div className="mt-6 text-tea-brown text-sm">
-          Showing {filteredOrders.length} of {orders.length} orders
+        <div className="mt-6 flex justify-between items-center text-tea-brown text-sm">
+          <div>
+            Showing {filteredOrders.length} of {orders.length} orders
+          </div>
+          <div className="text-right">
+            <span className="font-semibold">Total Value: </span>
+            {filteredOrders.reduce((sum, o) => sum + parseFloat(o.total.toString()), 0).toFixed(2)} SAR
+          </div>
         </div>
       </div>
     </div>

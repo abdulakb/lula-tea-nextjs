@@ -22,6 +22,14 @@ interface Order {
   updated_at: string;
   items: any[];
   invoice_base64: string;
+  notes?: string;
+}
+
+interface OrderNote {
+  id: string;
+  note: string;
+  created_by: string;
+  created_at: string;
 }
 
 export default function OrderDetail() {
@@ -29,7 +37,10 @@ export default function OrderDetail() {
   const params = useParams();
   const orderId = params.id as string;
   const [order, setOrder] = useState<Order | null>(null);
+  const [orderNotes, setOrderNotes] = useState<OrderNote[]>([]);
+  const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(true);
+  const [addingNote, setAddingNote] = useState(false);
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -37,6 +48,7 @@ export default function OrderDetail() {
       return;
     }
     fetchOrder();
+    fetchOrderNotes();
   }, [router, orderId]);
 
   const fetchOrder = async () => {
@@ -53,6 +65,49 @@ export default function OrderDetail() {
       console.error("Error fetching order:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchOrderNotes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("order_notes")
+        .select("*")
+        .eq("order_id", orderId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setOrderNotes(data || []);
+    } catch (err) {
+      console.error("Error fetching notes:", err);
+    }
+  };
+
+  const addNote = async () => {
+    if (!newNote.trim()) return;
+
+    try {
+      setAddingNote(true);
+      const { data, error } = await supabase
+        .from("order_notes")
+        .insert([{
+          order_id: orderId,
+          note: newNote.trim(),
+          created_by: "admin"
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setOrderNotes([data, ...orderNotes]);
+      setNewNote("");
+      alert("Note added successfully!");
+    } catch (err) {
+      console.error("Error adding note:", err);
+      alert("Failed to add note");
+    } finally {
+      setAddingNote(false);
     }
   };
 
@@ -276,6 +331,63 @@ export default function OrderDetail() {
             <span className="font-semibold">Payment Method:</span>{" "}
             {order.payment_method === "cod" ? "Cash on Delivery" : "WhatsApp Order"}
           </p>
+        </div>
+
+        {/* Order Notes / Comments */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-deep-brown mb-4 flex items-center gap-2">
+            <svg className="w-6 h-6 text-tea-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            Order Notes
+          </h2>
+          
+          {/* Add New Note */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-deep-brown mb-2">
+              Add a note
+            </label>
+            <div className="flex gap-2">
+              <textarea
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                placeholder="Add internal notes about this order..."
+                rows={3}
+                className="flex-1 px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green resize-none"
+              />
+              <button
+                onClick={addNote}
+                disabled={!newNote.trim() || addingNote}
+                className="px-6 py-2 bg-tea-green text-white rounded-lg font-medium hover:bg-tea-green/90 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors self-end"
+              >
+                {addingNote ? "Adding..." : "Add Note"}
+              </button>
+            </div>
+          </div>
+
+          {/* Notes List */}
+          <div className="space-y-3">
+            {orderNotes.length === 0 ? (
+              <div className="text-center py-8 text-tea-brown bg-warm-cream/30 rounded-lg">
+                <svg className="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                <p>No notes yet. Add one above to track order updates.</p>
+              </div>
+            ) : (
+              orderNotes.map((note) => (
+                <div key={note.id} className="border border-tea-brown/20 rounded-lg p-4 bg-warm-cream/20">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-semibold text-tea-green uppercase">{note.created_by}</span>
+                    <span className="text-xs text-tea-brown">
+                      {new Date(note.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-deep-brown whitespace-pre-wrap">{note.note}</p>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
         {/* Actions */}

@@ -345,7 +345,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link
             href="/admin/orders"
             className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow"
@@ -383,6 +383,27 @@ export default function AdminDashboard() {
                 </h3>
                 <p className="text-tea-brown text-sm">
                   View customer insights & history
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/products"
+            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center gap-4">
+              <div className="bg-indigo-500/10 p-4 rounded-lg">
+                <svg className="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-deep-brown mb-1">
+                  Products
+                </h3>
+                <p className="text-tea-brown text-sm">
+                  Manage inventory & catalog
                 </p>
               </div>
             </div>

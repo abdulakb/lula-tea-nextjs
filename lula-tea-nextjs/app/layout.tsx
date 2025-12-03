@@ -22,6 +22,31 @@ export const metadata: Metadata = {
   title: "Lula Tea - Homemade with Love",
   description: "Discover our finest blend of loose leaf teas, carefully crafted with love. Each ingredient is thoughtfully selected to give you a unique taste experience.",
   manifest: "/manifest.json",
+  icons: {
+    icon: '/images/logo.jpg',
+    apple: '/images/logo.jpg',
+  },
+  openGraph: {
+    title: "Lula Tea - Homemade with Love",
+    description: "Discover our finest blend of loose leaf teas, carefully crafted with love.",
+    url: "https://lulatee.com",
+    siteName: "Lula Tea",
+    images: [
+      {
+        url: '/images/logo.jpg',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Lula Tea - Homemade with Love",
+    description: "Discover our finest blend of loose leaf teas, carefully crafted with love.",
+    images: ['/images/logo.jpg'],
+  },
 };
 
 export default function RootLayout({

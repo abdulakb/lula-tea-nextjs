@@ -251,7 +251,7 @@ export default function OrdersManagement() {
                           <select
                             value={order.status}
                             onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                            className="text-xs border border-tea-brown/30 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-tea-green"
+                            className="text-xs border border-tea-brown/30 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-tea-green text-deep-brown bg-white font-medium"
                           >
                             <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>

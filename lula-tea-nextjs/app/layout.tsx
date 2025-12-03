@@ -7,6 +7,7 @@ import ChatWidget from "./components/ChatWidget";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AnalyticsProvider } from "@/context/AnalyticsContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,20 +56,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark-transition`}
       >
-        <AnalyticsProvider>
-          <LanguageProvider>
-            <CartProvider>
-              <Header />
-              {children}
-              <Footer />
-              <ChatWidget />
-            </CartProvider>
-          </LanguageProvider>
-        </AnalyticsProvider>
+        <ThemeProvider>
+          <AnalyticsProvider>
+            <LanguageProvider>
+              <CartProvider>
+                <Header />
+                {children}
+                <Footer />
+                <ChatWidget />
+              </CartProvider>
+            </LanguageProvider>
+          </AnalyticsProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

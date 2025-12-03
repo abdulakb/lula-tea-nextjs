@@ -11,6 +11,17 @@
   --accent-gold: #c9a961;
 }
 
+:root.dark {
+  --background: #1a1511;
+  --foreground: #f5f1e8;
+  --tea-green: #8fb38a;
+  --tea-brown: #a68964;
+  --warm-cream: #2a2419;
+  --deep-brown: #e8ddd0;
+  --soft-sage: #6b7a64;
+  --accent-gold: #d4b776;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -24,15 +35,14 @@
   --color-accent-gold: var(--accent-gold);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #2a1f1a;
-    --foreground: #f5f1e8;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode utilities */
+.dark-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

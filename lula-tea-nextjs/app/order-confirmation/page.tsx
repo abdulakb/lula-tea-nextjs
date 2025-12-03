@@ -79,9 +79,28 @@ function OrderConfirmationContent() {
           </p>
 
           {/* Success Message */}
-          <p className="text-lg text-gray-700 mb-8">
+          <p className="text-lg text-gray-700 mb-4">
             {t("orderSuccessMessage", language)}
           </p>
+
+          {/* Email Notice */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <div className="text-left">
+                <p className="font-medium text-blue-900 mb-1">
+                  {language === "ar" ? "📧 تحقق من بريدك الإلكتروني" : "📧 Check Your Email"}
+                </p>
+                <p className="text-sm text-blue-800">
+                  {language === "ar" 
+                    ? "تم إرسال تأكيد الطلب إلى بريدك الإلكتروني. إذا لم تجده، تحقق من مجلد البريد المزعج/غير المرغوب."
+                    : "Order confirmation sent to your email. If you don't see it, please check your spam/junk folder."}
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Download Invoice Button */}
           {invoiceBase64 && (

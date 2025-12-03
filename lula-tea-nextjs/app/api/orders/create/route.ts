@@ -235,6 +235,27 @@ export async function POST(request: NextRequest) {
       // Don't fail the order if WhatsApp fails
     }
 
+    // Send WhatsApp notification to admin about new order
+    try {
+      const adminWhatsappMessage = language === "ar"
+        ? `🔔 *طلب جديد!*\n\nرقم الطلب: ${orderId}\nالعميل: ${customerName}\nالهاتف: ${customerPhone}\nالإجمالي: ${total} ريال\nطريقة الدفع: ${paymentMethod === "cod" ? "الدفع عند الاستلام" : "واتساب"}\n\nعرض التفاصيل: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}\n\n--\nلولة تي - الإدارة`
+        : `🔔 *New Order Alert!*\n\nOrder ID: ${orderId}\nCustomer: ${customerName}\nPhone: ${customerPhone}\nTotal: ${total} SAR\nPayment: ${paymentMethod === "cod" ? "Cash on Delivery" : "WhatsApp"}\n\nView details: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}\n\n--\nLula Tea Admin`;
+
+      console.log("Admin WhatsApp notification prepared for order:", orderId);
+      
+      // Note: In a real implementation with WhatsApp Business API, you would send this via:
+      // await fetch("/api/notifications/whatsapp", {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     phoneNumber: ADMIN_WHATSAPP_NUMBER,
+      //     message: adminWhatsappMessage
+      //   })
+      // });
+    } catch (adminWhatsappError) {
+      console.error("Admin WhatsApp notification error:", adminWhatsappError);
+      // Don't fail the order if admin notification fails
+    }
+
     console.log("=== Order Creation Completed Successfully ===", { orderId, hasInvoice: !!base64Invoice });
 
     return NextResponse.json({

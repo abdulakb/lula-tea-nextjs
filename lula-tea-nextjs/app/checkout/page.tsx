@@ -520,7 +520,7 @@ export default function CheckoutPage() {
                     onChange={(e) => setPaymentMethod(e.target.value as "cod")}
                     className="w-4 h-4 text-tea-green focus:ring-tea-green"
                   />
-                  <span className="ml-3 text-deep-brown font-medium">
+                  <span className="ml-3 text-gray-900 dark:text-gray-100 font-medium">
                     {t("cashOnDelivery")}
                   </span>
                 </label>
@@ -534,7 +534,7 @@ export default function CheckoutPage() {
                     onChange={(e) => setPaymentMethod(e.target.value as "stcpay")}
                     className="w-4 h-4 text-purple-600 focus:ring-purple-600"
                   />
-                  <span className="ml-3 text-deep-brown font-medium flex items-center gap-2">
+                  <span className="ml-3 text-gray-900 dark:text-gray-100 font-medium flex items-center gap-2">
                     {t("stcPayQR")}
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                       {language === "ar" ? "مباشر" : "Instant"}
@@ -551,7 +551,7 @@ export default function CheckoutPage() {
                     onChange={(e) => setPaymentMethod(e.target.value as "whatsapp")}
                     className="w-4 h-4 text-tea-green focus:ring-tea-green"
                   />
-                  <span className="ml-3 text-deep-brown font-medium">
+                  <span className="ml-3 text-gray-900 dark:text-gray-100 font-medium">
                     {t("whatsappOrder")}
                   </span>
                 </label>

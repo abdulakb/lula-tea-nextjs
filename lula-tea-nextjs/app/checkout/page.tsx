@@ -334,6 +334,12 @@ export default function CheckoutPage() {
         items: orderItems,
       });
 
+      // Auto-open WhatsApp with invoice for customer
+      if (result.customerInvoiceWhatsappUrl) {
+        console.log("Opening WhatsApp with invoice for customer...");
+        window.open(result.customerInvoiceWhatsappUrl, '_blank');
+      }
+
       // Clear cart before redirecting
       clearCart();
 

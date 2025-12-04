@@ -3,11 +3,15 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
 import { openWhatsApp } from "@/lib/whatsapp";
-import ThemeToggle from "@/app/components/ThemeToggle";
+
+const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
+  ssr: false,
+});
 
 export default function CheckoutPage() {
   const { t, language } = useLanguage();

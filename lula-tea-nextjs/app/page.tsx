@@ -3,9 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
-import ThemeToggle from "@/app/components/ThemeToggle";
+
+const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [quantity, setQuantity] = useState(1);

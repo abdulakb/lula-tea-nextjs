@@ -1,8 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/context/LanguageContext";
 import ProductCard from "../components/ProductCard";
-import ThemeToggle from "../components/ThemeToggle";
+
+const ThemeToggle = dynamic(() => import("../components/ThemeToggle"), {
+  ssr: false,
+});
 
 export default function ProductPage() {
   const { t } = useLanguage();

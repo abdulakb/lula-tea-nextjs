@@ -101,6 +101,7 @@ export const translations = {
     // Checkout Payment
     paymentMethod: "Payment Method",
     cashOnDelivery: "Cash on Delivery",
+    stcPayQR: "STC Pay / Bank Transfer (QR Code)",
     whatsappOrder: "WhatsApp Order",
     customerInformation: "Customer Information",
     fullName: "Full Name",
@@ -237,6 +238,7 @@ export const translations = {
     // Checkout Payment
     paymentMethod: "طريقة الدفع",
     cashOnDelivery: "الدفع عند الاستلام",
+    stcPayQR: "STC Pay / تحويل بنكي (رمز QR)",
     whatsappOrder: "طلب عبر واتساب",
     customerInformation: "معلومات العميل",
     fullName: "الاسم الكامل",

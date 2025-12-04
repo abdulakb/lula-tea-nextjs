@@ -41,7 +41,8 @@ export default function CheckoutPage() {
     return () => clearTimeout(timer);
   }, []);
   
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "whatsapp">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "stcpay" | "whatsapp">("cod");
+  const [showStcInstructions, setShowStcInstructions] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -520,6 +521,23 @@ export default function CheckoutPage() {
                   </span>
                 </label>
                 
+                <label className="flex items-center p-4 border-2 border-purple-500/30 rounded-lg cursor-pointer hover:bg-purple-500/5 transition-colors">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="stcpay"
+                    checked={paymentMethod === "stcpay"}
+                    onChange={(e) => setPaymentMethod(e.target.value as "stcpay")}
+                    className="w-4 h-4 text-purple-600 focus:ring-purple-600"
+                  />
+                  <span className="ml-3 text-deep-brown font-medium flex items-center gap-2">
+                    {t("stcPayQR")}
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                      {language === "ar" ? "مباشر" : "Instant"}
+                    </span>
+                  </span>
+                </label>
+                
                 <label className="flex items-center p-4 border-2 border-tea-green/30 rounded-lg cursor-pointer hover:bg-tea-green/5 transition-colors">
                   <input
                     type="radio"
@@ -536,7 +554,239 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {paymentMethod === "whatsapp" ? (
+            {paymentMethod === "stcpay" ? (
+              // STC Pay QR Code Checkout
+              <div>
+                <div className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-gray-800 rounded-2xl p-6 mb-6 border-2 border-purple-200 dark:border-purple-800">
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-bold text-purple-700 dark:text-purple-300 mb-2">
+                      {language === "ar" ? "الدفع عبر STC Pay" : "Pay with STC Pay"}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {language === "ar" 
+                        ? "امسح رمز QR بتطبيق STC Pay أو تطبيق البنك"
+                        : "Scan QR code with STC Pay or your bank app"}
+                    </p>
+                  </div>
+
+                  {/* QR Code */}
+                  <div className="bg-white rounded-xl p-6 mb-6 shadow-lg">
+                    <div className="relative w-full max-w-sm mx-auto aspect-square">
+                      <Image
+                        src="/images/stc-qr-code.jpg"
+                        alt="STC Pay QR Code"
+                        fill
+                        className="object-contain"
+                        priority
+                      />
+                    </div>
+                    <div className="text-center mt-4">
+                      <p className="text-sm font-semibold text-gray-700">
+                        {language === "ar" ? "المبلغ المطلوب: " : "Amount: "}
+                        <span className="text-2xl text-purple-600">{subtotal} {language === "ar" ? "ريال" : "SAR"}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Instructions Toggle */}
+                  <button
+                    onClick={() => setShowStcInstructions(!showStcInstructions)}
+                    className="w-full flex items-center justify-between p-4 bg-purple-100 dark:bg-purple-900/30 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
+                  >
+                    <span className="font-semibold text-purple-800 dark:text-purple-200">
+                      {language === "ar" ? "📱 كيفية مسح رمز QR؟" : "📱 How to scan the QR code?"}
+                    </span>
+                    <svg
+                      className={`w-5 h-5 text-purple-600 dark:text-purple-300 transition-transform ${showStcInstructions ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Step-by-step Instructions */}
+                  {showStcInstructions && (
+                    <div className="mt-4 bg-white dark:bg-gray-800 rounded-lg p-6 border-2 border-purple-100 dark:border-purple-800">
+                      {language === "ar" ? (
+                        <div className="space-y-4 text-right" dir="rtl">
+                          <h4 className="font-bold text-lg text-purple-700 dark:text-purple-300 mb-4">طريقة الدفع:</h4>
+                          
+                          <div className="space-y-6">
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">١</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">افتح تطبيق البنك أو STC Pay</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">افتح تطبيق بنكك (مثل: STC Pay، الراجحي، الأهلي، إلخ)</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">٢</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">ابحث عن "مسح رمز QR" أو "QR Scanner"</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">عادة تجده في الصفحة الرئيسية أو قائمة الخدمات</p>
+                                <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                                  <p className="text-sm text-yellow-800 dark:text-yellow-200">💡 <strong>نصيحة:</strong> في STC Pay، ستجد أيقونة "QR scanner" في الشاشة الرئيسية</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">٣</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">امسح رمز QR أعلاه</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">وجّه كاميرا الهاتف نحو رمز QR</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">٤</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">أدخل المبلغ وأكمل الدفع</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">أدخل <strong className="text-purple-600">{subtotal} ريال</strong> واتبع التعليمات</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">✓</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">بعد الدفع، أكمل الطلب أدناه</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">املأ بياناتك وأكمل الطلب حتى نتمكن من التوصيل</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                            <p className="text-sm text-blue-800 dark:text-blue-200">
+                              <strong>❓ لا تعرف أين تجد ماسح QR؟</strong><br/>
+                              ابحث في تطبيق البنك عن: "مسح رمز" أو "QR" أو "مسح QR" أو "QR scanner"
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <h4 className="font-bold text-lg text-purple-700 dark:text-purple-300 mb-4">Payment Steps:</h4>
+                          
+                          <div className="space-y-6">
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">Open your bank or STC Pay app</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Open your banking app (e.g., STC Pay, Al Rajhi, Al Ahli, etc.)</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">Find "QR Scanner" option</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Usually found on the home screen or services menu</p>
+                                <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                                  <p className="text-sm text-yellow-800 dark:text-yellow-200">💡 <strong>Tip:</strong> In STC Pay, you'll find "QR scanner" icon on the main screen</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">Scan the QR code above</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Point your phone camera at the QR code</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">Enter amount and complete payment</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Enter <strong className="text-purple-600">{subtotal} SAR</strong> and follow instructions</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-4 items-start">
+                              <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">✓</div>
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">After payment, complete order below</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Fill in your details and complete the order for delivery</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                            <p className="text-sm text-blue-800 dark:text-blue-200">
+                              <strong>❓ Can't find QR scanner?</strong><br/>
+                              Look in your bank app for: "Scan QR", "QR Scanner", or "QR Code" option
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Customer Information Form for STC Pay */}
+                <form onSubmit={handleSubmitOrder}>
+                  <h3 className="text-lg font-semibold text-deep-brown dark:text-white mb-4">
+                    {t("customerInformation")}
+                  </h3>
+                  
+                  <div className="space-y-4 mb-6">
+                    <input
+                      type="text"
+                      placeholder={t("fullName")}
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                    <input
+                      type="tel"
+                      placeholder={t("phoneNumber")}
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      dir={language === "ar" ? "rtl" : "ltr"}
+                    />
+                    <textarea
+                      placeholder={t("deliveryAddress")}
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                      required
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      dir={language === "ar" ? "rtl" : "ltr"}
+                    />
+                    <textarea
+                      placeholder={t("deliveryNotesPlaceholder")}
+                      value={deliveryNotes}
+                      onChange={(e) => setDeliveryNotes(e.target.value)}
+                      rows={2}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      dir={language === "ar" ? "rtl" : "ltr"}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-6 py-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl"
+                  >
+                    {isSubmitting
+                      ? (language === "ar" ? "جاري المعالجة..." : "Processing...")
+                      : (language === "ar" ? "تأكيد الطلب (بعد الدفع)" : "Confirm Order (After Payment)")}
+                  </button>
+
+                  <p className="text-xs text-center mt-3 text-gray-500 dark:text-gray-400">
+                    {language === "ar" 
+                      ? "⚠️ تأكد من إتمام الدفع قبل تأكيد الطلب"
+                      : "⚠️ Make sure to complete payment before confirming order"}
+                  </p>
+                </form>
+              </div>
+            ) : paymentMethod === "whatsapp" ? (
               // WhatsApp Checkout
               <div>
                 <p className="text-tea-brown mb-6 text-center">{t("scanQR")}</p>

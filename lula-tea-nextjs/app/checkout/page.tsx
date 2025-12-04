@@ -7,6 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
 import { openWhatsApp } from "@/lib/whatsapp";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 export default function CheckoutPage() {
   const { t, language } = useLanguage();
@@ -341,7 +342,8 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream">
+    <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream dark:bg-gray-900 dark-transition">
+      <ThemeToggle />
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-deep-brown mb-4">

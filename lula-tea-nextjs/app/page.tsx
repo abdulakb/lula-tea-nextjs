@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 export default function Home() {
   const [quantity, setQuantity] = useState(1);
@@ -29,6 +30,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
+      <ThemeToggle />
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-20 px-4 sm:px-6 lg:px-8">
         {/* Soft Opening Banner */}

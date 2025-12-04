@@ -2,12 +2,14 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 import ProductCard from "../components/ProductCard";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function ProductPage() {
   const { t } = useLanguage();
 
   return (
     <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
+      <ThemeToggle />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-deep-brown mb-4">

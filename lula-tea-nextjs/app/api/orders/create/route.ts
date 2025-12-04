@@ -241,16 +241,24 @@ export async function POST(request: NextRequest) {
         ? `🔔 *طلب جديد!*\n\nرقم الطلب: ${orderId}\nالعميل: ${customerName}\nالهاتف: ${customerPhone}\nالإجمالي: ${total} ريال\nطريقة الدفع: ${paymentMethod === "cod" ? "الدفع عند الاستلام" : "واتساب"}\n\nعرض التفاصيل: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}\n\n--\nلولة تي - الإدارة`
         : `🔔 *New Order Alert!*\n\nOrder ID: ${orderId}\nCustomer: ${customerName}\nPhone: ${customerPhone}\nTotal: ${total} SAR\nPayment: ${paymentMethod === "cod" ? "Cash on Delivery" : "WhatsApp"}\n\nView details: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}\n\n--\nLula Tea Admin`;
 
-      console.log("Admin WhatsApp notification prepared for order:", orderId);
+      console.log("Sending admin WhatsApp notification for order:", orderId);
       
-      // Note: In a real implementation with WhatsApp Business API, you would send this via:
-      // await fetch("/api/notifications/whatsapp", {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     phoneNumber: ADMIN_WHATSAPP_NUMBER,
-      //     message: adminWhatsappMessage
-      //   })
-      // });
+      // Send WhatsApp notification to admin
+      const whatsappResponse = await fetch(`${process.env.SITE_URL || 'https://lulatee.com'}/api/notifications/whatsapp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "966539666654",
+          message: adminWhatsappMessage
+        })
+      });
+
+      const whatsappResult = await whatsappResponse.json();
+      console.log("WhatsApp notification result:", whatsappResult);
+      
+      if (whatsappResult.success && whatsappResult.whatsappUrl) {
+        console.log("✅ WhatsApp notification link generated:", whatsappResult.whatsappUrl);
+      }
     } catch (adminWhatsappError) {
       console.error("Admin WhatsApp notification error:", adminWhatsappError);
       // Don't fail the order if admin notification fails

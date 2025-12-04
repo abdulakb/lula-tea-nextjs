@@ -81,10 +81,9 @@ Lula Tea Admin`;
     const data = await response.json();
     
     if (data.success && data.whatsappUrl) {
-      // Auto-open WhatsApp (optional - can be disabled in settings)
-      if (typeof window !== "undefined" && settings.notify_on_new_order) {
-        window.open(data.whatsappUrl, "_blank");
-      }
+      console.log("WhatsApp notification URL generated:", data.whatsappUrl);
+      // Note: In production with WhatsApp Business API, this would send automatically
+      // For now, it generates a wa.me link that can be used to send the message
     }
   } catch (error) {
     console.error("Failed to send WhatsApp notification:", error);

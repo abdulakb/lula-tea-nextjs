@@ -98,6 +98,60 @@ export async function POST(request: NextRequest) {
 
     console.log("Saving order to database...", { orderId, quantityOrdered });
 
+    // Deduct stock for each item
+    const stockDeductionResults = [];
+    for (const item of items) {
+      try {
+        // Call the deduct_product_stock function
+        const { data: stockResult, error: stockError } = await supabase
+          .rpc('deduct_product_stock', {
+            p_product_id: item.id,
+            p_quantity: item.quantity,
+            p_order_id: orderId
+          });
+
+        if (stockError) {
+          console.error(`Stock deduction error for item ${item.id}:`, stockError);
+          stockDeductionResults.push({ 
+            item: item.name, 
+            success: false, 
+            error: stockError.message 
+          });
+        } else if (!stockResult.success) {
+          console.error(`Insufficient stock for item ${item.name}:`, stockResult);
+          // Rollback: we should not continue if stock is insufficient
+          return NextResponse.json({
+            error: `Insufficient stock for ${item.name}. Available: ${stockResult.available}, Requested: ${stockResult.requested}`,
+            insufficientStock: true,
+            item: item.name
+          }, { status: 400 });
+        } else {
+          console.log(`Stock deducted successfully for ${item.name}:`, stockResult);
+          stockDeductionResults.push({ 
+            item: item.name, 
+            success: true, 
+            ...stockResult 
+          });
+          
+          // Check for low stock alert
+          if (stockResult.low_stock_alert) {
+            console.warn(`⚠️ LOW STOCK ALERT: ${item.name} - Current stock: ${stockResult.new_stock}`);
+            // You could send notification here
+          }
+        }
+      } catch (err) {
+        console.error(`Error deducting stock for ${item.name}:`, err);
+        stockDeductionResults.push({ 
+          item: item.name, 
+          success: false, 
+          error: String(err) 
+        });
+      }
+    }
+
+    console.log("Stock deduction results:", stockDeductionResults);
+
+
     // Save order to Supabase with all customer form data
     const { data: orderData, error: orderError } = await supabase
       .from("orders")

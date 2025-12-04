@@ -170,10 +170,10 @@ export default function OrderDetail() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-deep-brown mb-2">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
               Order Details
             </h1>
-            <p className="text-tea-brown">Order ID: {order.order_id}</p>
+            <p className="text-gray-700 dark:text-gray-300">Order ID: {order.order_id}</p>
           </div>
           <Link
             href="/admin/orders"
@@ -184,17 +184,17 @@ export default function OrderDetail() {
         </div>
 
         {/* Order Status */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-tea-brown mb-1">Status</p>
-              <p className="text-2xl font-bold text-deep-brown capitalize">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
                 {order.status}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-tea-brown mb-1">Order Date</p>
-              <p className="text-lg font-semibold text-deep-brown">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Order Date</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
                 {new Date(order.created_at).toLocaleString()}
               </p>
             </div>
@@ -202,21 +202,21 @@ export default function OrderDetail() {
         </div>
 
         {/* Customer Information */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-deep-brown mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Customer Information
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-tea-brown mb-1">Name</p>
-              <p className="text-lg font-semibold text-deep-brown">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Name</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
                 {order.customer_name}
               </p>
             </div>
             <div>
-              <p className="text-sm text-tea-brown mb-1">Phone</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Phone</p>
               <div className="flex items-center gap-2">
-                <p className="text-lg font-semibold text-deep-brown">
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   <a
                     href={`https://wa.me/${order.customer_phone.replace(/\D/g, "")}`}
                     target="_blank"
@@ -239,78 +239,78 @@ export default function OrderDetail() {
               </div>
             </div>
             <div className="md:col-span-2">
-              <p className="text-sm text-tea-brown mb-1">Delivery Address</p>
-              <p className="text-lg text-deep-brown">{order.customer_address}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Delivery Address</p>
+              <p className="text-lg text-gray-900 dark:text-white">{order.customer_address}</p>
             </div>
             {order.delivery_notes && (
               <div className="md:col-span-2">
-                <p className="text-sm text-tea-brown mb-1">Delivery Notes</p>
-                <p className="text-lg text-deep-brown">{order.delivery_notes}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Delivery Notes</p>
+                <p className="text-lg text-gray-900 dark:text-white">{order.delivery_notes}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Order Items */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-deep-brown mb-4">Order Items</h2>
-          <div className="border border-tea-brown/20 rounded-lg overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Order Items</h2>
+          <div className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
             <table className="w-full">
-              <thead className="bg-tea-green/10">
+              <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-deep-brown">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                     Item
                   </th>
-                  <th className="px-4 py-3 text-center text-sm font-semibold text-deep-brown">
+                  <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 dark:text-white">
                     Quantity
                   </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-deep-brown">
+                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900 dark:text-white">
                     Price
                   </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-deep-brown">
+                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900 dark:text-white">
                     Total
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((item: any, index: number) => (
-                  <tr key={index} className="border-t border-tea-brown/10">
-                    <td className="px-4 py-3 text-sm text-deep-brown">
+                  <tr key={index} className="border-t border-gray-200 dark:border-gray-600">
+                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                       {item.name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-center text-deep-brown">
+                    <td className="px-4 py-3 text-sm text-center text-gray-900 dark:text-white">
                       {item.quantity}
                     </td>
-                    <td className="px-4 py-3 text-sm text-right text-deep-brown">
+                    <td className="px-4 py-3 text-sm text-right text-gray-900 dark:text-white">
                       {item.price} SAR
                     </td>
-                    <td className="px-4 py-3 text-sm text-right font-semibold text-deep-brown">
+                    <td className="px-4 py-3 text-sm text-right font-semibold text-gray-900 dark:text-white">
                       {item.price * item.quantity} SAR
                     </td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-tea-green/5">
+              <tfoot className="bg-gray-50 dark:bg-gray-700">
                 <tr className="border-t-2 border-tea-green">
-                  <td colSpan={3} className="px-4 py-3 text-right font-semibold text-deep-brown">
+                  <td colSpan={3} className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">
                     Subtotal:
                   </td>
-                  <td className="px-4 py-3 text-right font-semibold text-deep-brown">
+                  <td className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">
                     {order.subtotal} SAR
                   </td>
                 </tr>
                 {order.delivery_fee > 0 && (
                   <tr>
-                    <td colSpan={3} className="px-4 py-3 text-right font-semibold text-deep-brown">
+                    <td colSpan={3} className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">
                       Delivery Fee:
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold text-deep-brown">
+                    <td className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white">
                       {order.delivery_fee} SAR
                     </td>
                   </tr>
                 )}
                 <tr className="border-t border-tea-green">
-                  <td colSpan={3} className="px-4 py-3 text-right font-bold text-deep-brown text-lg">
+                  <td colSpan={3} className="px-4 py-3 text-right font-bold text-gray-900 dark:text-white text-lg">
                     Total:
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-tea-green text-lg">
@@ -323,19 +323,19 @@ export default function OrderDetail() {
         </div>
 
         {/* Payment Information */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-deep-brown mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Payment Information
           </h2>
-          <p className="text-lg text-deep-brown">
+          <p className="text-lg text-gray-900 dark:text-white">
             <span className="font-semibold">Payment Method:</span>{" "}
             {order.payment_method === "cod" ? "Cash on Delivery" : "WhatsApp Order"}
           </p>
         </div>
 
         {/* Order Notes / Comments */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-deep-brown mb-4 flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <svg className="w-6 h-6 text-tea-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
             </svg>
@@ -344,7 +344,7 @@ export default function OrderDetail() {
           
           {/* Add New Note */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-deep-brown mb-2">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
               Add a note
             </label>
             <div className="flex gap-2">

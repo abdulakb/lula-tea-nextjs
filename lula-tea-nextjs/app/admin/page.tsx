@@ -114,19 +114,19 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-warm-cream dark:bg-gray-900 flex items-center justify-center px-4 dark-transition">
         <ThemeToggle />
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md dark-transition">
-          <h1 className="text-3xl font-bold text-deep-brown dark:text-deep-brown mb-6 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
             Admin Login
           </h1>
           <form onSubmit={handleLogin}>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-deep-brown dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-tea-brown/30 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-700 text-deep-brown dark:text-white dark-transition"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark-transition"
                 placeholder="Enter admin password"
                 required
               />
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
               Login
             </button>
           </form>
-          <p className="mt-4 text-sm text-tea-brown dark:text-gray-400 text-center">
+          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
             Default password: lulatea2024 (change in env)
           </p>
         </div>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
         <ThemeToggle />
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tea-green mx-auto mb-4"></div>
-          <p className="text-tea-brown dark:text-gray-300">Loading dashboard...</p>
+          <p className="text-gray-700 dark:text-gray-300">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-warm-cream dark:bg-gray-900 flex items-center justify-center dark-transition">
         <ThemeToggle />
-        <p className="text-tea-brown dark:text-gray-300">Failed to load analytics data</p>
+        <p className="text-gray-700 dark:text-gray-300">Failed to load analytics data</p>
       </div>
     );
   }
@@ -177,16 +177,16 @@ export default function AdminDashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-deep-brown dark:text-deep-brown mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
               Admin Dashboard
             </h1>
-            <p className="text-tea-brown dark:text-gray-400">Welcome back! Here's your business overview.</p>
+            <p className="text-gray-700 dark:text-gray-300">Welcome back! Here's your business overview.</p>
           </div>
           <div className="flex gap-3 w-full md:w-auto">
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value)}
-              className="flex-1 md:flex-initial px-4 py-2 border border-tea-brown/30 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-deep-brown dark:text-white dark-transition"
+              className="flex-1 md:flex-initial px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark-transition"
             >
               <option value="day">Last 24 Hours</option>
               <option value="week">Last 7 Days</option>
@@ -255,37 +255,37 @@ export default function AdminDashboard() {
 
         {/* Order Status Breakdown */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8 dark-transition">
-          <h2 className="text-2xl font-bold text-deep-brown dark:text-deep-brown mb-6">Order Status</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Order Status</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="text-center">
               <div className="bg-yellow-100 text-yellow-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.pending}</p>
               </div>
-              <p className="text-sm text-tea-brown font-medium">Pending</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Pending</p>
             </div>
             <div className="text-center">
               <div className="bg-blue-100 text-blue-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.processing}</p>
               </div>
-              <p className="text-sm text-tea-brown font-medium">Processing</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Processing</p>
             </div>
             <div className="text-center">
               <div className="bg-purple-100 text-purple-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.shipped}</p>
               </div>
-              <p className="text-sm text-tea-brown font-medium">Shipped</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Shipped</p>
             </div>
             <div className="text-center">
               <div className="bg-green-100 text-green-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.delivered}</p>
               </div>
-              <p className="text-sm text-tea-brown font-medium">Delivered</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Delivered</p>
             </div>
             <div className="text-center">
               <div className="bg-red-100 text-red-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.cancelled}</p>
               </div>
-              <p className="text-sm text-tea-brown font-medium">Cancelled</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Cancelled</p>
             </div>
           </div>
         </div>

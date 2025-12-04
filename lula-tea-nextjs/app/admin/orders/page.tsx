@@ -59,6 +59,34 @@ export default function OrdersManagement() {
     }
   };
 
+  const deleteOrder = async (orderId: string, orderIdDisplay: string) => {
+    if (!confirm(`Are you sure you want to delete order ${orderIdDisplay}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("orders")
+        .delete()
+        .eq("id", orderId);
+
+      if (error) throw error;
+
+      // Update local state
+      setOrders(orders.filter(order => order.id !== orderId));
+      
+      // Remove from selected orders if it was selected
+      const newSelectedOrders = new Set(selectedOrders);
+      newSelectedOrders.delete(orderId);
+      setSelectedOrders(newSelectedOrders);
+
+      alert("Order deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting order:", err);
+      alert("Failed to delete order");
+    }
+  };
+
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -133,6 +161,37 @@ export default function OrdersManagement() {
     } catch (err) {
       console.error("Error updating bulk status:", err);
       alert("Failed to update orders");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedOrders.size === 0) {
+      alert("Please select orders to delete");
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete ${selectedOrders.size} orders? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const orderIds = Array.from(selectedOrders);
+      
+      const { error } = await supabase
+        .from("orders")
+        .delete()
+        .in("id", orderIds);
+
+      if (error) throw error;
+
+      // Update local state
+      setOrders(orders.filter(order => !selectedOrders.has(order.id)));
+      setSelectedOrders(new Set());
+      setShowBulkActions(false);
+      alert(`Successfully deleted ${orderIds.length} orders!`);
+    } catch (err) {
+      console.error("Error deleting orders:", err);
+      alert("Failed to delete orders");
     }
   };
 
@@ -350,7 +409,14 @@ export default function OrdersManagement() {
                   disabled={!bulkStatus}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
                 >
-                  Update
+                  Update Status
+                </button>
+                <button
+                  onClick={handleBulkDelete}
+                  className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                  title="Delete selected orders"
+                >
+                  Delete Selected
                 </button>
                 <button
                   onClick={() => setSelectedOrders(new Set())}
@@ -452,6 +518,13 @@ export default function OrdersManagement() {
                             <option value="delivered">Delivered</option>
                             <option value="cancelled">Cancelled</option>
                           </select>
+                          <button
+                            onClick={() => deleteOrder(order.id, order.order_id)}
+                            className="text-red-600 hover:text-red-700 font-medium text-sm"
+                            title="Delete order"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>

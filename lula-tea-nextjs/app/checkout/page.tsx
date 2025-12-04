@@ -351,10 +351,10 @@ export default function CheckoutPage() {
       <ThemeToggle />
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-deep-brown mb-4">
-            {t("checkoutTitle")}
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            {t("checkout")}
           </h1>
-          <p className="text-xl text-tea-brown">{t("checkoutDescription")}</p>
+          <p className="text-xl text-gray-700 dark:text-gray-300">{t("checkoutDescription")}</p>
         </div>
 
         {/* Free Delivery Teaser - Before location shared */}
@@ -443,39 +443,39 @@ export default function CheckoutPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Order Summary */}
-          <div className="bg-white rounded-3xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold text-deep-brown mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               {language === "ar" ? "ملخص الطلب" : "Order Summary"}
             </h2>
             {items.map((item) => (
               <div key={item.id} className="mb-4 pb-4 border-b border-tea-brown/10">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">
-                    <p className="font-semibold text-deep-brown">
+                    <p className="font-semibold text-gray-900 dark:text-white">
                       {language === "ar" ? item.nameAr : item.name}
                     </p>
-                    <p className="text-sm text-tea-brown">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {language === "ar" ? `${item.price} ريال للكيس` : `${item.price} SAR per pack`}
                     </p>
                   </div>
-                  <span className="font-semibold text-deep-brown">
+                  <span className="font-semibold text-gray-900 dark:text-white">
                     {language === "ar" ? `${item.price * item.quantity} ريال` : `${item.price * item.quantity} SAR`}
                   </span>
                 </div>
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-tea-brown">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
                     {language === "ar" ? "الكمية:" : "Quantity:"}
                   </span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="w-8 h-8 flex items-center justify-center bg-tea-brown/10 hover:bg-tea-brown/20 rounded-lg transition-colors text-deep-brown font-bold"
+                      className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-900 dark:text-white font-bold"
                       aria-label="Decrease quantity"
                     >
                       −
                     </button>
-                    <span className="w-12 text-center font-semibold text-deep-brown">
+                    <span className="w-12 text-center font-semibold text-gray-900 dark:text-white">
                       {item.quantity}
                     </span>
                     <button
@@ -496,7 +496,7 @@ export default function CheckoutPage() {
               </div>
             ))}
             <div className="flex justify-between items-center pt-4 border-t-2 border-tea-green">
-              <span className="text-xl font-bold text-deep-brown">{t("subtotal")}</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">{t("subtotal")}</span>
               <span className="text-2xl font-bold text-tea-green">
                 {language === "ar" ? `${subtotal} ريال` : `${subtotal} SAR`}
               </span>
@@ -504,10 +504,10 @@ export default function CheckoutPage() {
           </div>
 
           {/* Checkout Form */}
-          <div id="checkout-form" className="bg-white rounded-3xl shadow-xl p-8">
+          <div id="checkout-form" className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8">
             {/* Payment Method Selection */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-deep-brown mb-3">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                 {t("paymentMethod")}
               </h3>
               <div className="space-y-3">
@@ -818,7 +818,7 @@ export default function CheckoutPage() {
             ) : (
               // COD Checkout Form
               <form onSubmit={handleSubmitOrder}>
-                <h3 className="text-lg font-semibold text-deep-brown mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   {t("customerInformation")}
                 </h3>
                 
@@ -830,7 +830,7 @@ export default function CheckoutPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                       {t("fullName")} *
                     </label>
                     <input
@@ -838,12 +838,12 @@ export default function CheckoutPage() {
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                       {language === "ar" ? "البريد الإلكتروني (اختياري)" : "Email (Optional)"}
                     </label>
                     <input
@@ -851,15 +851,15 @@ export default function CheckoutPage() {
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
                       placeholder={language === "ar" ? "your@email.com" : "your@email.com"}
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                     />
-                    <p className="text-xs text-tea-brown mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       {language === "ar" ? "لتلقي تأكيد الطلب عبر البريد الإلكتروني" : "To receive order confirmation via email"}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                       {t("phoneNumber")} *
                     </label>
                     <input
@@ -867,12 +867,12 @@ export default function CheckoutPage() {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                       {t("deliveryAddress")} *
                     </label>
                     <div className="flex gap-2">
@@ -881,7 +881,7 @@ export default function CheckoutPage() {
                         onChange={(e) => setDeliveryAddress(e.target.value)}
                         required
                         rows={3}
-                        className="flex-1 px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
+                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                         placeholder={language === "ar" ? "أدخل عنوانك أو استخدم موقعك" : "Enter your address or use your location"}
                       />
                     </div>

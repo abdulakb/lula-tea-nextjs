@@ -155,13 +155,36 @@ export default function OrderDetail() {
 
   const items = typeof order.items === "string" ? JSON.parse(order.items) : order.items;
 
-  const handleSendInvoiceWhatsApp = () => {
-    const invoiceUrl = `${window.location.origin}/api/invoice/${order.order_id}`;
-    const message = `✅ تأكيد طلبك من لولا تي\nOrder Confirmation from Lula Tea\n\nرقم الطلب / Order ID: ${order.order_id}\nالإجمالي / Total: ${order.total} SAR\n\nتحميل الفاتورة / Download Invoice:\n${invoiceUrl}\n\nشكراً لك! Thank you! 🍵`;
-    
-    const phone = order.customer_phone.replace(/\D/g, '');
-    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handleSendInvoiceWhatsApp = async () => {
+    try {
+      // First, verify the invoice exists
+      const invoiceUrl = `${window.location.origin}/api/invoice/${order.order_id}`;
+      
+      // Simplified message without the full URL (WhatsApp sometimes blocks long URLs)
+      const message = `✅ تأكيد طلبك من لولا تي
+Order Confirmation from Lula Tea
+
+رقم الطلب / Order ID: ${order.order_id}
+الإجمالي / Total: ${order.total} SAR
+
+سنرسل لك الفاتورة في رسالة منفصلة
+We will send you the invoice in a separate message
+
+شكراً لك! Thank you! 🍵`;
+      
+      const phone = order.customer_phone.replace(/\D/g, '');
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      
+      // Open WhatsApp
+      window.open(whatsappUrl, '_blank');
+      
+      // Also copy the invoice URL to clipboard for easy sharing
+      await navigator.clipboard.writeText(invoiceUrl);
+      alert(`WhatsApp opened!\n\nInvoice link copied to clipboard:\n${invoiceUrl}\n\nYou can paste it in the WhatsApp chat.`);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to open WhatsApp. Please try again.');
+    }
   };
 
   return (

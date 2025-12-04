@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { isAdminAuthenticated, setAdminAuthenticated, verifyAdminPassword } from "@/lib/adminAuth";
-import ThemeToggle from "@/app/components/ThemeToggle";
+
+const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
+  ssr: false,
+});
 
 interface Analytics {
   summary: {

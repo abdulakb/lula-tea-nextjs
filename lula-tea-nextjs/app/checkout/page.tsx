@@ -621,8 +621,7 @@ export default function CheckoutPage() {
                             <div className="flex gap-4 items-start">
                               <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">١</div>
                               <div className="flex-1">
-                                <p className="font-semibold text-gray-800 dark:text-white mb-2">افتح تطبيق البنك أو STC Pay</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">افتح تطبيق بنكك (مثل: STC Pay، الراجحي، الأهلي، إلخ)</p>
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">افتح تطبيق STC Pay</p>
                               </div>
                             </div>
 
@@ -677,8 +676,7 @@ export default function CheckoutPage() {
                             <div className="flex gap-4 items-start">
                               <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
                               <div className="flex-1">
-                                <p className="font-semibold text-gray-800 dark:text-white mb-2">Open your bank or STC Pay app</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">Open your banking app (e.g., STC Pay, Al Rajhi, Al Ahli, etc.)</p>
+                                <p className="font-semibold text-gray-800 dark:text-white mb-2">Open STC Pay app</p>
                               </div>
                             </div>
 

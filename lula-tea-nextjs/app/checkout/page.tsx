@@ -566,7 +566,7 @@ export default function CheckoutPage() {
 
             {paymentMethod === "stcpay" ? (
               // STC Pay QR Code Checkout
-              <div>
+              <form onSubmit={handleSubmitOrder}>
                 <div className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-gray-800 rounded-2xl p-6 mb-6 border-2 border-purple-200 dark:border-purple-800">
                   <div className="text-center mb-6">
                     <h3 className="text-xl font-bold text-purple-700 dark:text-purple-300 mb-2">
@@ -735,65 +735,146 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Customer Information Form for STC Pay */}
-                <form onSubmit={handleSubmitOrder}>
-                  <h3 className="text-lg font-semibold text-deep-brown dark:text-white mb-4">
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     {t("customerInformation")}
                   </h3>
                   
+                  {error && (
+                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                      {error}
+                    </div>
+                  )}
+                  
                   <div className="space-y-4 mb-6">
-                    <input
-                      type="text"
-                      placeholder={t("fullName")}
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                    <input
-                      type="tel"
-                      placeholder={t("phoneNumber")}
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      dir={language === "ar" ? "rtl" : "ltr"}
-                    />
-                    <textarea
-                      placeholder={t("deliveryAddress")}
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      required
-                      rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      dir={language === "ar" ? "rtl" : "ltr"}
-                    />
-                    <textarea
-                      placeholder={t("deliveryNotesPlaceholder")}
-                      value={deliveryNotes}
-                      onChange={(e) => setDeliveryNotes(e.target.value)}
-                      rows={2}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      dir={language === "ar" ? "rtl" : "ltr"}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        {t("fullName")} *
+                      </label>
+                      <input
+                        type="text"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        {t("phoneNumber")} *
+                      </label>
+                      <input
+                        type="tel"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        dir={language === "ar" ? "rtl" : "ltr"}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        {t("deliveryAddress")} *
+                      </label>
+                      <textarea
+                        value={deliveryAddress}
+                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                        required
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        dir={language === "ar" ? "rtl" : "ltr"}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleGetLocation}
+                        disabled={loadingLocation}
+                        className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:bg-gray-400"
+                      >
+                        {loadingLocation ? (
+                          <>
+                            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                            </svg>
+                            <span>{language === "ar" ? "جاري تحديد الموقع..." : "Getting location..."}</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>{language === "ar" ? "📍 استخدم موقعي الحالي" : "📍 Use My Current Location"}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        {t("deliveryTime")} *
+                      </label>
+                      <select
+                        value={deliveryTime}
+                        onChange={(e) => setDeliveryTime(e.target.value)}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      >
+                        <option value="">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                        <option value={t("deliveryTimeMorning")}>{t("deliveryTimeMorning")}</option>
+                        <option value={t("deliveryTimeAfternoon")}>{t("deliveryTimeAfternoon")}</option>
+                        <option value={t("deliveryTimeEvening")}>{t("deliveryTimeEvening")}</option>
+                        <option value={t("deliveryTimeAnytime")}>{t("deliveryTimeAnytime")}</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        {t("deliveryNotes")}
+                      </label>
+                      <textarea
+                        value={deliveryNotes}
+                        onChange={(e) => setDeliveryNotes(e.target.value)}
+                        rows={2}
+                        placeholder={t("deliveryNotesPlaceholder")}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        dir={language === "ar" ? "rtl" : "ltr"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-700 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-yellow-800 dark:text-yellow-200 font-semibold mb-2">
+                      {language === "ar" 
+                        ? "📲 هل استلمت رسالة تأكيد الدفع من البنك؟"
+                        : "📲 Did you receive payment confirmation SMS from your bank?"}
+                    </p>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                      {language === "ar" 
+                        ? "بعد مسح رمز QR والدفع، ستصلك رسالة نصية من البنك تؤكد التحويل. تأكد من استلامها قبل تأكيد الطلب."
+                        : "After scanning the QR code and paying, you'll receive an SMS from your bank confirming the transfer. Make sure you received it before confirming the order."}
+                    </p>
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-6 py-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
                   >
                     {isSubmitting
-                      ? (language === "ar" ? "جاري المعالجة..." : "Processing...")
-                      : (language === "ar" ? "تأكيد الطلب (بعد الدفع)" : "Confirm Order (After Payment)")}
+                      ? (language === "ar" ? "⏳ جاري المعالجة..." : "⏳ Processing...")
+                      : (language === "ar" ? "✅ تأكيد الطلب (بعد الدفع)" : "✅ Confirm Order (After Payment)")}
                   </button>
 
-                  <p className="text-xs text-center mt-3 text-gray-500 dark:text-gray-400">
-                    {language === "ar" 
-                      ? "⚠️ تأكد من إتمام الدفع قبل تأكيد الطلب"
-                      : "⚠️ Make sure to complete payment before confirming order"}
+                  <p className="text-sm text-center mt-3 text-yellow-600 dark:text-yellow-400 font-semibold">
+                    ⚠️ {language === "ar" 
+                      ? "تأكد من إتمام الدفع قبل تأكيد الطلب"
+                      : "Make sure to complete payment before confirming order"}
                   </p>
-                </form>
-              </div>
+                </div>
+              </form>
             ) : paymentMethod === "whatsapp" ? (
               // WhatsApp Checkout
               <div>

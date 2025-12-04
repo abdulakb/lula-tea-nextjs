@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       deliveryFee,
       total,
       paymentMethod,
+      transactionReference,
       language,
       qualifiesForFreeDelivery,
     } = body;
@@ -166,6 +167,7 @@ export async function POST(request: NextRequest) {
           gps_coordinates: gpsCoordinates || null,
           delivery_time_preference: deliveryTime || null,
           delivery_notes: deliveryNotes || null,
+          transaction_reference: transactionReference || null,
           quantity_ordered: quantityOrdered,
           items: JSON.stringify(items),
           subtotal,

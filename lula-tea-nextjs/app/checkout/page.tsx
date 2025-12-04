@@ -54,6 +54,7 @@ export default function CheckoutPage() {
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
   const [gpsCoordinates, setGpsCoordinates] = useState("");
+  const [transactionReference, setTransactionReference] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -282,6 +283,12 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Validate transaction reference for STC Pay
+    if (paymentMethod === "stcpay" && !transactionReference.trim()) {
+      setError(language === "ar" ? "يرجى إدخال رقم المعاملة من رسالة البنك" : "Please enter transaction reference from bank SMS");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -298,7 +305,9 @@ export default function CheckoutPage() {
         customerEmail,
         customerPhone,
         customerAddress: deliveryAddress,
-        deliveryNotes,
+        deliveryNotes: paymentMethod === "stcpay" 
+          ? `${deliveryNotes}\n\n💳 Transaction Ref: ${transactionReference}`
+          : deliveryNotes,
         deliveryTime,
         gpsCoordinates,
         items: orderItems,
@@ -306,6 +315,7 @@ export default function CheckoutPage() {
         deliveryFee: 0,
         total: subtotal,
         paymentMethod,
+        transactionReference: paymentMethod === "stcpay" ? transactionReference : undefined,
         language,
         qualifiesForFreeDelivery: deliveryEligibility?.qualifies || false,
       };
@@ -856,6 +866,34 @@ export default function CheckoutPage() {
                         ? "بعد مسح رمز QR والدفع، ستصلك رسالة نصية من البنك تؤكد التحويل. تأكد من استلامها قبل تأكيد الطلب."
                         : "After scanning the QR code and paying, you'll receive an SMS from your bank confirming the transfer. Make sure you received it before confirming the order."}
                     </p>
+                  </div>
+
+                  {/* Transaction Reference Input */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      {language === "ar" 
+                        ? "رقم المعاملة / رمز التحويل *"
+                        : "Transaction Reference / Transfer Code *"}
+                    </label>
+                    <input
+                      type="text"
+                      value={transactionReference}
+                      onChange={(e) => setTransactionReference(e.target.value)}
+                      required
+                      placeholder={language === "ar" 
+                        ? "أدخل رقم المعاملة من رسالة البنك"
+                        : "Enter transaction reference from bank SMS"}
+                      className="w-full px-4 py-3 border-2 border-purple-300 dark:border-purple-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-lg"
+                      dir="ltr"
+                    />
+                    <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <p className="text-xs text-blue-800 dark:text-blue-200">
+                        <strong>💡 {language === "ar" ? "مثال" : "Example"}:</strong><br/>
+                        {language === "ar" 
+                          ? "في رسالة البنك، ابحث عن:\n• رقم المعاملة\n• رمز التحويل\n• Transaction ID\n• Reference Number"
+                          : "In your bank SMS, look for:\n• Transaction ID\n• Transfer Code\n• Reference Number\n• Any unique code/number"}
+                      </p>
+                    </div>
                   </div>
 
                   <button

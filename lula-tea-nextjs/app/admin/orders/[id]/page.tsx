@@ -17,6 +17,7 @@ interface Order {
   subtotal: number;
   delivery_fee: number;
   payment_method: string;
+  transaction_reference?: string;
   status: string;
   created_at: string;
   updated_at: string;
@@ -350,10 +351,49 @@ We will send you the invoice in a separate message
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Payment Information
           </h2>
-          <p className="text-lg text-gray-900 dark:text-white">
-            <span className="font-semibold">Payment Method:</span>{" "}
-            {order.payment_method === "cod" ? "Cash on Delivery" : "WhatsApp Order"}
-          </p>
+          <div className="space-y-3">
+            <p className="text-lg text-gray-900 dark:text-white">
+              <span className="font-semibold">Payment Method:</span>{" "}
+              <span className={order.payment_method === "stcpay" ? "text-purple-600 font-semibold" : ""}>
+                {order.payment_method === "cod" 
+                  ? "Cash on Delivery" 
+                  : order.payment_method === "stcpay"
+                  ? "STC Pay (QR Code)"
+                  : "WhatsApp Order"}
+              </span>
+            </p>
+            
+            {order.transaction_reference && (
+              <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-300 dark:border-purple-700 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-1">
+                      💳 Transaction Reference
+                    </p>
+                    <p className="text-2xl font-bold font-mono text-purple-700 dark:text-purple-300 tracking-wider break-all">
+                      {order.transaction_reference}
+                    </p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 mt-2">
+                      ✓ Verify this reference in your STC Pay transaction history
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(order.transaction_reference!);
+                      alert("Transaction reference copied to clipboard!");
+                    }}
+                    className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors flex-shrink-0"
+                    title="Copy transaction reference"
+                  >
+                    📋 Copy
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Order Notes / Comments */}

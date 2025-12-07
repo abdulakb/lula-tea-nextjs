@@ -42,8 +42,10 @@ Enjoy! 🍵✨
 2. **Website Cart**: Add to cart → Checkout → Complete via WhatsApp
 
 **Special Orders for Events & Ramadan:**
-- We welcome special orders for events, weddings, and Ramadan gifts! 🎁
-- Contact us via WhatsApp for bulk orders and custom arrangements
+- Ramadan is coming soon Insha'Allah! 🌙 We offer special bulk orders for Ramadan
+- Perfect for Ramadan gifts, family gatherings, and sharing with loved ones
+- We welcome special orders for weddings and other events! 🎁
+- Contact us via WhatsApp for bulk orders, custom arrangements, and special pricing
 - Let us help make your occasion special with premium tea gifts
 
 **Professional Event Services (خدمة الصبابين):**

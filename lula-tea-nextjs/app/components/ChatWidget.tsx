@@ -181,35 +181,35 @@ export default function ChatWidget() {
                     {language === "ar" ? "أسئلة مقترحة:" : "Suggested questions:"}
                   </p>
                   <button
-                    onClick={() => setInput(language === "ar" ? "ما هو منتجكم؟" : "What is your product?")}
+                    onClick={() => setInput(language === "ar" ? "ما الفرق بين شايكم وشاي السوبرماركت؟" : "What's the difference between your tea and supermarket tea?")}
                     className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
                     <span className="font-medium text-deep-brown">
-                      {language === "ar" ? "🍵 ما هو منتجكم؟" : "🍵 What is your product?"}
+                      {language === "ar" ? "🌟 ما الفرق بين شايكم وشاي السوبرماركت؟" : "🌟 What's the difference between your tea and supermarket tea?"}
                     </span>
                   </button>
                   <button
-                    onClick={() => setInput(language === "ar" ? "كم السعر؟" : "What's the price?")}
+                    onClick={() => setInput(language === "ar" ? "كم السعر وكيف أطلب؟" : "What's the price and how to order?")}
                     className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
                     <span className="font-medium text-deep-brown">
-                      {language === "ar" ? "💰 كم السعر؟" : "💰 What's the price?"}
+                      {language === "ar" ? "💰 كم السعر وكيف أطلب؟" : "💰 What's the price and how to order?"}
                     </span>
                   </button>
                   <button
-                    onClick={() => setInput(language === "ar" ? "طريقة التحضير" : "How to prepare the tea?")}
+                    onClick={() => setInput(language === "ar" ? "ما هي فوائد الشاي الأخضر الصحية؟" : "What are the health benefits of green tea?")}
                     className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
                     <span className="font-medium text-deep-brown">
-                      {language === "ar" ? "☕ طريقة التحضير" : "☕ How to prepare the tea?"}
+                      {language === "ar" ? "💚 ما هي فوائد الشاي الأخضر الصحية؟" : "💚 What are the health benefits of green tea?"}
                     </span>
                   </button>
                   <button
-                    onClick={() => setInput(language === "ar" ? "كيف أطلب؟" : "How to order?")}
+                    onClick={() => setInput(language === "ar" ? "كيف أحضر كوب شاي مثالي؟" : "How do I brew the perfect cup?")}
                     className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
                     <span className="font-medium text-deep-brown">
-                      {language === "ar" ? "📱 كيف أطلب؟" : "📱 How to order?"}
+                      {language === "ar" ? "☕ كيف أحضر كوب شاي مثالي؟" : "☕ How do I brew the perfect cup?"}
                     </span>
                   </button>
                 </div>

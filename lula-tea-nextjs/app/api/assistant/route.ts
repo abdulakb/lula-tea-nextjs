@@ -41,6 +41,11 @@ Enjoy! 🍵✨
 1. **WhatsApp Direct**: +966 53 966 6654 (Fastest)
 2. **Website Cart**: Add to cart → Checkout → Complete via WhatsApp
 
+**Special Orders for Events & Ramadan:**
+- We welcome special orders for events, weddings, and Ramadan gifts! 🎁
+- Contact us via WhatsApp for bulk orders and custom arrangements
+- Let us help make your occasion special with premium tea gifts
+
 ## Shipping & Delivery
 - Shipping: Saudi Arabia only
 - Delivery Time: 2-3 days

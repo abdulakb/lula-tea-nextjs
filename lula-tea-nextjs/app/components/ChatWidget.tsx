@@ -205,11 +205,11 @@ export default function ChatWidget() {
                     </span>
                   </button>
                   <button
-                    onClick={() => setInput(language === "ar" ? "هل يمكنني الشراء بالجملة؟" : "Can I order in bulk?")}
+                    onClick={() => setInput(language === "ar" ? "هل تقدمون طلبات خاصة للمناسبات ورمضان؟" : "Do you offer special orders for events and Ramadan?")}
                     className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
                     <span className="font-medium text-deep-brown">
-                      {language === "ar" ? "📦 هل يمكنني الشراء بالجملة؟" : "📦 Can I order in bulk?"}
+                      {language === "ar" ? "🎁 هل تقدمون طلبات خاصة للمناسبات ورمضان؟" : "🎁 Do you offer special orders for events and Ramadan?"}
                     </span>
                   </button>
                 </div>

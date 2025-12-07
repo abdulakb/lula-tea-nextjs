@@ -138,6 +138,3 @@ export async function POST(request: Request) {
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-    );
-  }
-}

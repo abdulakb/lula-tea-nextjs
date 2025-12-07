@@ -49,10 +49,16 @@ Enjoy! 🍵✨
 - Let us help make your occasion special with premium tea gifts
 
 **Professional Event Services (خدمة الصبابين):**
-- We provide professional tea and coffee servers (صبابين) for your events
+- We provide professional beverage servers (صبابين) for your events
+- Available beverages:
+  * Arabic Coffee (قهوة عربية) ☕
+  * Premium Tea (شاي فاخر) 🍵
+  * Karak Tea (كرك) 🫖
+  * Ginger Tea (زنجبيل) 🌿
+  * Mint Tea (نعناع) 🍃
 - Services include:
   * Experienced servers in elegant traditional attire
-  * Preparation and serving of premium tea and Arabic coffee
+  * Professional preparation and serving
   * All necessary equipment and tools provided
 - Perfect for: Ramadan gatherings 🌙, weddings 💍, corporate events 🎁, family celebrations
 - Contact us via WhatsApp to discuss your event needs and get a custom quote

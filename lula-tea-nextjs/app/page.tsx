@@ -222,6 +222,44 @@ export default function Home() {
                   : "Follow these simple steps for the perfect cup of tea"}
               </p>
 
+              {/* Video Tutorial */}
+              <div className="mb-8 bg-warm-cream/30 rounded-2xl p-6 border-2 border-tea-green/20">
+                <div className="flex items-center gap-3 mb-4">
+                  <svg className="w-6 h-6 text-tea-green" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-deep-brown">
+                    {language === "ar" ? "شاهد الفيديو التعليمي" : "Watch Tutorial Video"}
+                  </h3>
+                </div>
+                <div className="aspect-video bg-deep-brown/5 rounded-xl flex items-center justify-center relative overflow-hidden">
+                  {/* Placeholder - Replace with actual video */}
+                  <div className="text-center p-4">
+                    <svg className="w-16 h-16 text-tea-green/40 mx-auto mb-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-tea-brown text-sm">
+                      {language === "ar" 
+                        ? "قريباً: فيديو تعليمي قصير لتحضير الشاي"
+                        : "Coming Soon: Short brewing tutorial video"}
+                    </p>
+                    <p className="text-tea-brown/60 text-xs mt-2">
+                      {language === "ar" 
+                        ? "سيتم إنشاؤه باستخدام Microsoft 365 Copilot"
+                        : "Created with Microsoft 365 Copilot"}
+                    </p>
+                  </div>
+                  {/* When you have the video, replace above div with: */}
+                  {/* <video 
+                    controls 
+                    className="w-full h-full"
+                    poster="/images/video-thumbnail.jpg"
+                  >
+                    <source src="/videos/brewing-tutorial.mp4" type="video/mp4" />
+                  </video> */}
+                </div>
+              </div>
+
               <div className="space-y-6">
                 {/* Step 1 */}
                 <div className="flex gap-4">
@@ -325,9 +363,39 @@ export default function Home() {
                   </h3>
                   <p className="text-tea-brown mb-4">
                     {language === "ar"
-                      ? "نوفر لك صبابين محترفين لتقديم الشاي والقهوة العربية في مناسباتك بأسلوب راقي وتقليدي"
-                      : "We provide professional servers (sabbabeen) to prepare and serve tea and Arabic coffee at your events with elegant, traditional style"}
+                      ? "نوفر لك صبابين محترفين لتقديم المشروبات في مناسباتك بأسلوب راقي وتقليدي"
+                      : "We provide professional servers (sabbabeen) to prepare and serve beverages at your events with elegant, traditional style"}
                   </p>
+                  
+                  {/* Beverage Options */}
+                  <div className="mb-4 p-4 bg-warm-cream/50 rounded-xl">
+                    <h4 className="font-semibold text-deep-brown mb-3">
+                      {language === "ar" ? "المشروبات المتوفرة:" : "Available Beverages:"}
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex items-center gap-2 text-tea-brown">
+                        <span>☕</span>
+                        <span>{language === "ar" ? "قهوة عربية" : "Arabic Coffee"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-tea-brown">
+                        <span>🍵</span>
+                        <span>{language === "ar" ? "شاي فاخر" : "Premium Tea"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-tea-brown">
+                        <span>🫖</span>
+                        <span>{language === "ar" ? "كرك" : "Karak"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-tea-brown">
+                        <span>🌿</span>
+                        <span>{language === "ar" ? "زنجبيل" : "Ginger Tea"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-tea-brown">
+                        <span>🍃</span>
+                        <span>{language === "ar" ? "نعناع" : "Mint Tea"}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2 text-deep-brown">
                       <svg className="w-5 h-5 text-tea-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

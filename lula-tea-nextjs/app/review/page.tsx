@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import dynamic from "next/dynamic";
@@ -9,7 +9,7 @@ const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
   ssr: false,
 });
 
-export default function ReviewPage() {
+function ReviewPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { language, t } = useLanguage();
@@ -216,5 +216,17 @@ export default function ReviewPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ReviewPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-warm-cream dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-tea-green"></div>
+      </div>
+    }>
+      <ReviewPageContent />
+    </Suspense>
   );
 }

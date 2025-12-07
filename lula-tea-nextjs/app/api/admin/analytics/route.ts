@@ -56,9 +56,11 @@ export async function GET(request: Request) {
       new Date(o.created_at) >= thisMonthStart
     ) || [];
 
-    // Calculate revenue
+    // Calculate revenue (exclude cancelled orders)
     const calculateRevenue = (orderList: any[]) => 
-      orderList.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+      orderList
+        .filter(o => o.status !== 'cancelled')
+        .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
 
     const totalRevenue = calculateRevenue(orders || []);
     const todayRevenue = calculateRevenue(todayOrders);

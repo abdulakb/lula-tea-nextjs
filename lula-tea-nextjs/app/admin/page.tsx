@@ -205,7 +205,7 @@ export default function AdminDashboard() {
         {/* Summary Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Today */}
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+          <Link href="/admin/orders" className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-shadow cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">Today</h3>
               <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,10 +214,10 @@ export default function AdminDashboard() {
             </div>
             <p className="text-3xl font-bold mb-1">{analytics.summary.todayOrders}</p>
             <p className="text-sm opacity-90">{formatCurrency(analytics.summary.todayRevenue)}</p>
-          </div>
+          </Link>
 
           {/* This Week */}
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+          <Link href="/admin/orders" className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-shadow cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">This Week</h3>
               <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,10 +226,10 @@ export default function AdminDashboard() {
             </div>
             <p className="text-3xl font-bold mb-1">{analytics.summary.weekOrders}</p>
             <p className="text-sm opacity-90">{formatCurrency(analytics.summary.weekRevenue)}</p>
-          </div>
+          </Link>
 
           {/* This Month */}
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+          <Link href="/admin/orders" className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-shadow cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">This Month</h3>
               <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,10 +238,10 @@ export default function AdminDashboard() {
             </div>
             <p className="text-3xl font-bold mb-1">{analytics.summary.monthOrders}</p>
             <p className="text-sm opacity-90">{formatCurrency(analytics.summary.monthRevenue)}</p>
-          </div>
+          </Link>
 
           {/* Total */}
-          <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
+          <Link href="/admin/orders" className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-shadow cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">All Time</h3>
               <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
             </div>
             <p className="text-3xl font-bold mb-1">{analytics.summary.totalOrders}</p>
             <p className="text-sm opacity-90">{formatCurrency(analytics.summary.totalRevenue)}</p>
-          </div>
+          </Link>
         </div>
 
         {/* Order Status Breakdown */}

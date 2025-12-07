@@ -5,7 +5,12 @@ import { initAppInsights } from '@/lib/appInsights';
 
 export default function AppInsightsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    initAppInsights();
+    const result = initAppInsights();
+    if (result) {
+      console.log('✅ Application Insights initialized successfully');
+    } else {
+      console.warn('⚠️ Application Insights not initialized - check connection string');
+    }
   }, []);
 
   return <>{children}</>;

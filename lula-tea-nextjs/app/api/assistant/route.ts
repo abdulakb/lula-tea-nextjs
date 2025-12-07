@@ -138,36 +138,6 @@ export async function POST(request: Request) {
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-    const lastMessage = messages[messages.length - 1];
-    const language = detectLanguage(lastMessage.content);
-    
-    // Simulate streaming delay for realistic feel
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const response = generateMockResponse(lastMessage.content, language);
-    
-    // Return as plain text stream (compatible with the chat widget)
-    return new Response(response, {
-      status: 200,
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0",
-      },
-    });
-  } catch (error: any) {
-    console.error("AI Assistant Error:", error);
-    
-    return new Response(
-      "I apologize for the technical issue. Please contact us on WhatsApp: +966 53 966 6654 📱",
-      {
-        status: 200,
-        headers: { 
-          "Content-Type": "text/plain",
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        },
-      }
     );
   }
 }

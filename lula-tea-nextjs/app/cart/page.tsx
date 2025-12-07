@@ -4,10 +4,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useState, useEffect } from "react";
 
 export default function CartPage() {
   const { t, language } = useLanguage();
   const { items, removeItem, updateQuantity, subtotal } = useCart();
+  const [availableStock, setAvailableStock] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch current stock
+  useEffect(() => {
+    async function fetchStock() {
+      try {
+        const response = await fetch('/api/products');
+        const data = await response.json();
+        const product = data.find((p: any) => p.sku === 'LULA-TEA-001');
+        setAvailableStock(product?.stock_quantity || 0);
+      } catch (error) {
+        console.error('Error fetching stock:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStock();
+  }, []);
 
   if (items.length === 0) {
     return (
@@ -82,11 +102,20 @@ export default function CartPage() {
                 </span>
                 <button
                   onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  className="w-8 h-8 rounded-full bg-tea-green/20 hover:bg-tea-green/30 text-deep-brown font-bold transition-colors"
+                  disabled={item.quantity >= availableStock}
+                  className="w-8 h-8 rounded-full bg-tea-green/20 hover:bg-tea-green/30 text-deep-brown font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={item.quantity >= availableStock ? `Only ${availableStock} in stock` : ''}
                 >
                   +
                 </button>
               </div>
+
+              {/* Stock Warning */}
+              {item.quantity >= availableStock && (
+                <div className="text-xs text-amber-600 font-medium">
+                  {language === "ar" ? `المخزون: ${availableStock}` : `Stock: ${availableStock}`}
+                </div>
+              )}
 
               <button
                 onClick={() => removeItem(item.id)}

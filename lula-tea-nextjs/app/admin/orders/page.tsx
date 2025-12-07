@@ -301,7 +301,7 @@ export default function OrdersManagement() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Order ID, customer name, or phone..."
-                className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white text-deep-brown placeholder:text-tea-brown/50"
               />
             </div>
             <div>

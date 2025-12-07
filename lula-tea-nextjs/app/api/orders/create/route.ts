@@ -311,11 +311,21 @@ export async function POST(request: NextRequest) {
       const siteUrl = process.env.SITE_URL || 'https://lulatee.com';
       const invoiceUrl = `${siteUrl}/api/invoice/${orderId}`;
       const whatsappMessage = language === "ar"
-        ? `✅ تم تأكيد طلبك من لولا تي!\n\nرقم الطلب: ${orderId}\nالإجمالي: ${total} ريال\n\nتحميل الفاتورة:\n${invoiceUrl}\n\nشكراً لطلبك! 🍵`
-        : `✅ Order Confirmed - Lula Tea!\n\nOrder ID: ${orderId}\nTotal: ${total} SAR\n\nDownload Invoice:\n${invoiceUrl}\n\nThank you for your order! 🍵`;
+        ? `✅ تم تأكيد طلبك من لولا تي!\n\nرقم الطلب: ${orderId}\nالإجمالي: ${total} ريال\n\nتحميل الفاتورة:\n${invoiceUrl}\n\nشكراً لطلبك! 🍵\n\n💚 لولة تي - مصنوع بحب`
+        : `✅ Order Confirmed - Lula Tea!\n\nOrder ID: ${orderId}\nTotal: ${total} SAR\n\nDownload Invoice:\n${invoiceUrl}\n\nThank you for your order! 🍵\n\n💚 Lula Tea - Homemade with Love`;
       
-      const cleanPhone = customerPhone.replace(/\D/g, '');
+      // Clean phone and add Saudi country code
+      let cleanPhone = customerPhone.replace(/\D/g, '');
+      if (!cleanPhone.startsWith('966')) {
+        if (cleanPhone.startsWith('0')) {
+          cleanPhone = '966' + cleanPhone.substring(1);
+        } else {
+          cleanPhone = '966' + cleanPhone;
+        }
+      }
+      
       customerInvoiceWhatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+      console.log("✅ Customer WhatsApp invoice link generated:", customerInvoiceWhatsappUrl);
     } catch (e) {
       console.error("Error creating customer WhatsApp URL:", e);
     }

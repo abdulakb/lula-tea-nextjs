@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
+import { useToast } from "@/context/ToastContext";
 
 interface Product {
   id: string;
@@ -32,6 +33,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
   const { language, t } = useLanguage();
   const { addItem } = useCart();
   const { trackEvent } = useAnalytics();
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchProduct();
@@ -73,14 +75,17 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
 
   const handleAddToCart = () => {
     if (product.isOutOfStock) {
-      alert(language === "ar" ? "نفذت الكمية" : "Out of stock");
+      showToast(language === "ar" ? "نفذت الكمية" : "Out of stock", "error");
       return;
     }
 
     if (quantity > product.stock) {
-      alert(language === "ar" 
-        ? `الكمية المتاحة فقط ${product.stock}` 
-        : `Only ${product.stock} available`);
+      showToast(
+        language === "ar" 
+          ? `الكمية المتاحة فقط ${product.stock}` 
+          : `Only ${product.stock} available`,
+        "warning"
+      );
       return;
     }
 
@@ -104,8 +109,13 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
       total_value: product.price * quantity,
     });
     
-    // Show toast notification (placeholder)
-    alert(language === "ar" ? "تمت الإضافة إلى السلة!" : "Added to cart!");
+    // Show toast notification
+    showToast(
+      language === "ar" 
+        ? `تمت إضافة ${quantity} إلى السلة! 🛒` 
+        : `${quantity} item${quantity > 1 ? 's' : ''} added to cart! 🛒`,
+      "success"
+    );
   };
 
   const handleBuyNow = () => {
@@ -131,18 +141,23 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
           />
           {/* Stock Badge */}
           {product.isOutOfStock && (
-            <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg">
+            <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg animate-pulse">
               {language === "ar" ? "نفذت الكمية" : "Out of Stock"}
             </div>
           )}
           {product.isLowStock && !product.isOutOfStock && (
-            <div className="absolute top-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg">
-              {language === "ar" ? `${product.stock} متبقي فقط!` : `Only ${product.stock} left!`}
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span>{language === "ar" ? `${product.stock} متبقي فقط! ⚡` : `Only ${product.stock} left! ⚡`}</span>
+              </div>
             </div>
           )}
-          {product.stock > 0 && product.stock <= 10 && !product.isLowStock && !product.isOutOfStock && (
-            <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-lg text-sm">
-              {language === "ar" ? `متوفر: ${product.stock}` : `Stock: ${product.stock}`}
+          {product.stock > 10 && product.stock <= 20 && !product.isLowStock && !product.isOutOfStock && (
+            <div className="absolute top-4 right-4 bg-amber-500 text-white px-3 py-1.5 rounded-lg font-semibold shadow-lg text-sm">
+              {language === "ar" ? `${product.stock} متوفر` : `${product.stock} in stock`}
             </div>
           )}
         </div>

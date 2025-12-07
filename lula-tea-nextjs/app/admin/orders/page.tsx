@@ -101,8 +101,9 @@ export default function OrdersManagement() {
         order.id === orderId ? { ...order, status: newStatus } : order
       ));
 
-      // Send email notification (if configured)
       const order = orders.find(o => o.id === orderId);
+      
+      // Send email notification (if configured)
       if (order && order.email && process.env.NEXT_PUBLIC_ENABLE_EMAILS === "true") {
         const { subject, html } = generateOrderStatusEmail(
           order.order_id,
@@ -120,6 +121,39 @@ export default function OrdersManagement() {
             html,
           }),
         });
+      }
+
+      // Send WhatsApp notification
+      if (order && order.customer_phone) {
+        try {
+          const notificationResponse = await fetch("/api/orders/update-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              orderId: order.id,
+              status: newStatus,
+              sendNotification: true,
+            }),
+          });
+
+          if (notificationResponse.ok) {
+            const notificationData = await notificationResponse.json();
+            
+            if (notificationData.whatsappUrl) {
+              // Open WhatsApp in new tab for admin to send
+              const sendNow = confirm(
+                `Status updated! Send WhatsApp notification to ${order.customer_name}?\n\nMessage preview: ${notificationData.preview || 'Status update notification'}`
+              );
+              
+              if (sendNow) {
+                window.open(notificationData.whatsappUrl, '_blank');
+              }
+            }
+          }
+        } catch (whatsappError) {
+          console.error("WhatsApp notification error:", whatsappError);
+          // Don't fail the status update if WhatsApp fails
+        }
       }
 
       alert("Order status updated successfully!");

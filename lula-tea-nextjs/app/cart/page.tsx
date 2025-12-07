@@ -4,11 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import { useToast } from "@/context/ToastContext";
 import { useState, useEffect } from "react";
+import CheckoutProgress from "../components/CheckoutProgress";
 
 export default function CartPage() {
   const { t, language } = useLanguage();
   const { items, removeItem, updateQuantity, subtotal } = useCart();
+  const { showToast } = useToast();
   const [availableStock, setAvailableStock] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
@@ -66,6 +69,7 @@ export default function CartPage() {
   return (
     <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        <CheckoutProgress currentStep={1} />
         <h1 className="text-4xl md:text-5xl font-bold text-deep-brown mb-12 text-center">
           {t("cartTitle")}
         </h1>
@@ -92,7 +96,15 @@ export default function CartPage() {
               {/* Quantity Controls */}
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  onClick={() => {
+                    updateQuantity(item.id, item.quantity - 1);
+                    if (item.quantity > 1) {
+                      showToast(
+                        language === "ar" ? "تم تحديث الكمية" : "Quantity updated",
+                        "info"
+                      );
+                    }
+                  }}
                   className="w-8 h-8 rounded-full bg-tea-green/20 hover:bg-tea-green/30 text-deep-brown font-bold transition-colors"
                 >
                   -
@@ -101,7 +113,22 @@ export default function CartPage() {
                   {item.quantity}
                 </span>
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  onClick={() => {
+                    if (item.quantity >= availableStock) {
+                      showToast(
+                        language === "ar" 
+                          ? `الكمية المتاحة فقط ${availableStock}` 
+                          : `Only ${availableStock} available`,
+                        "warning"
+                      );
+                      return;
+                    }
+                    updateQuantity(item.id, item.quantity + 1);
+                    showToast(
+                      language === "ar" ? "تم تحديث الكمية" : "Quantity updated",
+                      "info"
+                    );
+                  }}
                   disabled={item.quantity >= availableStock}
                   className="w-8 h-8 rounded-full bg-tea-green/20 hover:bg-tea-green/30 text-deep-brown font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title={item.quantity >= availableStock ? `Only ${availableStock} in stock` : ''}
@@ -118,7 +145,13 @@ export default function CartPage() {
               )}
 
               <button
-                onClick={() => removeItem(item.id)}
+                onClick={() => {
+                  removeItem(item.id);
+                  showToast(
+                    language === "ar" ? "تم إزالة المنتج من السلة" : "Item removed from cart",
+                    "info"
+                  );
+                }}
                 className="text-red-600 hover:text-red-700 transition-colors p-2"
                 aria-label={t("remove")}
               >

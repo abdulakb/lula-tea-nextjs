@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { t } from "@/lib/i18n";
 import Link from "next/link";
+import CheckoutProgress from "../components/CheckoutProgress";
 
 function OrderConfirmationContent() {
   const { language } = useLanguage();
@@ -50,6 +51,7 @@ function OrderConfirmationContent() {
   return (
     <div className="min-h-screen bg-warm-cream pt-24 pb-12">
       <div className="max-w-2xl mx-auto px-4">
+        <CheckoutProgress currentStep={3} />
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           {/* Success Icon */}
           <div className="w-20 h-20 bg-tea-green rounded-full flex items-center justify-center mx-auto mb-6">

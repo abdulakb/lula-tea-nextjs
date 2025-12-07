@@ -1,13 +1,17 @@
 -- Set actual inventory for Lula Tea Premium Blend
 -- Starting inventory: 20 bags
--- Promotional distribution: 10 bags
 -- Sold to Rawan: 2 bags
--- Current stock should be: 8 bags
+-- Sold to Abdullah: 3 bags
+-- Promotional distribution: 10 bags (6 given + 4 expected)
+-- Subtotal after initial sales: 5 bags
+-- New stock received: 41 bags
+-- Final available stock: 46 bags
 
 -- Step 1: Find the product ID for "Premium Loose Leaf Blend"
 DO $$
 DECLARE
   v_product_id UUID;
+  v_current_stock INTEGER;
 BEGIN
   -- Get the product ID
   SELECT id INTO v_product_id
@@ -27,36 +31,7 @@ BEGIN
 
   RAISE NOTICE 'Product stock set to 20 bags';
 
-  -- Step 3: Record promotional distribution (10 bags)
-  INSERT INTO stock_movements (
-    product_id,
-    order_id,
-    movement_type,
-    quantity,
-    previous_stock,
-    new_stock,
-    notes,
-    created_by
-  ) VALUES (
-    v_product_id,
-    'PROMO-2024-12',
-    'adjustment',
-    -10,
-    20,
-    10,
-    'Promotional distribution - 10 bags given away for marketing campaign',
-    'admin'
-  );
-
-  RAISE NOTICE 'Recorded promotional distribution: 10 bags';
-
-  -- Step 4: Update stock after promotion
-  UPDATE products
-  SET stock_quantity = 10
-  WHERE id = v_product_id;
-
-  -- Step 5: Record sale to Rawan (2 bags) - if not already recorded
-  -- Check if this order already has a stock movement
+  -- Step 3: Record sale to Rawan (2 bags)
   IF NOT EXISTS (
     SELECT 1 FROM stock_movements 
     WHERE order_id = 'LT1764855293254'
@@ -75,28 +50,98 @@ BEGIN
       'LT1764855293254',
       'sale',
       -2,
-      10,
-      8,
+      20,
+      18,
       'Stock deducted for order LT1764855293254 (Rawan)',
       'system'
     );
 
-    RAISE NOTICE 'Recorded sale to Rawan: 2 bags';
-
-    -- Update final stock
-    UPDATE products
-    SET stock_quantity = 8
-    WHERE id = v_product_id;
-
-    RAISE NOTICE 'Final stock: 8 bags';
+    UPDATE products SET stock_quantity = 18 WHERE id = v_product_id;
+    RAISE NOTICE 'Recorded sale to Rawan: 2 bags (Stock: 18)';
   ELSE
-    RAISE NOTICE 'Sale to Rawan already recorded, skipping';
-    
-    -- Just make sure stock is correct
-    UPDATE products
-    SET stock_quantity = 8
-    WHERE id = v_product_id;
+    UPDATE products SET stock_quantity = 18 WHERE id = v_product_id;
+    RAISE NOTICE 'Sale to Rawan already recorded';
   END IF;
+
+  -- Step 4: Record sale to Abdullah (3 bags)
+  IF NOT EXISTS (
+    SELECT 1 FROM stock_movements 
+    WHERE order_id = 'LT1764769936825'
+  ) THEN
+    INSERT INTO stock_movements (
+      product_id,
+      order_id,
+      movement_type,
+      quantity,
+      previous_stock,
+      new_stock,
+      notes,
+      created_by
+    ) VALUES (
+      v_product_id,
+      'LT1764769936825',
+      'sale',
+      -3,
+      18,
+      15,
+      'Stock deducted for order LT1764769936825 (Abdullah)',
+      'system'
+    );
+
+    UPDATE products SET stock_quantity = 15 WHERE id = v_product_id;
+    RAISE NOTICE 'Recorded sale to Abdullah: 3 bags (Stock: 15)';
+  ELSE
+    UPDATE products SET stock_quantity = 15 WHERE id = v_product_id;
+    RAISE NOTICE 'Sale to Abdullah already recorded';
+  END IF;
+
+  -- Step 5: Record promotional distribution (10 bags: 6 given + 4 expected)
+  INSERT INTO stock_movements (
+    product_id,
+    order_id,
+    movement_type,
+    quantity,
+    previous_stock,
+    new_stock,
+    notes,
+    created_by
+  ) VALUES (
+    v_product_id,
+    'PROMO-2024-12',
+    'adjustment',
+    -10,
+    15,
+    5,
+    'Promotional distribution - 10 bags (6 distributed + 4 reserved for promotion)',
+    'admin'
+  );
+
+  UPDATE products SET stock_quantity = 5 WHERE id = v_product_id;
+  RAISE NOTICE 'Recorded promotional distribution: 10 bags (Stock: 5)';
+
+  -- Step 6: Add new inventory (41 bags)
+  INSERT INTO stock_movements (
+    product_id,
+    order_id,
+    movement_type,
+    quantity,
+    previous_stock,
+    new_stock,
+    notes,
+    created_by
+  ) VALUES (
+    v_product_id,
+    'RESTOCK-' || TO_CHAR(NOW(), 'YYYYMMDD'),
+    'restock',
+    41,
+    5,
+    46,
+    'New inventory received - 41 bags added to stock',
+    'admin'
+  );
+
+  UPDATE products SET stock_quantity = 46 WHERE id = v_product_id;
+  RAISE NOTICE 'Added new inventory: 41 bags (Final Stock: 46)';
 
 END $$;
 

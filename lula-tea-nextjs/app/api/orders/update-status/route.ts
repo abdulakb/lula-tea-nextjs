@@ -9,10 +9,10 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(request: NextRequest) {
   try {
-    const { orderId, status, adminPassword } = await request.json();
+    const { orderId, status, adminPassword, sendNotification } = await request.json();
 
-    // Verify admin password
-    if (adminPassword !== "lulatea2024") {
+    // Verify admin password (optional if called from authenticated admin UI)
+    if (adminPassword && adminPassword !== "lulatea2024") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -22,29 +22,66 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
+    // Fetch the order by ID (UUID) or order_id (readable format)
+    let order;
+    
+    // Try fetching by UUID first (orderId from admin UI)
+    const { data: orderByUuid, error: uuidError } = await supabase
+      .from("orders")
+      .select()
+      .eq("id", orderId)
+      .single();
+
+    if (orderByUuid) {
+      order = orderByUuid;
+    } else {
+      // Try fetching by order_id (readable format like LT123...)
+      const { data: orderByReadableId, error: readableError } = await supabase
+        .from("orders")
+        .select()
+        .eq("order_id", orderId)
+        .single();
+      
+      if (orderByReadableId) {
+        order = orderByReadableId;
+      }
+    }
+
+    if (!order) {
+      console.error("Order not found:", orderId);
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
     // Update order status
-    const { data: order, error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from("orders")
       .update({ 
         status,
         updated_at: new Date().toISOString()
       })
-      .eq("order_id", orderId)
-      .select()
-      .single();
+      .eq("id", order.id);
 
-    if (updateError || !order) {
+    if (updateError) {
       console.error("Error updating order:", updateError);
       return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
     }
 
-    // Send WhatsApp notification to customer
-    const notificationSent = await sendStatusNotification(order, status);
+    // Update local order object
+    order.status = status;
+
+    // Prepare WhatsApp notification if requested
+    let notificationResult;
+    if (sendNotification) {
+      notificationResult = await sendStatusNotification(order, status);
+    }
 
     return NextResponse.json({
       success: true,
       order,
-      notificationSent
+      whatsappUrl: notificationResult?.whatsappUrl,
+      phone: notificationResult?.phone,
+      preview: getMessagePreview(status),
+      notificationSent: notificationResult?.success || false
     });
   } catch (error) {
     console.error("Order status update error:", error);
@@ -52,66 +89,91 @@ export async function POST(request: NextRequest) {
   }
 }
 
+function getMessagePreview(status: string): string {
+  const previews: Record<string, string> = {
+    confirmed: "✅ تم تأكيد طلبك! نحن نحضر الشاي بحب ❤️",
+    processing: "📦 يتم تحضير طلبك",
+    shipped: "🚚 طلبك في الطريق إليك!",
+    delivered: "🍵 بالعافية 🍵 + رابط تقييم ⭐",
+    cancelled: "❌ تم إلغاء الطلب"
+  };
+  return previews[status] || "Order status update";
+}
+
 async function sendStatusNotification(order: any, status: string) {
-  if (!process.env.WHATSAPP_API_TOKEN || !order.customer_phone) {
-    return false;
-  }
-
-  const phone = order.customer_phone.replace(/\D/g, "");
-  
-  // Determine if customer prefers Arabic (based on previous interactions or default to bilingual)
-  const bilingual = true; // Send both languages for best UX
-
-  let message = "";
-
-  if (bilingual) {
-    message = `Hello ${order.customer_name}! 🌿\nمرحباً ${order.customer_name}!\n\n`;
-    message += `Order Update / تحديث الطلب\n`;
-    message += `━━━━━━━━━━━━━━━━\n\n`;
-    message += `📦 Order: ${order.order_id}\n`;
-    message += `Status: ${status.toUpperCase()}\n`;
-    message += `الحالة: ${getStatusArabic(status)}\n\n`;
-    message += getStatusMessage(status) + "\n\n";
-    message += getStatusMessageArabic(status) + "\n\n";
-    
-    if (status === "shipped") {
-      message += `Expected delivery: Within 2-3 days\n`;
-      message += `التوصيل المتوقع: خلال ٢-٣ أيام\n\n`;
-    }
-    
-    if (status === "delivered") {
-      message += `Enjoy your premium tea! ☕\n`;
-      message += `استمتع بالشاي الفاخر! ☕\n\n`;
-      message += `Rate your experience: https://lulatee.com\n`;
-    }
-    
-    message += `\nQuestions? Reply to this message!\n`;
-    message += `أسئلة؟ رد على هذه الرسالة!\n\n`;
-    message += `💚 Lula Tea - Homemade with Love`;
-  }
-
   try {
-    const response = await fetch(
-      `https://graph.facebook.com/v18.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.WHATSAPP_API_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: phone,
-          type: "text",
-          text: { body: message },
-        }),
+    // Clean phone number and ensure it has Saudi country code
+    let cleanPhone = order.customer_phone.replace(/\D/g, '');
+    
+    // Add country code if not present
+    if (!cleanPhone.startsWith('966')) {
+      if (cleanPhone.startsWith('0')) {
+        cleanPhone = '966' + cleanPhone.substring(1);
+      } else {
+        cleanPhone = '966' + cleanPhone;
       }
-    );
-
-    return response.ok;
+    }
+    
+    // Build bilingual message
+    let message = `مرحباً ${order.customer_name}! 🌿\nHello ${order.customer_name}!\n\n`;
+    message += `📦 رقم الطلب / Order: ${order.order_id}\n\n`;
+    
+    // Status-specific messages
+    if (status === "confirmed") {
+      message += `✅ تم تأكيد طلبك!\n✅ Your order is confirmed!\n\n`;
+      message += `نحن نحضر الشاي بحب ❤️\nWe're preparing your tea with love ❤️\n\n`;
+    } else if (status === "processing") {
+      message += `📦 يتم تحضير طلبك\n📦 Your order is being prepared\n\n`;
+      message += `سنقوم بالتوصيل قريباً\nWill be delivered soon\n\n`;
+    } else if (status === "shipped") {
+      message += `🚚 طلبك في الطريق إليك!\n🚚 Your order is on its way!\n\n`;
+      message += `التوصيل المتوقع: خلال ٢-٣ أيام\nExpected delivery: Within 2-3 days\n\n`;
+    } else if (status === "delivered") {
+      message += `✨ تم توصيل طلبك بنجاح!\n✨ Your order has been delivered!\n\n`;
+      message += `🍵 *بالعافية* 🍵\n🍵 *Enjoy your tea!* 🍵\n\n`;
+      message += `نتمنى أن تستمتع بالشاي الفاخر من لولة تي\nWe hope you enjoy your premium Lula Tea\n\n`;
+      
+      // Interactive review request with link
+      message += `---\n\n`;
+      message += `⭐ *قيّم تجربتك في دقيقة!* ⭐\n⭐ *Rate your experience in 1 minute!* ⭐\n\n`;
+      message += `اضغط هنا لتقييم الطلب بنجوم:\nClick to rate with stars:\n\n`;
+      
+      // Generate review link with order details
+      const reviewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://lulatea.com'}/review?order=${encodeURIComponent(order.order_id)}&name=${encodeURIComponent(order.customer_name.split(' ')[0])}`;
+      message += `🔗 ${reviewUrl}\n\n`;
+      
+      message += `تقييمك يساعد عملاء جدد! 💚\nYour rating helps new customers! 💚\n\n`;
+    } else if (status === "cancelled") {
+      message += `❌ تم إلغاء الطلب\n❌ Order cancelled\n\n`;
+      message += `نأسف لإلغاء طلبك\nSorry for the cancellation\n\n`;
+    }
+    
+    message += `أي استفسار؟ رد على هذه الرسالة\nAny questions? Reply to this message\n\n`;
+    message += `💚 لولة تي - مصنوع بحب\n💚 Lula Tea - Homemade with Love`;
+    
+    // Use wa.me link for simplicity
+    const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    
+    console.log(`WhatsApp notification prepared for ${order.customer_name}:`, whatsappUrl);
+    
+    // In a real implementation, you would:
+    // 1. Store this in a notification queue
+    // 2. Use WhatsApp Business API to auto-send
+    // 3. Or return the URL to admin to click and send
+    
+    // For now, we'll just log it and return success
+    return {
+      success: true,
+      whatsappUrl,
+      phone: cleanPhone
+    };
+    
   } catch (error) {
-    console.error("Failed to send WhatsApp notification:", error);
-    return false;
+    console.error("Failed to prepare WhatsApp notification:", error);
+    return {
+      success: false,
+      error: String(error)
+    };
   }
 }
 

@@ -1,103 +1,143 @@
-export const runtime = "edge";
+// Azure OpenAI Configuration
+const AZURE_OPENAI_ENDPOINT = process.env.AZURE_OPENAI_ENDPOINT || "https://gpt100.services.ai.azure.com";
+const AZURE_OPENAI_API_KEY = process.env.AZURE_OPENAI_API_KEY || "";
+const AZURE_OPENAI_DEPLOYMENT = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4o";
 
-// Mock AI responses for Lula Tea
-const lulaTeaKnowledge = {
-  product: {
-    name: "Premium Loose Leaf Blend",
-    nameAr: "مزيج أوراق الشاي المميز",
-    price: "60 SAR",
-    weight: "200g",
-    description: "Handcrafted premium loose leaf tea blend made with carefully selected ingredients",
-    descriptionAr: "مزيج أوراق شاي فاخر محضّر يدوياً بمكونات مُختارة بعناية",
-  },
-  contact: {
-    phone: "+966 53 966 6654",
-    whatsapp: "+966 53 966 6654",
-    whatsappUrl: "https://wa.me/966539666654",
-    orderMethods: ["Website cart", "WhatsApp direct"],
-  },
-};
+// Lula Tea Business Knowledge
+const SYSTEM_PROMPT = `You are a helpful and friendly AI assistant for Lula Tea (لولة تي), a premium homemade tea brand from Saudi Arabia.
 
-function detectLanguage(text: string): "en" | "ar" {
-  const arabicPattern = /[\u0600-\u06FF]/;
-  return arabicPattern.test(text) ? "ar" : "en";
-}
+## Your Role
+- Assist customers with product information, ordering, and general inquiries
+- Respond naturally in the language the customer uses (Arabic or English)
+- Be warm, friendly, and professional
+- Use appropriate emojis to make conversations engaging 🍵 ☕ 💚
 
-function generateMockResponse(userMessage: string, language: "en" | "ar"): string {
-  const lowerMessage = userMessage.toLowerCase();
-  
-  // Greetings
-  if (lowerMessage.match(/^(hi|hello|hey|مرحبا|السلام|أهلا)/i)) {
-    return language === "ar"
-      ? "مرحباً! أنا مساعد لولا تي 🍵\n\nكيف يمكنني مساعدتك اليوم؟ يمكنني مساعدتك في:\n- معلومات عن منتجاتنا\n- الأسعار والطلب\n- نصائح تحضير الشاي\n- طرق التواصل معنا\n\n📱 للتواصل المباشر: " + lulaTeaKnowledge.contact.phone
-      : "Hello! I'm the Lula Tea assistant 🍵\n\nHow can I help you today? I can assist with:\n- Product information\n- Pricing and ordering\n- Tea brewing tips\n- Contact information\n\n📱 Contact us directly: " + lulaTeaKnowledge.contact.phone;
-  }
-  
-  // Brewing tips (check early to avoid conflicts with other patterns)
-  if (lowerMessage.match(/(brew|preparation|make tea|making tea|how.*prepare|prepare.*tea|كيف احضر|طريقة التحضير|تحضير الشاي|اعداد الشاي|تحضير)/i)) {
-    return language === "ar"
-      ? `خطوات التحضير: ☕️\n\n١. اخلط خلطة الشاي جيداً قبل كل استخدام\n\n٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء\n\n٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته\n\nوبالعافية.. 🍵✨\n\n💡 نصيحة: يمكنك التحكم في قوة النكهة حسب رغبتك\n\nهل تريد معرفة المزيد؟`
-      : `Brewing Steps: ☕️\n\n1. Mix the tea blend well before each use\n\n2. Take the appropriate amount of tea blend, then rinse it lightly with water\n\n3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor\n\nEnjoy! 🍵✨\n\n💡 Tip: You can control the strength of the flavor to your preference\n\nWould you like to know more?`;
-  }
-  
-  // Contact / Phone / WhatsApp questions
-  if (lowerMessage.match(/(contact|phone|call|whatsapp|reach|تواصل|اتصال|رقم|واتساب)/i)) {
-    return language === "ar"
-      ? `يمكنك التواصل معنا بسهولة! 📱\n\n📞 رقم الهاتف/واتساب:\n${lulaTeaKnowledge.contact.phone}\n\n💬 طرق التواصل:\n1️⃣ واتساب مباشر (الأسرع)\n2️⃣ اتصال هاتفي\n3️⃣ رسالة نصية\n\nنحن متاحون للرد على استفساراتك!\n\nهل تريد أن أساعدك في شيء آخر؟`
-      : `You can reach us easily! 📱\n\n📞 Phone/WhatsApp:\n${lulaTeaKnowledge.contact.phone}\n\n💬 Contact methods:\n1️⃣ WhatsApp direct (fastest)\n2️⃣ Phone call\n3️⃣ Text message\n\nWe're available to answer your questions!\n\nIs there anything else I can help you with?`;
-  }
-  
-  // Product questions
-  if (lowerMessage.match(/(product|tea|blend|what do you sell|ماذا تبيع|منتج|شاي)/i)) {
-    return language === "ar"
-      ? `نحن نقدم ${lulaTeaKnowledge.product.nameAr}! 🌿\n\n✨ ${lulaTeaKnowledge.product.descriptionAr}\n💰 السعر: ${lulaTeaKnowledge.product.price}\n📦 الوزن: ${lulaTeaKnowledge.product.weight}\n\nكل دفعة محضّرة بحب واهتمام بالتفاصيل. هل تريد طلبه؟`
-      : `We offer our ${lulaTeaKnowledge.product.name}! 🌿\n\n✨ ${lulaTeaKnowledge.product.description}\n💰 Price: ${lulaTeaKnowledge.product.price}\n📦 Weight: ${lulaTeaKnowledge.product.weight}\n\nEach batch is made with love and attention to detail. Would you like to order?`;
-  }
-  
-  // Price questions
-  if (lowerMessage.match(/(price|cost|how much|كم|السعر|التكلفة)/i)) {
-    return language === "ar"
-      ? `سعر مزيج الشاي المميز ${lulaTeaKnowledge.product.weight} هو ${lulaTeaKnowledge.product.price} 💰\n\nيمكنك الطلب عبر:\n📱 واتساب: ${lulaTeaKnowledge.contact.phone}\n🛒 سلة التسوق في الموقع\n\nهل تريد إضافته إلى السلة؟`
-      : `Our Premium Tea Blend ${lulaTeaKnowledge.product.weight} costs ${lulaTeaKnowledge.product.price} 💰\n\nYou can order via:\n📱 WhatsApp: ${lulaTeaKnowledge.contact.phone}\n🛒 Website cart\n\nWould you like to add it to your cart?`;
-  }
-  
-  // Ordering questions
-  if (lowerMessage.match(/(order|buy|purchase|how to order|طلب|شراء|كيف اطلب)/i)) {
-    return language === "ar"
-      ? `يمكنك طلب شاي لولا بطريقتين سهلتين:\n\n1️⃣ 📱 عبر واتساب: ${lulaTeaKnowledge.contact.phone}\n   (انقر زر واتساب في أي صفحة)\n\n2️⃣ 🛒 عبر الموقع:\n   - أضف المنتج للسلة\n   - انتقل للسلة\n   - أكمل الطلب عبر واتساب\n\nنحن هنا لمساعدتك! 💚`
-      : `You can order Lula Tea in two easy ways:\n\n1️⃣ 📱 Via WhatsApp: ${lulaTeaKnowledge.contact.phone}\n   (Click the WhatsApp button on any page)\n\n2️⃣ 🛒 Through the website:\n   - Add product to cart\n   - Go to cart\n   - Complete order via WhatsApp\n\nWe're here to help! 💚`;
-  }
-  
-  // Ingredients
-  if (lowerMessage.match(/(ingredient|what's in|مكونات|محتويات)/i)) {
-    return language === "ar"
-      ? `مزيجنا يحتوي على أوراق شاي فاخرة مُختارة بعناية 🌿\n\n✨ كل مكون محسوب بدقة\n💚 محضّر بحب\n🎯 مزيج فريد لا يُنسى\n\nنحن نختار فقط أجود المكونات لضمان تجربة طعم استثنائية. للمزيد من التفاصيل، تواصل معنا عبر واتساب!`
-      : `Our blend contains carefully selected premium tea leaves 🌿\n\n✨ Every ingredient is precisely calculated\n💚 Made with love\n🎯 Unique unforgettable blend\n\nWe select only the finest ingredients to ensure an exceptional taste experience. For more details, reach out via WhatsApp!`;
-  }
-  
-  // Coming soon / Other products
-  if (lowerMessage.match(/(other|more|accessories|teapot|mug|أخرى|المزيد|إكسسوارات)/i)) {
-    return language === "ar"
-      ? `قريباً! 🎉\n\nنعمل على توسيع مجموعتنا:\n🍵 مزيجات شاي جديدة\n🫖 أباريق شاي أنيقة\n☕ أكواب مميزة\n\nترقبوا الجديد من عائلة لولا تي! تابعنا لتكون أول من يعرف.\n\nهل تريد طلب مزيجنا الحالي؟`
-      : `Coming Soon! 🎉\n\nWe're expanding our collection:\n🍵 New tea blends\n🫖 Elegant teapots\n☕ Beautiful mugs\n\nStay tuned for exciting additions to the Lula Tea family! Follow us to be the first to know.\n\nWould you like to order our current blend?`;
-  }
-  
-  // Thank you
-  if (lowerMessage.match(/(thank|thanks|شكرا)/i)) {
-    return language === "ar"
-      ? "العفو! يسعدنا خدمتك 💚\n\nإذا كنت بحاجة لأي شيء آخر، أنا هنا لمساعدتك!\n\n📱 أو تواصل معنا مباشرة: " + lulaTeaKnowledge.contact.phone
-      : "You're welcome! Happy to help 💚\n\nIf you need anything else, I'm here to assist!\n\n📱 Or reach us directly: " + lulaTeaKnowledge.contact.phone;
-  }
-  
-  // Default response
-  return language === "ar"
-    ? `شكراً لسؤالك! 🍵\n\nأنا هنا لمساعدتك في:\n✅ معلومات عن منتج الشاي\n✅ الأسعار (${lulaTeaKnowledge.product.price})\n✅ كيفية الطلب\n✅ نصائح التحضير\n✅ طرق التواصل\n\nما الذي تود معرفته؟\n\n📱 للتواصل المباشر: ${lulaTeaKnowledge.contact.phone}`
-    : `Thanks for asking! 🍵\n\nI'm here to help you with:\n✅ Tea product information\n✅ Pricing (${lulaTeaKnowledge.product.price})\n✅ How to order\n✅ Brewing tips\n✅ Contact information\n\nWhat would you like to know?\n\n📱 Contact us directly: ${lulaTeaKnowledge.contact.phone}`;
-}
+## Product Information
+**Premium Loose Leaf Blend (مزيج أوراق الشاي المميز)**
+- Price: 75 SAR per bag
+- Weight: 200g
+- Description: Handcrafted premium loose leaf tea blend made with carefully selected ingredients
+- Description (AR): مزيج أوراق شاي فاخر محضّر يدوياً بمكونات مُختارة بعناية
+- Made with love and attention to detail
+- Currently in stock
+
+## Brewing Instructions
+**Arabic:**
+خطوات التحضير: ☕️
+١. اخلط خلطة الشاي جيداً قبل كل استخدام
+٢. خذ المقدار المناسب من خلطة الشاي، ثم اغسله غسلة خفيفة بالماء
+٣. اسكب عليه ماءً مغلياً واتركه على نار هادئة حتى يأخذ الشاي لونه ونكهته
+وبالعافية.. 🍵✨
+
+**English:**
+Brewing Steps: ☕️
+1. Mix the tea blend well before each use
+2. Take the appropriate amount of tea blend, then rinse it lightly with water
+3. Pour boiling water over it and leave it on low heat until the tea gets its color and flavor
+Enjoy! 🍵✨
+
+## Ordering Information
+**Two Easy Ways to Order:**
+1. **WhatsApp Direct**: +966 53 966 6654 (Fastest)
+2. **Website Cart**: Add to cart → Checkout → Complete via WhatsApp
+
+## Shipping & Delivery
+- Shipping: Saudi Arabia only
+- Delivery Time: 2-3 days
+- We provide tracking information
+
+## Payment Methods
+- STC Pay (محفظة STC Pay)
+- Bank Transfer (تحويل بنكي)
+- Payment instructions provided after order confirmation
+
+## Contact Information
+- Phone/WhatsApp: +966 53 966 6654
+- Available to answer questions and take orders
+- WhatsApp is the fastest way to reach us
+
+## Conversation Guidelines
+- **Match the customer's language** - If they write in Arabic, respond in Arabic. If English, respond in English
+- **Be concise but helpful** - Keep responses clear and to the point
+- **Use emojis appropriately** - 🍵 ☕ 💚 🌿 to add warmth
+- **Suggest products naturally** - When relevant to the conversation
+- **Guide to action** - Direct customers to add to cart or contact via WhatsApp
+- **Stay positive and friendly** - Represent the homemade, personal touch of Lula Tea
+- **Don't invent information** - If you don't know something, suggest contacting via WhatsApp
+
+## What You CANNOT Do
+- Process orders directly (guide them to cart or WhatsApp)
+- Access specific order status (direct them to contact via WhatsApp)
+- Make up product details not listed above
+- Provide medical advice about tea consumption
+
+## Coming Soon
+We're expanding our collection:
+- New tea blends
+- Elegant teapots
+- Beautiful mugs
+(Mention this if customers ask about other products)
+
+Remember: You represent Lula Tea's warm, personal, homemade brand. Be helpful, friendly, and make customers feel valued! 💚`;
 
 export async function POST(request: Request) {
   try {
     const { messages } = await request.json();
+
+    if (!messages || !Array.isArray(messages)) {
+      return Response.json({ error: "Invalid messages format" }, { status: 400 });
+    }
+
+    // Prepare messages for Azure OpenAI
+    const apiMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messages.map((msg: any) => ({
+        role: msg.role,
+        content: msg.content,
+      })),
+    ];
+
+    // Call Azure OpenAI API
+    const response = await fetch(
+      `${AZURE_OPENAI_ENDPOINT}/openai/deployments/${AZURE_OPENAI_DEPLOYMENT}/chat/completions?api-version=2024-08-01-preview`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": AZURE_OPENAI_API_KEY,
+        },
+        body: JSON.stringify({
+          messages: apiMessages,
+          max_tokens: 800,
+          temperature: 0.7,
+          top_p: 0.95,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("Azure OpenAI API error:", errorData);
+      return Response.json(
+        { error: "Failed to get response from AI" },
+        { status: 500 }
+      );
+    }
+
+    const data = await response.json();
+    const assistantMessage = data.choices[0]?.message?.content || "Sorry, I couldn't process that.";
+
+    return Response.json({
+      role: "assistant",
+      content: assistantMessage,
+    });
+  } catch (error) {
+    console.error("Assistant API error:", error);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
     const lastMessage = messages[messages.length - 1];
     const language = detectLanguage(lastMessage.content);
     

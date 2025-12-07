@@ -127,12 +127,20 @@ export default function ChatWidget() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold">
+                <h3 className="font-semibold text-white">
                   {language === "ar" ? "مساعد لولا تي" : "Lula Tea Assistant"}
                 </h3>
-                <p className="text-xs text-white/80">
-                  {language === "ar" ? "هنا للمساعدة!" : "Here to help!"}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1 bg-white/20 rounded-full px-2 py-0.5">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M13 7H7v6h6V7z" />
+                      <path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-[10px] font-medium text-white">
+                      {language === "ar" ? "مدعوم بالذكاء الاصطناعي" : "Powered by AI"}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <button
@@ -160,7 +168,7 @@ export default function ChatWidget() {
                       />
                     </svg>
                   </div>
-                  <p className="text-tea-brown text-sm font-semibold">
+                  <p className="text-deep-brown dark:text-gray-800 text-sm font-semibold">
                     {language === "ar"
                       ? "مرحباً! كيف يمكنني مساعدتك اليوم؟"
                       : "Hi! How can I help you today?"}
@@ -169,38 +177,38 @@ export default function ChatWidget() {
                 
                 {/* Suggested Questions */}
                 <div className="space-y-2">
-                  <p className="text-xs text-tea-brown/70 px-1 mb-2">
+                  <p className="text-xs text-deep-brown/60 font-medium px-1 mb-2">
                     {language === "ar" ? "أسئلة مقترحة:" : "Suggested questions:"}
                   </p>
                   <button
                     onClick={() => setInput(language === "ar" ? "ما هو منتجكم؟" : "What is your product?")}
-                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
-                    <span className="font-medium">
+                    <span className="font-medium text-deep-brown">
                       {language === "ar" ? "🍵 ما هو منتجكم؟" : "🍵 What is your product?"}
                     </span>
                   </button>
                   <button
                     onClick={() => setInput(language === "ar" ? "كم السعر؟" : "What's the price?")}
-                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
-                    <span className="font-medium">
+                    <span className="font-medium text-deep-brown">
                       {language === "ar" ? "💰 كم السعر؟" : "💰 What's the price?"}
                     </span>
                   </button>
                   <button
                     onClick={() => setInput(language === "ar" ? "طريقة التحضير" : "How to prepare the tea?")}
-                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
-                    <span className="font-medium">
+                    <span className="font-medium text-deep-brown">
                       {language === "ar" ? "☕ طريقة التحضير" : "☕ How to prepare the tea?"}
                     </span>
                   </button>
                   <button
                     onClick={() => setInput(language === "ar" ? "كيف أطلب؟" : "How to order?")}
-                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm text-deep-brown transition-colors"
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
-                    <span className="font-medium">
+                    <span className="font-medium text-deep-brown">
                       {language === "ar" ? "📱 كيف أطلب؟" : "📱 How to order?"}
                     </span>
                   </button>
@@ -217,10 +225,12 @@ export default function ChatWidget() {
                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                     message.role === "user"
                       ? "bg-tea-green text-white"
-                      : "bg-white text-deep-brown shadow-sm"
+                      : "bg-white shadow-sm border border-gray-100"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <p className={`text-sm whitespace-pre-wrap ${
+                    message.role === "user" ? "text-white" : "text-gray-900"
+                  }`}>{message.content}</p>
                 </div>
               </div>
             ))}
@@ -250,7 +260,7 @@ export default function ChatWidget() {
                 placeholder={
                   language === "ar" ? "اكتب رسالتك..." : "Type your message..."
                 }
-                className="flex-1 px-4 py-2 rounded-full border border-tea-brown/20 focus:border-tea-green focus:outline-none focus:ring-2 focus:ring-tea-green/20 text-sm text-black"
+                className="flex-1 px-4 py-2 rounded-full border border-tea-brown/20 focus:border-tea-green focus:outline-none focus:ring-2 focus:ring-tea-green/20 text-sm text-gray-900 placeholder:text-gray-400"
                 disabled={isLoading}
               />
               <button

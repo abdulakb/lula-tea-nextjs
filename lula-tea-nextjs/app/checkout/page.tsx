@@ -7,7 +7,9 @@ import dynamic from "next/dynamic";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
+import { useToast } from "@/context/ToastContext";
 import { openWhatsApp } from "@/lib/whatsapp";
+import CheckoutProgress from "../components/CheckoutProgress";
 
 const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
   ssr: false,
@@ -17,6 +19,7 @@ export default function CheckoutPage() {
   const { t, language } = useLanguage();
   const { items, subtotal, updateQuantity, removeItem, clearCart } = useCart();
   const { trackEvent } = useAnalytics();
+  const { showToast } = useToast();
   const router = useRouter();
 
   // Track checkout start
@@ -58,6 +61,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [loadingLocation, setLoadingLocation] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({});
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [qualifiesForFreeDelivery, setQualifiesForFreeDelivery] = useState(false);
   const [distanceFromWarehouse, setDistanceFromWarehouse] = useState<number | null>(null);
@@ -276,16 +280,56 @@ export default function CheckoutPage() {
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
     
-    // Validate required fields
-    if (!customerName || !customerPhone || !deliveryAddress || !deliveryTime) {
-      setError(language === "ar" ? "يرجى ملء جميع الحقول المطلوبة" : "Please fill all required fields");
-      return;
+    // Validate required fields with specific error messages
+    const errors: {[key: string]: string} = {};
+    
+    if (!customerName.trim()) {
+      errors.customerName = language === "ar" ? "الاسم مطلوب" : "Name is required";
+    } else if (customerName.trim().length < 3) {
+      errors.customerName = language === "ar" ? "الاسم يجب أن يكون 3 أحرف على الأقل" : "Name must be at least 3 characters";
+    }
+    
+    if (!customerPhone.trim()) {
+      errors.customerPhone = language === "ar" ? "رقم الهاتف مطلوب" : "Phone number is required";
+    } else if (!/^[0-9+\s-]{10,}$/.test(customerPhone.trim())) {
+      errors.customerPhone = language === "ar" ? "رقم هاتف غير صالح" : "Invalid phone number";
+    }
+    
+    if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail.trim())) {
+      errors.customerEmail = language === "ar" ? "البريد الإلكتروني غير صالح" : "Invalid email address";
+    }
+    
+    if (!deliveryAddress.trim()) {
+      errors.deliveryAddress = language === "ar" ? "العنوان مطلوب" : "Address is required";
+    } else if (deliveryAddress.trim().length < 10) {
+      errors.deliveryAddress = language === "ar" ? "يرجى إدخال عنوان مفصل" : "Please enter a detailed address";
+    }
+    
+    if (!deliveryTime) {
+      errors.deliveryTime = language === "ar" ? "وقت التوصيل مطلوب" : "Delivery time is required";
     }
 
     // Validate transaction reference for STC Pay
     if (paymentMethod === "stcpay" && !transactionReference.trim()) {
-      setError(language === "ar" ? "يرجى إدخال رقم المعاملة من رسالة البنك" : "Please enter transaction reference from bank SMS");
+      errors.transactionReference = language === "ar" ? "رقم المعاملة مطلوب" : "Transaction reference required";
+    } else if (paymentMethod === "stcpay" && transactionReference.trim().length < 4) {
+      errors.transactionReference = language === "ar" ? "رقم المعاملة غير صالح" : "Invalid transaction reference";
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setError(language === "ar" ? "يرجى تصحيح الأخطاء أدناه" : "Please correct the errors below");
+      showToast(
+        language === "ar" ? "يرجى ملء جميع الحقول المطلوبة بشكل صحيح" : "Please fill all required fields correctly",
+        "error"
+      );
+      // Scroll to first error
+      const firstErrorField = document.querySelector('.border-red-500');
+      if (firstErrorField) {
+        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
 
@@ -366,6 +410,7 @@ export default function CheckoutPage() {
     <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream dark:bg-gray-900 dark-transition">
       <ThemeToggle />
       <div className="max-w-4xl mx-auto">
+        <CheckoutProgress currentStep={2} />
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             {t("checkout")}
@@ -794,10 +839,29 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
+                        onChange={(e) => {
+                          setCustomerName(e.target.value);
+                          if (fieldErrors.customerName) {
+                            const newErrors = {...fieldErrors};
+                            delete newErrors.customerName;
+                            setFieldErrors(newErrors);
+                          }
+                        }}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                          fieldErrors.customerName 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                        }`}
                       />
+                      {fieldErrors.customerName && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {fieldErrors.customerName}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -807,11 +871,30 @@ export default function CheckoutPage() {
                       <input
                         type="tel"
                         value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        onChange={(e) => {
+                          setCustomerPhone(e.target.value);
+                          if (fieldErrors.customerPhone) {
+                            const newErrors = {...fieldErrors};
+                            delete newErrors.customerPhone;
+                            setFieldErrors(newErrors);
+                          }
+                        }}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                          fieldErrors.customerPhone 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                        }`}
                         dir={language === "ar" ? "rtl" : "ltr"}
                       />
+                      {fieldErrors.customerPhone && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {fieldErrors.customerPhone}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -820,12 +903,31 @@ export default function CheckoutPage() {
                       </label>
                       <textarea
                         value={deliveryAddress}
-                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                        onChange={(e) => {
+                          setDeliveryAddress(e.target.value);
+                          if (fieldErrors.deliveryAddress) {
+                            const newErrors = {...fieldErrors};
+                            delete newErrors.deliveryAddress;
+                            setFieldErrors(newErrors);
+                          }
+                        }}
                         required
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                          fieldErrors.deliveryAddress 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                        }`}
                         dir={language === "ar" ? "rtl" : "ltr"}
                       />
+                      {fieldErrors.deliveryAddress && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {fieldErrors.deliveryAddress}
+                        </p>
+                      )}
                       <button
                         type="button"
                         onClick={handleGetLocation}
@@ -858,9 +960,20 @@ export default function CheckoutPage() {
                       </label>
                       <select
                         value={deliveryTime}
-                        onChange={(e) => setDeliveryTime(e.target.value)}
+                        onChange={(e) => {
+                          setDeliveryTime(e.target.value);
+                          if (fieldErrors.deliveryTime) {
+                            const newErrors = {...fieldErrors};
+                            delete newErrors.deliveryTime;
+                            setFieldErrors(newErrors);
+                          }
+                        }}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                          fieldErrors.deliveryTime 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                        }`}
                       >
                         <option value="">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
                         <option value={t("deliveryTimeMorning")}>{t("deliveryTimeMorning")}</option>
@@ -868,6 +981,14 @@ export default function CheckoutPage() {
                         <option value={t("deliveryTimeEvening")}>{t("deliveryTimeEvening")}</option>
                         <option value={t("deliveryTimeAnytime")}>{t("deliveryTimeAnytime")}</option>
                       </select>
+                      {fieldErrors.deliveryTime && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {fieldErrors.deliveryTime}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -929,11 +1050,21 @@ export default function CheckoutPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3"
                   >
-                    {isSubmitting
-                      ? (language === "ar" ? "⏳ جاري المعالجة..." : "⏳ Processing...")
-                      : (language === "ar" ? "✅ تأكيد الطلب (بعد الدفع)" : "✅ Confirm Order (After Payment)")}
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                        </svg>
+                        <span>{language === "ar" ? "جاري المعالجة..." : "Processing..."}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{language === "ar" ? "✅ تأكيد الطلب (بعد الدفع)" : "✅ Confirm Order (After Payment)"}</span>
+                      </>
+                    )}
                   </button>
 
                   <p className="text-sm text-center mt-3 text-yellow-600 dark:text-yellow-400 font-semibold">

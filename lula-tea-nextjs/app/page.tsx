@@ -232,32 +232,21 @@ export default function Home() {
                     {language === "ar" ? "شاهد الفيديو التعليمي" : "Watch Tutorial Video"}
                   </h3>
                 </div>
-                <div className="aspect-video bg-deep-brown/5 rounded-xl flex items-center justify-center relative overflow-hidden">
-                  {/* Placeholder - Replace with actual video */}
-                  <div className="text-center p-4">
-                    <svg className="w-16 h-16 text-tea-green/40 mx-auto mb-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                    </svg>
-                    <p className="text-tea-brown text-sm">
-                      {language === "ar" 
-                        ? "قريباً: فيديو تعليمي قصير لتحضير الشاي"
-                        : "Coming Soon: Short brewing tutorial video"}
-                    </p>
-                    <p className="text-tea-brown/60 text-xs mt-2">
-                      {language === "ar" 
-                        ? "سيتم إنشاؤه باستخدام Microsoft 365 Copilot"
-                        : "Created with Microsoft 365 Copilot"}
-                    </p>
-                  </div>
-                  {/* When you have the video, replace above div with: */}
-                  {/* <video 
-                    controls 
+                <div className="aspect-video bg-deep-brown/5 rounded-xl relative overflow-hidden">
+                  <iframe 
+                    src="https://m365x58770056-my.sharepoint.com/personal/admin_m365x58770056_onmicrosoft_com/_layouts/15/embed.aspx?UniqueId=cc5b7a5e-14f4-4694-8e4c-a129d3d5e520"
                     className="w-full h-full"
-                    poster="/images/video-thumbnail.jpg"
-                  >
-                    <source src="/videos/brewing-tutorial.mp4" type="video/mp4" />
-                  </video> */}
+                    frameBorder="0"
+                    scrolling="no"
+                    allowFullScreen
+                    title={language === "ar" ? "فيديو تعليمي لتحضير الشاي" : "Tea Brewing Tutorial"}
+                  />
                 </div>
+                <p className="text-tea-brown/60 text-xs mt-3 text-center">
+                  {language === "ar" 
+                    ? "تم إنشاؤه باستخدام Microsoft 365 Copilot Create"
+                    : "Created with Microsoft 365 Copilot Create"}
+                </p>
               </div>
 
               <div className="space-y-6">

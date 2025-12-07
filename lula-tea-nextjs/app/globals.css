@@ -24,16 +24,16 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #f5f1e8;
+  --color-foreground: #2d1810;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-tea-green: var(--tea-green);
-  --color-tea-brown: var(--tea-brown);
-  --color-warm-cream: var(--warm-cream);
-  --color-deep-brown: var(--deep-brown);
-  --color-soft-sage: var(--soft-sage);
-  --color-accent-gold: var(--accent-gold);
+  --color-tea-green: #7a9b76;
+  --color-tea-brown: #2d1810;
+  --color-warm-cream: #f5f1e8;
+  --color-deep-brown: #1a1008;
+  --color-soft-sage: #a8b5a0;
+  --color-accent-gold: #c9a961;
 }
 
 body {

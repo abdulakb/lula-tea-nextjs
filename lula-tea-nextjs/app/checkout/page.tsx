@@ -589,6 +589,22 @@ export default function CheckoutPage() {
                     </p>
                   </div>
 
+                  {/* Mobile: Download QR Button */}
+                  <div className="md:hidden mb-4">
+                    <a
+                      href="/images/stc-qr-code.jpg"
+                      download="stc-pay-qr-code.jpg"
+                      className="block w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-6 rounded-xl font-semibold text-center shadow-lg hover:from-purple-700 hover:to-purple-800 transition-all"
+                    >
+                      {language === "ar" ? "📥 حفظ رمز QR للمسح من جهاز آخر" : "📥 Download QR Code to scan from another device"}
+                    </a>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-2">
+                      {language === "ar" 
+                        ? "احفظ الصورة وافتحها على جهاز آخر للمسح"
+                        : "Save the QR image and open it on another device to scan"}
+                    </p>
+                  </div>
+
                   {/* QR Code */}
                   <div className="bg-white rounded-xl p-6 mb-6 shadow-lg">
                     <div className="relative w-full max-w-sm mx-auto aspect-square">
@@ -605,6 +621,20 @@ export default function CheckoutPage() {
                         {language === "ar" ? "المبلغ المطلوب: " : "Amount: "}
                         <span className="text-2xl text-purple-600">{subtotal} {language === "ar" ? "ريال" : "SAR"}</span>
                       </p>
+                    </div>
+                    
+                    {/* Desktop: Download option */}
+                    <div className="hidden md:block mt-4">
+                      <a
+                        href="/images/stc-qr-code.jpg"
+                        download="stc-pay-qr-code.jpg"
+                        className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 text-sm font-medium flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        {language === "ar" ? "تحميل رمز QR" : "Download QR Code"}
+                      </a>
                     </div>
                   </div>
 

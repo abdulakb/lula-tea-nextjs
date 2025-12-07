@@ -368,28 +368,28 @@ export default function Home() {
                   </p>
                   
                   {/* Beverage Options */}
-                  <div className="mb-4 p-4 bg-warm-cream/50 rounded-xl">
-                    <h4 className="font-semibold text-deep-brown mb-3">
+                  <div className="mb-4 p-4 bg-tea-green/10 rounded-xl border-2 border-tea-green/20">
+                    <h4 className="font-bold text-deep-brown mb-3 text-base">
                       {language === "ar" ? "المشروبات المتوفرة:" : "Available Beverages:"}
                     </h4>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex items-center gap-2 text-tea-brown">
+                      <div className="flex items-center gap-2 text-deep-brown font-medium">
                         <span>☕</span>
                         <span>{language === "ar" ? "قهوة عربية" : "Arabic Coffee"}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-tea-brown">
+                      <div className="flex items-center gap-2 text-deep-brown font-medium">
                         <span>🍵</span>
                         <span>{language === "ar" ? "شاي فاخر" : "Premium Tea"}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-tea-brown">
+                      <div className="flex items-center gap-2 text-deep-brown font-medium">
                         <span>🫖</span>
                         <span>{language === "ar" ? "كرك" : "Karak"}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-tea-brown">
+                      <div className="flex items-center gap-2 text-deep-brown font-medium">
                         <span>🌿</span>
                         <span>{language === "ar" ? "زنجبيل" : "Ginger Tea"}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-tea-brown">
+                      <div className="flex items-center gap-2 text-deep-brown font-medium">
                         <span>🍃</span>
                         <span>{language === "ar" ? "نعناع" : "Mint Tea"}</span>
                       </div>

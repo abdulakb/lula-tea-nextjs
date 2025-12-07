@@ -161,6 +161,18 @@ export default function OrderDetail() {
       // First, verify the invoice exists
       const invoiceUrl = `${window.location.origin}/api/invoice/${order.order_id}`;
       
+      // Clean phone number and ensure it has Saudi country code
+      let phone = order.customer_phone.replace(/\D/g, '');
+      
+      // Add country code if not present
+      if (!phone.startsWith('966')) {
+        if (phone.startsWith('0')) {
+          phone = '966' + phone.substring(1);
+        } else {
+          phone = '966' + phone;
+        }
+      }
+      
       // Simplified message without the full URL (WhatsApp sometimes blocks long URLs)
       const message = `✅ تأكيد طلبك من لولا تي
 Order Confirmation from Lula Tea
@@ -168,12 +180,11 @@ Order Confirmation from Lula Tea
 رقم الطلب / Order ID: ${order.order_id}
 الإجمالي / Total: ${order.total} SAR
 
-سنرسل لك الفاتورة في رسالة منفصلة
-We will send you the invoice in a separate message
+📄 رابط الفاتورة / Invoice Link:
+${invoiceUrl}
 
 شكراً لك! Thank you! 🍵`;
       
-      const phone = order.customer_phone.replace(/\D/g, '');
       const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
       
       // Open WhatsApp
@@ -181,10 +192,13 @@ We will send you the invoice in a separate message
       
       // Also copy the invoice URL to clipboard for easy sharing
       await navigator.clipboard.writeText(invoiceUrl);
-      alert(`WhatsApp opened!\n\nInvoice link copied to clipboard:\n${invoiceUrl}\n\nYou can paste it in the WhatsApp chat.`);
+      
+      console.log('WhatsApp URL:', whatsappUrl);
+      console.log('Phone:', phone);
+      
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to open WhatsApp. Please try again.');
+      alert('Failed to open WhatsApp. Please check console for details.');
     }
   };
 

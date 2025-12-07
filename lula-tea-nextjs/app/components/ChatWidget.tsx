@@ -197,19 +197,19 @@ export default function ChatWidget() {
                     </span>
                   </button>
                   <button
-                    onClick={() => setInput(language === "ar" ? "ما هي فوائد الشاي الأخضر الصحية؟" : "What are the health benefits of green tea?")}
-                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
-                  >
-                    <span className="font-medium text-deep-brown">
-                      {language === "ar" ? "💚 ما هي فوائد الشاي الأخضر الصحية؟" : "💚 What are the health benefits of green tea?"}
-                    </span>
-                  </button>
-                  <button
                     onClick={() => setInput(language === "ar" ? "كيف أحضر كوب شاي مثالي؟" : "How do I brew the perfect cup?")}
                     className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
                   >
                     <span className="font-medium text-deep-brown">
                       {language === "ar" ? "☕ كيف أحضر كوب شاي مثالي؟" : "☕ How do I brew the perfect cup?"}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => setInput(language === "ar" ? "هل يمكنني الشراء بالجملة؟" : "Can I order in bulk?")}
+                    className="w-full text-left bg-white hover:bg-tea-green/10 border border-tea-brown/10 rounded-xl px-3 py-2.5 text-sm transition-colors"
+                  >
+                    <span className="font-medium text-deep-brown">
+                      {language === "ar" ? "📦 هل يمكنني الشراء بالجملة؟" : "📦 Can I order in bulk?"}
                     </span>
                   </button>
                 </div>

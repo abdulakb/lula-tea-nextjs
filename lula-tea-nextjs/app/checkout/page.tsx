@@ -9,6 +9,7 @@ import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
 import { useToast } from "@/context/ToastContext";
 import { openWhatsApp } from "@/lib/whatsapp";
+import { trackCheckoutStarted } from "@/lib/appInsights";
 import CheckoutProgress from "../components/CheckoutProgress";
 
 const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
@@ -34,6 +35,9 @@ export default function CheckoutPage() {
         price: item.price,
       })),
     });
+    
+    // Track in Azure App Insights
+    trackCheckoutStarted(subtotal, items.length);
 
     // Auto-scroll to form on mobile to avoid confusion
     // Wait for page to fully load before scrolling

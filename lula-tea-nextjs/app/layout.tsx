@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
 import FloatingCartButton from "./components/FloatingCartButton";
+import AppInsightsProvider from "./components/AppInsightsProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AnalyticsProvider } from "@/context/AnalyticsContext";
@@ -62,21 +63,23 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark-transition`}
       >
-        <ThemeProvider>
-          <AnalyticsProvider>
-            <LanguageProvider>
-              <CartProvider>
-                <ToastProvider>
-                  <Header />
-                  {children}
-                  <Footer />
-                  <ChatWidget />
-                  <FloatingCartButton />
-                </ToastProvider>
-              </CartProvider>
-            </LanguageProvider>
-          </AnalyticsProvider>
-        </ThemeProvider>
+        <AppInsightsProvider>
+          <ThemeProvider>
+            <AnalyticsProvider>
+              <LanguageProvider>
+                <CartProvider>
+                  <ToastProvider>
+                    <Header />
+                    {children}
+                    <Footer />
+                    <ChatWidget />
+                    <FloatingCartButton />
+                  </ToastProvider>
+                </CartProvider>
+              </LanguageProvider>
+            </AnalyticsProvider>
+          </ThemeProvider>
+        </AppInsightsProvider>
       </body>
     </html>
   );

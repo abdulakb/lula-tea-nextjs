@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { trackAddToCart } from "@/lib/appInsights";
 
 export interface CartItem {
   id: string;
@@ -57,6 +58,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...current, { ...item, quantity }];
     });
+    
+    // Track add to cart event
+    trackAddToCart(item.id, quantity, item.price);
   };
 
   const removeItem = (id: string) => {

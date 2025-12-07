@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { trackChatMessage } from "@/lib/appInsights";
 
 interface Message {
   id: string;
@@ -35,6 +36,9 @@ export default function ChatWidget() {
       role: "user",
       content: input.trim(),
     };
+
+    // Track chat message
+    trackChatMessage(userMessage.content.length, language);
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");

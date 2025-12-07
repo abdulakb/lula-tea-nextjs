@@ -53,12 +53,12 @@ export default function ChatWidget() {
         }),
       });
 
-      const text = await response.text();
+      const data = await response.json();
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: text,
+        content: data.content || data.error || "Sorry, I couldn't process that.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);

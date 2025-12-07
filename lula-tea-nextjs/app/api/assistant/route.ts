@@ -46,6 +46,15 @@ Enjoy! 🍵✨
 - Contact us via WhatsApp for bulk orders and custom arrangements
 - Let us help make your occasion special with premium tea gifts
 
+**Professional Event Services (خدمة الصبابين):**
+- We provide professional tea and coffee servers (صبابين) for your events
+- Services include:
+  * Experienced servers in elegant traditional attire
+  * Preparation and serving of premium tea and Arabic coffee
+  * All necessary equipment and tools provided
+- Perfect for: Ramadan gatherings 🌙, weddings 💍, corporate events 🎁, family celebrations
+- Contact us via WhatsApp to discuss your event needs and get a custom quote
+
 ## Shipping & Delivery
 - Shipping: Saudi Arabia only
 - Delivery Time: 2-3 days

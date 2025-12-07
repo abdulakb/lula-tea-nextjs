@@ -10,7 +10,7 @@ export const initAppInsights = () => {
   const connectionString = process.env.NEXT_PUBLIC_APPINSIGHTS_CONNECTION_STRING;
   
   if (!connectionString) {
-    console.warn('Azure Application Insights connection string not found');
+    console.warn('Azure Application Insights connection string not found - analytics disabled');
     return null;
   }
 
@@ -18,34 +18,43 @@ export const initAppInsights = () => {
     return { reactPlugin, appInsights };
   }
 
-  reactPlugin = new ReactPlugin();
-  appInsights = new ApplicationInsights({
-    config: {
-      connectionString: connectionString,
-      extensions: [reactPlugin],
-      enableAutoRouteTracking: true,
-      disableAjaxTracking: false,
-      autoTrackPageVisitTime: true,
-      enableCorsCorrelation: true,
-      enableRequestHeaderTracking: true,
-      enableResponseHeaderTracking: true,
-    }
-  });
+  try {
+    reactPlugin = new ReactPlugin();
+    appInsights = new ApplicationInsights({
+      config: {
+        connectionString: connectionString,
+        extensions: [reactPlugin],
+        enableAutoRouteTracking: true,
+        disableAjaxTracking: false,
+        autoTrackPageVisitTime: true,
+        enableCorsCorrelation: true,
+        enableRequestHeaderTracking: true,
+        enableResponseHeaderTracking: true,
+      }
+    });
 
-  appInsights.loadAppInsights();
+    appInsights.loadAppInsights();
 
-  // Track page views
-  appInsights.trackPageView();
+    // Track page views
+    appInsights.trackPageView();
 
-  return { reactPlugin, appInsights };
+    return { reactPlugin, appInsights };
+  } catch (error) {
+    console.error('Failed to initialize Application Insights:', error);
+    return null;
+  }
 };
 
 export const getAppInsights = () => appInsights;
 
 // Custom event tracking helpers
 export const trackEvent = (name: string, properties?: Record<string, any>) => {
-  if (appInsights) {
-    appInsights.trackEvent({ name }, properties);
+  try {
+    if (appInsights) {
+      appInsights.trackEvent({ name }, properties);
+    }
+  } catch (error) {
+    console.warn('Failed to track event:', name, error);
   }
 };
 

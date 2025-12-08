@@ -1,8 +1,6 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import StoryCarousel from "../components/StoryCarousel";
 import Image from "next/image";
 
@@ -50,7 +48,6 @@ export default function StoryPage() {
 
   return (
     <div className="min-h-screen bg-warm-cream">
-      <Header />
       
       {/* Hero Section */}
       <section className="relative pt-24 md:pt-32 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-tea-green/20 to-accent-gold/10">
@@ -142,8 +139,6 @@ export default function StoryPage() {
           </a>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

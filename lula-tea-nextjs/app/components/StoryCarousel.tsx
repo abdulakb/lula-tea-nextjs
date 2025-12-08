@@ -91,8 +91,8 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
             />
             
             {/* Text Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-deep-brown/95 via-deep-brown/70 to-transparent p-6 md:p-10">
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center leading-tight px-4">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-deep-brown/95 via-deep-brown/80 to-transparent pt-16 pb-6 md:pb-10 px-4 md:px-8">
+              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white text-center leading-tight max-w-4xl mx-auto">
                 {language === "ar" ? slide.titleAr : slide.titleEn}
               </h3>
             </div>

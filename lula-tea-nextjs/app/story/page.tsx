@@ -4,6 +4,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import StoryCarousel from "../components/StoryCarousel";
+import Image from "next/image";
+import Image from "next/image";
 
 export default function StoryPage() {
   const { language, t } = useLanguage();
@@ -52,12 +54,12 @@ export default function StoryPage() {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-tea-green/20 to-accent-gold/10">
+      <section className="relative pt-24 md:pt-32 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-tea-green/20 to-accent-gold/10">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-deep-brown mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-deep-brown mb-4 md:mb-6">
             {language === "ar" ? "قصتنا" : "Our Story"}
           </h1>
-          <p className="text-2xl text-tea-brown font-serif italic">
+          <p className="text-xl md:text-2xl text-tea-brown font-serif italic">
             {language === "ar" 
               ? "من كوب مُشارك إلى حلم تحقق" 
               : "From a Cup Shared, to a Dream Realized"}
@@ -66,10 +68,10 @@ export default function StoryPage() {
       </section>
 
       {/* Story Video Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-8 md:py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-5xl mx-auto">
           <StoryCarousel language={language} />
-          <p className="text-tea-brown/60 text-sm text-center mt-6">
+          <p className="text-tea-brown/60 text-xs md:text-sm text-center mt-4 md:mt-6">
             {language === "ar" 
               ? "تم إنشاؤه باستخدام Microsoft 365 Copilot Create"
               : "Created with Microsoft 365 Copilot Create"}
@@ -78,9 +80,9 @@ export default function StoryPage() {
       </section>
 
       {/* Detailed Story Sections */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-warm-cream to-soft-sage/10">
+      <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-warm-cream to-soft-sage/10">
         <div className="max-w-6xl mx-auto">
-          <div className="space-y-20">
+          <div className="space-y-12 md:space-y-20">
             {storyScenes.map((scene, index) => (
               <div 
                 key={index}
@@ -103,17 +105,15 @@ export default function StoryPage() {
                   </p>
                 </div>
 
-                {/* Image Placeholder */}
-                <div className="flex-1">
-                  <div className="aspect-square bg-gradient-to-br from-accent-gold/20 to-tea-green/20 rounded-2xl shadow-xl flex items-center justify-center">
-                    <div className="text-center p-8">
-                      <svg className="w-24 h-24 text-tea-green/40 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                      </svg>
-                      <p className="text-tea-brown/60 text-sm">
-                        {language === "ar" ? "مشهد من القصة" : "Scene from our story"}
-                      </p>
-                    </div>
+                {/* Image from Carousel */}
+                <div className="flex-1 w-full">
+                  <div className="aspect-square relative rounded-2xl shadow-xl overflow-hidden">
+                    <Image
+                      src={`/images/story/slide-${index + 1}.png`}
+                      alt={language === "ar" ? scene.titleAr : scene.titleEn}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                 </div>
               </div>

@@ -71,6 +71,12 @@ export default function Header() {
                 {t("product")}
               </Link>
               <Link 
+                href="/story" 
+                className="text-deep-brown hover:text-tea-green transition-colors font-medium"
+              >
+                {language === "ar" ? "قصتنا" : "Our Story"}
+              </Link>
+              <Link 
                 href="/contact" 
                 className="text-deep-brown hover:text-tea-green transition-colors font-medium"
               >
@@ -181,6 +187,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               {t("product")}
+            </Link>
+            <Link 
+              href="/story" 
+              className="block py-2 text-deep-brown hover:text-tea-green transition-colors font-medium text-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {language === "ar" ? "قصتنا" : "Our Story"}
             </Link>
             <Link 
               href="/contact" 

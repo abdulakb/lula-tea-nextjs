@@ -36,27 +36,27 @@ export default function Home() {
     <main className="min-h-screen">
       <ThemeToggle />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-12 md:py-20 px-4 sm:px-6 lg:px-8">
         {/* Soft Opening Banner */}
-        <div className="max-w-7xl mx-auto mb-6">
-          <div className="bg-accent-gold/10 border-2 border-accent-gold/30 rounded-2xl px-6 py-3 text-center">
-            <p className="text-deep-brown font-semibold text-lg">
+        <div className="max-w-7xl mx-auto mb-4 md:mb-6">
+          <div className="bg-accent-gold/10 border-2 border-accent-gold/30 rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center">
+            <p className="text-deep-brown font-semibold text-sm md:text-lg">
               {t('softOpening')}
             </p>
           </div>
         </div>
 
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
             <div className="text-center lg:text-left">
-              <h1 className="text-5xl md:text-6xl font-bold text-deep-brown mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-deep-brown mb-4 md:mb-6 leading-tight">
                 {t('heroTitle')}
               </h1>
-              <p className="text-xl md:text-2xl text-tea-brown mb-8">
+              <p className="text-lg sm:text-xl md:text-2xl text-tea-brown mb-4 md:mb-8">
                 {t('heroSubtitle')}
               </p>
-              <p className="text-lg text-deep-brown/80 mb-8 max-w-xl">
+              <p className="text-base md:text-lg text-deep-brown/80 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0">
                 {t('heroDescription')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -76,7 +76,7 @@ export default function Home() {
             </div>
 
             {/* Right Image */}
-            <div className="relative h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl">
               <Image
                 src="/images/logo.jpg"
                 alt="Lula Tea Premium Blend"
@@ -90,13 +90,13 @@ export default function Home() {
       </section>
 
       {/* Product Section */}
-      <section id="product" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="product" className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-deep-brown mb-4">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-deep-brown mb-3 md:mb-4">
               {t('productTitle')}
             </h2>
-            <p className="text-xl text-tea-brown">
+            <p className="text-lg md:text-xl text-tea-brown">
               {t('productSubtitle')}
             </p>
           </div>

@@ -3,6 +3,7 @@
 import { useLanguage } from "@/context/LanguageContext";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import StoryCarousel from "../components/StoryCarousel";
 
 export default function StoryPage() {
   const { language, t } = useLanguage();
@@ -67,24 +68,8 @@ export default function StoryPage() {
       {/* Story Video Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="aspect-video bg-deep-brown/5 rounded-2xl overflow-hidden shadow-2xl mb-12">
-            <video 
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-              poster="/images/story-poster.jpg"
-            >
-              <source src="/videos/lula-story.mp4" type="video/mp4" />
-              <p className="text-tea-brown text-center p-4">
-                {language === "ar" 
-                  ? "متصفحك لا يدعم تشغيل الفيديو"
-                  : "Your browser does not support the video tag."}
-              </p>
-            </video>
-          </div>
-          <p className="text-tea-brown/60 text-sm text-center">
+          <StoryCarousel language={language} />
+          <p className="text-tea-brown/60 text-sm text-center mt-6">
             {language === "ar" 
               ? "تم إنشاؤه باستخدام Microsoft 365 Copilot Create"
               : "Created with Microsoft 365 Copilot Create"}

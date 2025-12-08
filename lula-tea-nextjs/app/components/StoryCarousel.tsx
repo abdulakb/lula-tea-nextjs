@@ -69,9 +69,11 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
 
   return (
     <div 
-      className="relative w-full aspect-video bg-deep-brown/5 rounded-2xl overflow-hidden shadow-2xl group"
+      className="relative w-full aspect-video bg-deep-brown/5 rounded-2xl overflow-hidden shadow-2xl group touch-auto"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
     >
       {/* Slides */}
       <div className="relative w-full h-full">
@@ -91,9 +93,9 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
             />
             
             {/* Text Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-deep-brown via-deep-brown/90 to-transparent pt-20 pb-8 px-6">
-              <div className="max-w-5xl mx-auto">
-                <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white text-center leading-relaxed break-words">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-black/50 pt-24 md:pt-32 pb-10 md:pb-12 px-4 md:px-8">
+              <div className="max-w-6xl mx-auto">
+                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-white text-center leading-loose px-2">
                   {language === "ar" ? slide.titleAr : slide.titleEn}
                 </h3>
               </div>

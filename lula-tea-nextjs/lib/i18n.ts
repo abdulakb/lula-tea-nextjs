@@ -11,7 +11,7 @@ export const translations = {
     heroSubtitle: "Experience the finest blend of loose leaf teas",
     heroDescription: "Our unique blend is carefully calculated with the finest ingredients, crafted with love to give you an unforgettable taste experience.",
     softOpening: "🌟 Soft Opening - Beta Version",
-    orderNow: "Checkout Now",
+    orderNow: "Order Now",
     contactUs: "Contact Us",
     
     // Product
@@ -148,7 +148,7 @@ export const translations = {
     heroSubtitle: "اختبر أفضل مزيج من أوراق الشاي الفاخرة",
     heroDescription: "مزيجنا الفريد مُحسوب بعناية بأجود المكونات، مُحضّر بحب ليمنحك تجربة طعم لا تُنسى.",
     softOpening: "🌟 تحت التجربة - نسخة تجريبية",
-    orderNow: "ادفع الآن",
+    orderNow: "اطلب الآن",
     contactUs: "تواصل معنا",
     
     // Product

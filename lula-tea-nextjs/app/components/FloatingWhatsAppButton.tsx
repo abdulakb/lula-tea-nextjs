@@ -19,7 +19,7 @@ export default function FloatingWhatsAppButton() {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 group"
+      className="fixed bottom-6 right-24 z-50 group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label={language === "ar" ? "تواصل عبر واتساب" : "Chat on WhatsApp"}

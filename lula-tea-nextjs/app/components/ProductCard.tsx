@@ -6,6 +6,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
 import { useToast } from "@/context/ToastContext";
+import { ProductCardSkeleton } from "./SkeletonLoaders";
+import StockNotificationForm from "./StockNotificationForm";
 
 interface Product {
   id: string;
@@ -55,14 +57,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
   };
 
   if (loading) {
-    return (
-      <div className="bg-warm-cream rounded-3xl shadow-xl overflow-hidden p-12 text-center">
-        <div className="animate-pulse">
-          <div className="h-8 bg-tea-brown/20 rounded w-3/4 mx-auto mb-4"></div>
-          <div className="h-4 bg-tea-brown/20 rounded w-1/2 mx-auto"></div>
-        </div>
-      </div>
-    );
+    return <ProductCardSkeleton />;
   }
 
   if (!product) {
@@ -203,6 +198,16 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
               <span className="text-deep-brown">{t("feature3")}</span>
             </div>
           </div>
+
+          {/* Stock Notification Form - Show when out of stock */}
+          {product.isOutOfStock && showActions && (
+            <div className="mb-6">
+              <StockNotificationForm 
+                productId={product.id}
+                productName={language === "ar" ? product.nameAr : product.name}
+              />
+            </div>
+          )}
 
           <div className="mb-6">
             <div className="text-3xl font-bold text-deep-brown mb-1">

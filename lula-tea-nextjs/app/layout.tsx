@@ -5,6 +5,8 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatWidget from "./components/ChatWidget";
 import FloatingCartButton from "./components/FloatingCartButton";
+import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
+import BackToTopButton from "./components/BackToTopButton";
 import AppInsightsProvider from "./components/AppInsightsProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
@@ -74,6 +76,8 @@ export default function RootLayout({
                     <Footer />
                     <ChatWidget />
                     <FloatingCartButton />
+                    <FloatingWhatsAppButton />
+                    <BackToTopButton />
                   </ToastProvider>
                 </CartProvider>
               </LanguageProvider>

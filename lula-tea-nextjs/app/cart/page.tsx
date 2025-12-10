@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { useToast } from "@/context/ToastContext";
 import { useState, useEffect } from "react";
 import CheckoutProgress from "../components/CheckoutProgress";
+import { CartItemSkeleton } from "../components/SkeletonLoaders";
 
 export default function CartPage() {
   const { t, language } = useLanguage();
@@ -31,6 +32,22 @@ export default function CartPage() {
     }
     fetchStock();
   }, []);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold text-deep-brown mb-12 text-center">
+            {t("cartTitle")}
+          </h1>
+          <div className="bg-white rounded-3xl shadow-xl p-8">
+            <CartItemSkeleton />
+            <CartItemSkeleton />
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   if (items.length === 0) {
     return (

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/context/LanguageContext";
 import ProductCard from "../components/ProductCard";
+import ProductReviews from "../components/ProductReviews";
 
 const ThemeToggle = dynamic(() => import("../components/ThemeToggle"), {
   ssr: false,
@@ -23,6 +24,11 @@ export default function ProductPage() {
         </div>
 
         <ProductCard showActions={true} />
+
+        {/* Customer Reviews Section */}
+        <div className="mt-16">
+          <ProductReviews />
+        </div>
       </div>
     </main>
   );

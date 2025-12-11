@@ -84,27 +84,14 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            {/* Image container with gradient overlay to hide baked-in text */}
-            <div className="absolute inset-0 overflow-hidden">
-              <Image
-                src={slide.image}
-                alt={language === "ar" ? slide.titleAr : slide.titleEn}
-                fill
-                className="object-cover object-center"
-                priority={index === 0}
-              />
-              {/* Strong gradient to completely hide top and bottom baked-in text */}
-              <div className="absolute inset-0 bg-gradient-to-b from-deep-brown via-transparent via-50% to-deep-brown" />
-            </div>
-            
-            {/* Clean Code-Based Text Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-deep-brown/95 py-8 px-6 z-10">
-              <div className="max-w-5xl mx-auto">
-                <h3 className="text-lg md:text-2xl lg:text-3xl font-bold text-white text-center leading-relaxed">
-                  {language === "ar" ? slide.titleAr : slide.titleEn}
-                </h3>
-              </div>
-            </div>
+            {/* Full image without cropping */}
+            <Image
+              src={slide.image}
+              alt={language === "ar" ? slide.titleAr : slide.titleEn}
+              fill
+              className="object-contain"
+              priority={index === 0}
+            />
           </div>
         ))}
       </div>

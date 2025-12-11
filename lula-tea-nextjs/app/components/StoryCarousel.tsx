@@ -88,7 +88,7 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
               src={slide.image}
               alt={language === "ar" ? slide.titleAr : slide.titleEn}
               fill
-              className="object-cover"
+              className="object-contain"
               priority={index === 0}
             />
             

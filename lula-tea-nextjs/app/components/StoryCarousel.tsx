@@ -69,7 +69,7 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
 
   return (
     <div 
-      className="relative w-full aspect-video bg-deep-brown/5 rounded-2xl overflow-hidden shadow-2xl group touch-auto"
+      className="relative w-full aspect-[4/3] bg-deep-brown/5 rounded-2xl overflow-hidden shadow-2xl group touch-auto"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}

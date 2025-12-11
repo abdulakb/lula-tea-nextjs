@@ -29,8 +29,12 @@ export const metadata: Metadata = {
   description: "Discover our finest blend of loose leaf teas, carefully crafted with love. Each ingredient is thoughtfully selected to give you a unique taste experience.",
   manifest: "/manifest.json",
   icons: {
-    icon: '/images/logo.jpg',
+    icon: [
+      { url: '/images/logo.jpg', sizes: '32x32', type: 'image/jpeg' },
+      { url: '/images/logo.jpg', sizes: '16x16', type: 'image/jpeg' },
+    ],
     apple: '/images/logo.jpg',
+    shortcut: '/images/logo.jpg',
   },
   openGraph: {
     title: "Lula Tea - Homemade with Love",

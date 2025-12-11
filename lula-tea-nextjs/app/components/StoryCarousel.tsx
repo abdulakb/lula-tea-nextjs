@@ -90,11 +90,11 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
                 src={slide.image}
                 alt={language === "ar" ? slide.titleAr : slide.titleEn}
                 fill
-                className="object-cover object-top"
+                className="object-cover object-center"
                 priority={index === 0}
               />
-              {/* Dark gradient to cover bottom baked-in text */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent from-60% to-deep-brown" />
+              {/* Strong gradient to completely hide top and bottom baked-in text */}
+              <div className="absolute inset-0 bg-gradient-to-b from-deep-brown via-transparent via-50% to-deep-brown" />
             </div>
             
             {/* Clean Code-Based Text Overlay */}

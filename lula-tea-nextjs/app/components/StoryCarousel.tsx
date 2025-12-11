@@ -76,22 +76,25 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
       onTouchEnd={() => setIsPaused(false)}
     >
       {/* Slides */}
-      <div className="relative w-full min-h-[500px] md:min-h-[600px] lg:min-h-[700px]">
+      <div className="relative w-full h-[600px] md:h-[700px] lg:h-[800px]">
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 flex items-center justify-center ${
+            className={`absolute inset-0 transition-opacity duration-1000 ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
             {/* Full image without cropping */}
-            <Image
-              src={slide.image}
-              alt={language === "ar" ? slide.titleAr : slide.titleEn}
-              fill
-              className="object-contain"
-              priority={index === 0}
-            />
+            <div className="relative w-full h-full flex items-center justify-center">
+              <Image
+                src={slide.image}
+                alt={language === "ar" ? slide.titleAr : slide.titleEn}
+                width={1920}
+                height={1440}
+                className="max-w-full max-h-full w-auto h-auto object-contain"
+                priority={index === 0}
+              />
+            </div>
           </div>
         ))}
       </div>

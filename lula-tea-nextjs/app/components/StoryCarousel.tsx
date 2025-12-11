@@ -76,7 +76,7 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
       onTouchEnd={() => setIsPaused(false)}
     >
       {/* Slides */}
-      <div className="relative w-full min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
+      <div className="relative w-full min-h-[500px] md:min-h-[600px] lg:min-h-[700px]">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -84,19 +84,23 @@ export default function StoryCarousel({ language }: StoryCarouselProps) {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            <Image
-              src={slide.image}
-              alt={language === "ar" ? slide.titleAr : slide.titleEn}
-              width={1920}
-              height={1440}
-              className="w-full h-auto object-contain"
-              priority={index === 0}
-            />
+            {/* Image container with gradient overlay to hide baked-in text */}
+            <div className="absolute inset-0 overflow-hidden">
+              <Image
+                src={slide.image}
+                alt={language === "ar" ? slide.titleAr : slide.titleEn}
+                fill
+                className="object-cover object-top"
+                priority={index === 0}
+              />
+              {/* Dark gradient to cover bottom baked-in text */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent from-60% to-deep-brown" />
+            </div>
             
-            {/* Text Overlay - Subtle */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-deep-brown/80 to-transparent pt-12 pb-6 px-6">
+            {/* Clean Code-Based Text Overlay */}
+            <div className="absolute bottom-0 left-0 right-0 bg-deep-brown/95 py-8 px-6 z-10">
               <div className="max-w-5xl mx-auto">
-                <h3 className="text-base md:text-lg lg:text-xl font-semibold text-white text-center leading-relaxed drop-shadow-lg">
+                <h3 className="text-lg md:text-2xl lg:text-3xl font-bold text-white text-center leading-relaxed">
                   {language === "ar" ? slide.titleAr : slide.titleEn}
                 </h3>
               </div>

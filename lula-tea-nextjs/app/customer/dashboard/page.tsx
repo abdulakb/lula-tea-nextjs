@@ -63,6 +63,15 @@ export default function CustomerDashboard() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({
+    customer_name: '',
+    customer_email: '',
+    customer_phone: '',
+    delivery_address: '',
+    city: '',
+    delivery_notes: '',
+  });
 
   useEffect(() => {
     checkAuth();
@@ -109,6 +118,57 @@ export default function CustomerDashboard() {
     router.push('/');
   };
 
+  const handleEditOrder = () => {
+    if (!selectedOrder) return;
+    
+    setEditForm({
+      customer_name: selectedOrder.customer_name || '',
+      customer_email: selectedOrder.customer_email || '',
+      customer_phone: selectedOrder.customer_phone || '',
+      delivery_address: selectedOrder.delivery_address || '',
+      city: selectedOrder.city || '',
+      delivery_notes: selectedOrder.order_details?.delivery_notes || '',
+    });
+    setIsEditMode(true);
+  };
+
+  const handleSaveOrder = async () => {
+    if (!customer || !selectedOrder) return;
+
+    setActionLoading(true);
+    try {
+      const response = await fetch('/api/customer/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: selectedOrder.id,
+          customerId: customer.id,
+          action: 'update',
+          updates: editForm,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Update order in state
+        setOrders(orders.map(order => 
+          order.id === selectedOrder.id ? data.order : order
+        ));
+        setSelectedOrder(data.order);
+        setIsEditMode(false);
+        alert(language === 'en' ? 'Order updated successfully' : 'تم تحديث الطلب بنجاح');
+      } else {
+        alert(data.error || (language === 'en' ? 'Failed to update order' : 'فشل تحديث الطلب'));
+      }
+    } catch (error) {
+      console.error('Error updating order:', error);
+      alert(language === 'en' ? 'An error occurred' : 'حدث خطأ');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleCancelOrder = async (orderId: number) => {
     if (!customer) return;
 
@@ -138,6 +198,7 @@ export default function CustomerDashboard() {
           order.id === orderId ? { ...order, status: 'cancelled' } : order
         ));
         setSelectedOrder(null);
+        setIsEditMode(false);
         alert(language === 'en' ? 'Order cancelled successfully' : 'تم إلغاء الطلب بنجاح');
       } else {
         alert(data.error || (language === 'en' ? 'Failed to cancel order' : 'فشل إلغاء الطلب'));
@@ -311,8 +372,41 @@ export default function CustomerDashboard() {
                 {/* Delivery Info */}
                 <div>
                   <p className="text-sm text-gray-500 mb-1">{language === 'en' ? 'Delivery Address' : 'عنوان التوصيل'}</p>
-                  <p className="font-medium">{selectedOrder.delivery_address}</p>
-                  <p className="text-gray-600">{selectedOrder.city}</p>
+                  {isEditMode ? (
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        value={editForm.delivery_address}
+                        onChange={(e) => setEditForm({...editForm, delivery_address: e.target.value})}
+                        placeholder={language === 'en' ? 'Delivery Address' : 'عنوان التوصيل'}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      />
+                      <input
+                        type="text"
+                        value={editForm.city}
+                        onChange={(e) => setEditForm({...editForm, city: e.target.value})}
+                        placeholder={language === 'en' ? 'City' : 'المدينة'}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      />
+                      <textarea
+                        value={editForm.delivery_notes}
+                        onChange={(e) => setEditForm({...editForm, delivery_notes: e.target.value})}
+                        placeholder={language === 'en' ? 'Delivery Notes (Optional)' : 'ملاحظات التوصيل (اختياري)'}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <p className="font-medium">{selectedOrder.delivery_address}</p>
+                      <p className="text-gray-600">{selectedOrder.city}</p>
+                      {selectedOrder.order_details?.delivery_notes && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          {language === 'en' ? 'Notes: ' : 'ملاحظات: '}{selectedOrder.order_details.delivery_notes}
+                        </p>
+                      )}
+                    </>
+                  )}
                 </div>
 
                 {/* Order Items */}
@@ -347,16 +441,45 @@ export default function CustomerDashboard() {
 
                 {/* Actions */}
                 {(selectedOrder.status === 'pending' || selectedOrder.status === 'processing') && (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => handleCancelOrder(selectedOrder.id)}
-                      disabled={actionLoading}
-                      className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition"
-                    >
-                      {actionLoading
-                        ? (language === 'en' ? 'Cancelling...' : 'جاري الإلغاء...')
-                        : (language === 'en' ? 'Cancel Order' : 'إلغاء الطلب')}
-                    </button>
+                  <div className="space-y-3">
+                    {isEditMode ? (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={handleSaveOrder}
+                          disabled={actionLoading}
+                          className="flex-1 px-4 py-3 bg-tea-green text-white rounded-lg font-semibold hover:bg-opacity-90 disabled:opacity-50 transition"
+                        >
+                          {actionLoading
+                            ? (language === 'en' ? 'Saving...' : 'جاري الحفظ...')
+                            : (language === 'en' ? 'Save Changes' : 'حفظ التغييرات')}
+                        </button>
+                        <button
+                          onClick={() => setIsEditMode(false)}
+                          disabled={actionLoading}
+                          className="flex-1 px-4 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 disabled:opacity-50 transition"
+                        >
+                          {language === 'en' ? 'Cancel' : 'إلغاء'}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={handleEditOrder}
+                          className="flex-1 px-4 py-3 bg-tea-green text-white rounded-lg font-semibold hover:bg-opacity-90 transition"
+                        >
+                          {language === 'en' ? 'Edit Order' : 'تعديل الطلب'}
+                        </button>
+                        <button
+                          onClick={() => handleCancelOrder(selectedOrder.id)}
+                          disabled={actionLoading}
+                          className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition"
+                        >
+                          {actionLoading
+                            ? (language === 'en' ? 'Cancelling...' : 'جاري الإلغاء...')
+                            : (language === 'en' ? 'Cancel Order' : 'إلغاء الطلب')}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

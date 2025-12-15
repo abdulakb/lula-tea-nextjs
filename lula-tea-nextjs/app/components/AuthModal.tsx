@@ -10,15 +10,19 @@ interface AuthModalProps {
   language: 'en' | 'ar';
 }
 
-type AuthStep = 'phone' | 'otp' | 'profile';
+type AuthStep = 'phone' | 'otp' | 'profile' | 'email-login' | 'email-signup';
+type AuthMethod = 'phone' | 'email';
 
 export default function AuthModal({ isOpen, onClose, onSuccess, language }: AuthModalProps) {
   const t = translations[language];
+  const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
   const [step, setStep] = useState<AuthStep>('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState(0);
@@ -34,11 +38,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
   useEffect(() => {
     if (!isOpen) {
       // Reset state when modal closes
+      setAuthMethod('phone');
       setStep('phone');
       setPhone('');
       setOtp('');
       setName('');
       setEmail('');
+      setPassword('');
+      setConfirmPassword('');
       setError('');
       setDevOTP('');
     }
@@ -174,6 +181,103 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
     }
   };
 
+  const handleEmailLogin = async () => {
+    setError('');
+    
+    if (!email.trim() || !password.trim()) {
+      setError(language === 'en' ? 'Please enter email and password' : 'الرجاء إدخال البريد الإلكتروني وكلمة المرور');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'login',
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Save to session and close
+      saveCustomerSession(data.customer);
+      onSuccess(data.customer);
+      onClose();
+    } catch (err) {
+      console.error('Error logging in:', err);
+      setError(
+        language === 'en'
+          ? 'Invalid email or password'
+          : 'بريد إلكتروني أو كلمة مرور غير صحيحة'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailSignup = async () => {
+    setError('');
+    
+    if (!email.trim() || !name.trim() || !password.trim()) {
+      setError(language === 'en' ? 'Please fill in all required fields' : 'الرجاء ملء جميع الحقول المطلوبة');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError(language === 'en' ? 'Passwords do not match' : 'كلمات المرور غير متطابقة');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError(language === 'en' ? 'Password must be at least 8 characters' : 'يجب أن تكون كلمة المرور 8 أحرف على الأقل');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'signup',
+          email,
+          password,
+          name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Signup failed');
+      }
+
+      // Save to session and close
+      saveCustomerSession(data.customer);
+      onSuccess(data.customer);
+      onClose();
+    } catch (err) {
+      console.error('Error signing up:', err);
+      setError(
+        language === 'en'
+          ? (err as Error).message || 'Failed to create account'
+          : 'فشل في إنشاء الحساب'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCompleteProfile = async () => {
     setError('');
     
@@ -243,10 +347,44 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
         </button>
 
         <h2 className="text-2xl font-bold text-deep-brown mb-6">
-          {step === 'phone' && (language === 'en' ? 'Sign In / Sign Up' : 'تسجيل الدخول / إنشاء حساب')}
+          {(step === 'phone' || step === 'email-login' || step === 'email-signup') && (language === 'en' ? 'Sign In / Sign Up' : 'تسجيل الدخول / إنشاء حساب')}
           {step === 'otp' && (language === 'en' ? 'Verify Your Phone' : 'تحقق من هاتفك')}
           {step === 'profile' && (language === 'en' ? 'Complete Your Profile' : 'أكمل ملفك الشخصي')}
         </h2>
+
+        {/* Auth Method Tabs */}
+        {(step === 'phone' || step === 'email-login' || step === 'email-signup') && (
+          <div className="flex gap-2 mb-6 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => {
+                setAuthMethod('phone');
+                setStep('phone');
+                setError('');
+              }}
+              className={`flex-1 py-2 px-4 rounded-md font-medium transition ${
+                authMethod === 'phone'
+                  ? 'bg-white text-tea-green shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {language === 'en' ? '📱 Phone' : '📱 الهاتف'}
+            </button>
+            <button
+              onClick={() => {
+                setAuthMethod('email');
+                setStep('email-login');
+                setError('');
+              }}
+              className={`flex-1 py-2 px-4 rounded-md font-medium transition ${
+                authMethod === 'email'
+                  ? 'bg-white text-tea-green shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {language === 'en' ? '✉️ Email' : '✉️ البريد'}
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
@@ -282,6 +420,138 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
                 ? (language === 'en' ? 'Sending...' : 'جاري الإرسال...')
                 : (language === 'en' ? 'Send Code' : 'إرسال الرمز')}
             </button>
+          </div>
+        )}
+
+        {/* Email Login */}
+        {step === 'email-login' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Email Address' : 'البريد الإلكتروني'}
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={language === 'en' ? 'your@email.com' : 'your@email.com'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              dir="ltr"
+            />
+            
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Password' : 'كلمة المرور'}
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={language === 'en' ? '••••••••' : '••••••••'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2"
+            />
+            
+            <div className="text-right mb-4">
+              <a 
+                href="/forgot-password" 
+                target="_blank"
+                className="text-sm text-tea-green hover:underline"
+              >
+                {language === 'en' ? 'Forgot Password?' : 'نسيت كلمة المرور؟'}
+              </a>
+            </div>
+            
+            <button
+              onClick={handleEmailLogin}
+              disabled={loading}
+              className="w-full bg-tea-green text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 disabled:opacity-50 transition mb-3"
+            >
+              {loading
+                ? (language === 'en' ? 'Signing In...' : 'جاري تسجيل الدخول...')
+                : (language === 'en' ? 'Sign In' : 'تسجيل الدخول')}
+            </button>
+            
+            <div className="text-center">
+              <button
+                onClick={() => setStep('email-signup')}
+                className="text-sm text-gray-600 hover:text-tea-green"
+              >
+                {language === 'en' ? 'Don\'t have an account? Sign Up' : 'ليس لديك حساب؟ سجل الآن'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Email Signup */}
+        {step === 'email-signup' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Full Name' : 'الاسم الكامل'} *
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={language === 'en' ? 'Ahmed Abdullah' : 'أحمد عبدالله'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+            />
+            
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Email Address' : 'البريد الإلكتروني'} *
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={language === 'en' ? 'your@email.com' : 'your@email.com'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              dir="ltr"
+            />
+            
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Password' : 'كلمة المرور'} *
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={language === 'en' ? '••••••••' : '••••••••'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+            />
+            
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Confirm Password' : 'تأكيد كلمة المرور'} *
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder={language === 'en' ? '••••••••' : '••••••••'}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2"
+            />
+            
+            <p className="text-xs text-gray-500 mb-4">
+              {language === 'en'
+                ? 'Password must be at least 8 characters'
+                : 'يجب أن تكون كلمة المرور 8 أحرف على الأقل'}
+            </p>
+            
+            <button
+              onClick={handleEmailSignup}
+              disabled={loading}
+              className="w-full bg-tea-green text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 disabled:opacity-50 transition mb-3"
+            >
+              {loading
+                ? (language === 'en' ? 'Creating Account...' : 'جاري إنشاء الحساب...')
+                : (language === 'en' ? 'Sign Up' : 'إنشاء حساب')}
+            </button>
+            
+            <div className="text-center">
+              <button
+                onClick={() => setStep('email-login')}
+                className="text-sm text-gray-600 hover:text-tea-green"
+              >
+                {language === 'en' ? 'Already have an account? Sign In' : 'لديك حساب؟ سجل الدخول'}
+              </button>
+            </div>
           </div>
         )}
 

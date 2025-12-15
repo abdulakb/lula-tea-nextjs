@@ -125,24 +125,59 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (action === 'update') {
-      if (order.status !== 'pending') {
+      if (!['pending', 'processing'].includes(order.status)) {
         return NextResponse.json(
-          { error: 'Order can only be modified while pending' },
+          { error: 'Order can only be modified while pending or processing' },
           { status: 400 }
         );
       }
 
+      // Prepare update object
+      const updateData: any = {
+        updated_at: new Date().toISOString(),
+      };
+
+      // Allow updating specific fields
+      if (updates.customer_name) updateData.customer_name = updates.customer_name;
+      if (updates.customer_email !== undefined) updateData.customer_email = updates.customer_email;
+      if (updates.customer_phone) updateData.customer_phone = updates.customer_phone;
+      if (updates.delivery_address) {
+        updateData.delivery_address = updates.delivery_address;
+        updateData.delivery_address_formatted = updates.delivery_address;
+      }
+      if (updates.city) updateData.city = updates.city;
+      if (updates.delivery_notes !== undefined) updateData.delivery_notes = updates.delivery_notes;
+      if (updates.delivery_time_preference !== undefined) updateData.delivery_time_preference = updates.delivery_time_preference;
+      
+      // Handle items update (only if pending)
+      if (updates.items && order.status === 'pending') {
+        // Parse existing items
+        const oldItems = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+        const newItems = updates.items;
+        
+        // Calculate new totals
+        const newSubtotal = newItems.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+        const newTotal = newSubtotal + (order.delivery_fee || 0);
+        
+        updateData.items = JSON.stringify(newItems);
+        updateData.subtotal = newSubtotal;
+        updateData.total = newTotal;
+        updateData.quantity_ordered = newItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
+        
+        // TODO: Handle stock adjustments
+        // - Return stock for removed/reduced items
+        // - Deduct stock for new/increased items
+      }
+
       const { data, error } = await supabase
         .from('orders')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', orderId)
         .select()
         .single();
 
       if (error) {
+        console.error('Update error:', error);
         return NextResponse.json(
           { error: 'Failed to update order' },
           { status: 500 }

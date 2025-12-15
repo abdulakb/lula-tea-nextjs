@@ -15,6 +15,7 @@
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/supabase-js": "^2.84.0",
     "ai": "^5.0.99",
+    "bcryptjs": "^3.0.3",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.555.0",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

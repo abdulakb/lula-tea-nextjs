@@ -66,7 +66,7 @@ CREATE TRIGGER update_customers_updated_at_trigger
   FOR EACH ROW
   EXECUTE FUNCTION update_customers_updated_at();
 
--- Create updated_at trigger for customer_addresses
+-- Create updated_at trigger for customer_addresses (reuses the same function)
 CREATE TRIGGER update_customer_addresses_updated_at_trigger
   BEFORE UPDATE ON public.customer_addresses
   FOR EACH ROW
@@ -77,31 +77,25 @@ ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.customer_addresses ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for customers table
--- Allow anyone to insert (signup)
+-- Allow anyone to insert (signup) - uses anon key
 CREATE POLICY "Allow public signup" ON public.customers
   FOR INSERT
   WITH CHECK (true);
 
--- Customers can view their own data
-CREATE POLICY "Customers can view own data" ON public.customers
+-- Allow service role to see all (for API routes with service role key)
+CREATE POLICY "Service role can view all customers" ON public.customers
   FOR SELECT
-  USING (
-    id::text = current_setting('app.current_customer_id', true) OR
-    true  -- Allow service role to see all
-  );
+  USING (true);
 
--- Customers can update their own data
-CREATE POLICY "Customers can update own data" ON public.customers
+-- Allow service role to update all (for API routes with service role key)
+CREATE POLICY "Service role can update all customers" ON public.customers
   FOR UPDATE
-  USING (
-    id::text = current_setting('app.current_customer_id', true)
-  );
+  USING (true);
 
--- Service role can do everything
-CREATE POLICY "Service role full access to customers" ON public.customers
-  FOR ALL
-  USING (true)
-  WITH CHECK (true);
+-- Allow service role to delete (if needed)
+CREATE POLICY "Service role can delete customers" ON public.customers
+  FOR DELETE
+  USING (true);
 
 -- RLS Policies for customer_addresses
 CREATE POLICY "Customers can manage own addresses" ON public.customer_addresses

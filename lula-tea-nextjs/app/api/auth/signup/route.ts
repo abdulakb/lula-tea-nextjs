@@ -42,6 +42,10 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, email, phone, password } = validation.data;
+    
+    // Get language preference from request body or headers
+    const language = (body.language as "en" | "ar") || 
+      (request.headers.get("accept-language")?.includes("ar") ? "ar" : "en");
 
     // Sanitize inputs
     const sanitizedName = sanitizeInput(name);
@@ -112,7 +116,7 @@ export async function POST(request: NextRequest) {
     // Send welcome email (if email provided)
     if (sanitizedEmail && process.env.RESEND_API_KEY) {
       try {
-        const welcomeEmail = generateWelcomeEmail(sanitizedName, "en"); // TODO: Get language from request
+        const welcomeEmail = generateWelcomeEmail(sanitizedName, language);
         await resend.emails.send({
           from: "Lula Tea <orders@lulatee.com>",
           to: sanitizedEmail,
@@ -127,7 +131,7 @@ export async function POST(request: NextRequest) {
       // Send verification email
       try {
         const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL || "https://lulatee.com"}/verify-email?token=${verificationToken}`;
-        const verificationEmail = generateVerificationEmail(sanitizedName, verificationLink, "en");
+        const verificationEmail = generateVerificationEmail(sanitizedName, verificationLink, language);
         await resend.emails.send({
           from: "Lula Tea <orders@lulatee.com>",
           to: sanitizedEmail,

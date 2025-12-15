@@ -69,6 +69,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark-transition`}
       >
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
         <AppInsightsProvider>
           <ThemeProvider>
             <AnalyticsProvider>
@@ -76,7 +79,9 @@ export default function RootLayout({
                 <CartProvider>
                   <ToastProvider>
                     <Header />
-                    {children}
+                    <main id="main-content">
+                      {children}
+                    </main>
                     <Footer />
                     <ChatWidget />
                     <FloatingCartButton />

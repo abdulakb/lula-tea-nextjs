@@ -14,7 +14,10 @@
     "@microsoft/applicationinsights-web": "^3.3.10",
     "@stripe/stripe-js": "^8.5.3",
     "@supabase/supabase-js": "^2.84.0",
+    "@types/bcrypt": "^6.0.0",
     "ai": "^5.0.99",
+    "bcrypt": "^6.0.0",
+    "iron-session": "^8.0.4",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.555.0",
@@ -25,7 +28,8 @@
     "recharts": "^3.5.0",
     "resend": "^6.5.2",
     "stripe": "^20.0.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

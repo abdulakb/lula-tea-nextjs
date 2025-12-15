@@ -119,12 +119,14 @@ export default function Home() {
           <div className="max-w-4xl mx-auto bg-warm-cream rounded-3xl shadow-xl overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
               {/* Product Image */}
-              <div className="relative h-80 md:h-auto">
+              <div className="relative h-80 md:h-auto group">
                 <Image
                   src="/images/Product Image2.jpg"
-                  alt="Lula Tea Premium Blend"
+                  alt="Lula Tea Premium Loose Leaf Blend - 200g pack with natural ingredients"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
 
@@ -223,12 +225,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Image */}
-            <div className="relative h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl order-2 lg:order-1">
+            <div className="relative h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl order-2 lg:order-1 group">
               <Image
                 src="/images/Teapot.png"
-                alt="Lula Tea Brewing"
+                alt="Traditional Arabic teapot for brewing Lula Tea"
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
 
@@ -253,13 +257,20 @@ export default function Home() {
                     {language === "ar" ? "شاهد الفيديو التعليمي" : "Watch Tutorial Video"}
                   </h3>
                 </div>
-                <div className="aspect-video bg-deep-brown/5 rounded-xl relative overflow-hidden">
+                <div className="aspect-video bg-deep-brown/5 rounded-xl relative overflow-hidden shadow-inner">
                   <video 
                     controls 
                     className="w-full h-full object-cover"
                     preload="metadata"
+                    aria-label={language === "ar" ? "فيديو تعليمي لتحضير الشاي" : "Tea brewing tutorial video"}
+                    controlsList="nodownload"
                   >
                     <source src="/videos/tea-brewing-tutorial.mp4" type="video/mp4" />
+                    <track 
+                      kind="captions" 
+                      srcLang={language === "ar" ? "ar" : "en"}
+                      label={language === "ar" ? "العربية" : "English"}
+                    />
                     <p className="text-tea-brown text-center p-4">
                       {language === "ar" 
                         ? "متصفحك لا يدعم تشغيل الفيديو"

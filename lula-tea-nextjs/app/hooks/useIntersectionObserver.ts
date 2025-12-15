@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const DEFAULT_OPTIONS: IntersectionObserverInit = { threshold: 0.1 };
+
 export function useIntersectionObserver(options?: IntersectionObserverInit) {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef<HTMLElement>(null);
@@ -15,7 +17,7 @@ export function useIntersectionObserver(options?: IntersectionObserverInit) {
           observer.unobserve(elementRef.current);
         }
       }
-    }, options || { threshold: 0.1 });
+    }, options || DEFAULT_OPTIONS);
 
     const currentElement = elementRef.current;
     if (currentElement) {

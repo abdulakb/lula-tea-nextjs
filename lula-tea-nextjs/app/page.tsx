@@ -266,11 +266,6 @@ export default function Home() {
                     controlsList="nodownload"
                   >
                     <source src="/videos/tea-brewing-tutorial.mp4" type="video/mp4" />
-                    <track 
-                      kind="captions" 
-                      srcLang={language === "ar" ? "ar" : "en"}
-                      label={language === "ar" ? "العربية" : "English"}
-                    />
                     <p className="text-tea-brown text-center p-4">
                       {language === "ar" 
                         ? "متصفحك لا يدعم تشغيل الفيديو"

@@ -30,21 +30,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
+    setMounted(true);
     const stored = localStorage.getItem("lula-tea-cart");
     if (stored) {
       try {
-        setItems(JSON.parse(stored));
+        const parsedItems = JSON.parse(stored);
+        // Validate the data structure
+        if (Array.isArray(parsedItems)) {
+          setItems(parsedItems);
+          console.log(`✅ Cart restored: ${parsedItems.length} unique items`);
+        }
       } catch (e) {
-        console.error("Failed to parse cart:", e);
+        console.error("Failed to parse cart from localStorage:", e);
+        localStorage.removeItem("lula-tea-cart");
       }
     }
-    setMounted(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes (after mount)
   useEffect(() => {
     if (mounted) {
-      localStorage.setItem("lula-tea-cart", JSON.stringify(items));
+      try {
+        localStorage.setItem("lula-tea-cart", JSON.stringify(items));
+        console.log(`💾 Cart saved: ${items.length} unique items, ${items.reduce((sum, item) => sum + item.quantity, 0)} total items`);
+      } catch (e) {
+        console.error("Failed to save cart to localStorage:", e);
+      }
     }
   }, [items, mounted]);
 

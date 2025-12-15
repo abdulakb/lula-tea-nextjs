@@ -153,12 +153,39 @@ export async function POST(request: NextRequest) {
     console.log("Stock deduction results:", stockDeductionResults);
 
 
+    // Check if customer is logged in
+    let customerId = null;
+    if (customerPhone) {
+      // Sanitize phone to match format in database
+      const sanitizedPhone = customerPhone.startsWith('+') 
+        ? customerPhone 
+        : customerPhone.startsWith('966') 
+        ? '+' + customerPhone 
+        : customerPhone.startsWith('0') 
+        ? '+966' + customerPhone.slice(1)
+        : '+966' + customerPhone;
+      
+      // Try to find customer by phone
+      const { data: customerData } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('phone', sanitizedPhone)
+        .eq('verified', true)
+        .single();
+      
+      if (customerData) {
+        customerId = customerData.id;
+        console.log('Order linked to customer:', customerId);
+      }
+    }
+
     // Save order to Supabase with all customer form data
     const { data: orderData, error: orderError } = await supabase
       .from("orders")
       .insert([
         {
           order_id: orderId,
+          customer_id: customerId,
           customer_name: customerName,
           customer_email: customerEmail || null,
           customer_phone: customerPhone,

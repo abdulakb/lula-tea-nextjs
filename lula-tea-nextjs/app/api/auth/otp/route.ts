@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'OTP sent successfully',
-        // In development, return OTP for testing
-        ...(process.env.NODE_ENV === 'development' && { otp }),
+        // Return OTP for testing (remove this in production after testing)
+        otp,
       });
     }
 

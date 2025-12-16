@@ -112,9 +112,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
         throw new Error(data.error || 'Failed to send OTP');
       }
 
-      // Store dev OTP if provided
-      if (data.devOTP) {
-        setDevOTP(data.devOTP);
+      // Store OTP if provided (for testing)
+      if (data.otp) {
+        setDevOTP(data.otp);
       }
 
       setStep('otp');
@@ -566,7 +566,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
             
             {devOTP && (
               <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-sm">
-                <strong>Development Mode:</strong> OTP Code: <code className="font-mono">{devOTP}</code>
+                <strong>{language === 'en' ? 'Your OTP Code' : 'رمز التحقق الخاص بك'}:</strong> <code className="font-mono text-2xl font-bold">{devOTP}</code>
               </div>
             )}
 

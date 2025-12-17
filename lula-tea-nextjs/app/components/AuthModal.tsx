@@ -403,7 +403,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder={language === 'en' ? '0501234567' : '٠٥٠١٢٣٤٥٦٧'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
               dir="ltr"
             />
             <p className="text-xs text-gray-500 mb-4">
@@ -579,7 +579,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="123456"
               maxLength={6}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-center text-2xl tracking-widest font-mono"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-center text-2xl tracking-widest font-mono text-gray-900"
               dir="ltr"
             />
             

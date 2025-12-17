@@ -83,7 +83,8 @@ async function sendOTPviaWhatsApp(phone: string, otp: string, customerEmail?: st
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone, action } = await request.json();
+    const body = await request.json();
+    const { phone, action, otp } = body;
 
     if (!phone) {
       return NextResponse.json(
@@ -150,8 +151,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'verify-otp') {
-      const { otp } = await request.json();
-
       if (!otp) {
         return NextResponse.json(
           { error: 'OTP is required' },

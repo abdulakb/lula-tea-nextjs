@@ -82,31 +82,19 @@ export default function StoryPage() {
             {language === "ar" ? (
               <div className="space-y-6 text-tea-brown" dir="rtl">
                 <p className="text-xl md:text-2xl leading-relaxed">
-                  بدأت قصة <span className="font-bold text-tea-green">شاي لولا</span> من حب خالص للشاي الفاخر. لولا، التي كانت دائماً تقدّر فن الشاي الاستثنائي، كانت تستمتع بتلقي هدايا الشاي النادرة وتعتز بكل مزيج فريد.
-                </p>
-                <p className="text-xl md:text-2xl leading-relaxed">
-                  بشغف وخبرة، بدأت لولا في صنع مزيجاتها الخاصة، تجمع بين أفضل أنواع الشاي الفاخر لصنع الكوب المثالي. كل مزيج كان يُحفظ بعناية في برطمانات جميلة، جاهز للاستمتاع به في اللحظات اليومية أو لمشاركته مع الضيوف الأعزاء.
-                </p>
-                <p className="text-xl md:text-2xl leading-relaxed">
-                  وفي كل مرة يزورها أحد، كانت الضيافة السعودية الأصيلة تعني تقديم كوب من هذا الشاي المميز. وكانت النتيجة دائماً واحدة: يقع الضيوف في حب الشاي ويسألون "هل يمكننا أخذ بعضه للمنزل؟"
+                  بدأت قصة <span className="font-bold text-tea-green">شاي لولا</span> من حب خالص للشاي الفاخر. بشغف وخبرة، بدأت لولا في صنع مزيجاتها الخاصة، تجمع بين أفضل أنواع الشاي لصنع الكوب المثالي.
                 </p>
                 <p className="text-xl md:text-2xl leading-relaxed font-semibold text-tea-green">
-                  من هنا وُلدت الفكرة. ما بدأ كشغف شخصي أصبح رسالة: مشاركة هذه التجربة الاستثنائية مع الجميع. شاي لولا ليس مجرد منتج، بل هو قصة حب للشاي وللضيافة السعودية الدافئة.
+                  وعندما بدأ الضيوف يسألون "هل يمكننا أخذ بعضه للمنزل؟" وُلدت الفكرة. شاي لولا هو قصة حب للشاي وللضيافة السعودية الدافئة.
                 </p>
               </div>
             ) : (
               <div className="space-y-6 text-tea-brown">
                 <p className="text-xl md:text-2xl leading-relaxed">
-                  The story of <span className="font-bold text-tea-green">Lula Tea</span> began with a pure love for exceptional tea. Lula, who has always appreciated the art of premium tea, would receive exquisite tea gifts and treasure each unique blend.
-                </p>
-                <p className="text-xl md:text-2xl leading-relaxed">
-                  With passion and expertise, Lula started crafting her own custom blends, combining the finest premium varieties to create the perfect cup. Each carefully crafted blend was stored in beautiful jars, ready to be enjoyed during daily moments or shared with beloved guests.
-                </p>
-                <p className="text-xl md:text-2xl leading-relaxed">
-                  Every time someone visited, true Saudi hospitality meant serving a cup of this special tea. And the response was always the same: guests would fall in love with it and ask, "Can we take some home?"
+                  The story of <span className="font-bold text-tea-green">Lula Tea</span> began with a pure love for exceptional tea. With passion and expertise, Lula started crafting custom blends, combining the finest varieties to create the perfect cup.
                 </p>
                 <p className="text-xl md:text-2xl leading-relaxed font-semibold text-tea-green">
-                  That's where the idea was born. What started as a personal passion became a mission: to share this exceptional experience with everyone. Lula Tea isn't just a product—it's a love story for tea and warm Saudi hospitality.
+                  When guests started asking "Can we take some home?" the idea was born. Lula Tea is a love story for tea and warm Saudi hospitality.
                 </p>
               </div>
             )}

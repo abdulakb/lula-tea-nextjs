@@ -75,45 +75,41 @@ export default function StoryPage() {
         </div>
       </section>
 
-      {/* Detailed Story Sections */}
+      {/* Our Story Paragraph */}
       <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-warm-cream to-soft-sage/10">
-        <div className="max-w-6xl mx-auto">
-          <div className="space-y-12 md:space-y-20">
-            {storyScenes.map((scene, index) => (
-              <div 
-                key={index}
-                className={`flex flex-col ${
-                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                } gap-12 items-center`}
-              >
-                {/* Text Content */}
-                <div className="flex-1 space-y-4">
-                  <div className="inline-block px-4 py-2 bg-tea-green/10 rounded-full mb-4">
-                    <span className="text-tea-green font-bold">
-                      {language === "ar" ? `${6 - index}` : `${index + 1}`}
-                    </span>
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-deep-brown">
-                    {language === "ar" ? scene.titleAr : scene.titleEn}
-                  </h2>
-                  <p className="text-xl text-tea-brown leading-relaxed">
-                    {language === "ar" ? scene.descAr : scene.descEn}
-                  </p>
-                </div>
-
-                {/* Image from Carousel */}
-                <div className="flex-1 w-full">
-                  <div className="aspect-square relative rounded-2xl shadow-xl overflow-hidden">
-                    <Image
-                      src={`/images/story/slide-${index + 1}.png`}
-                      alt={language === "ar" ? scene.titleAr : scene.titleEn}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="prose prose-lg md:prose-xl prose-tea mx-auto text-center">
+            {language === "ar" ? (
+              <div className="space-y-6 text-tea-brown" dir="rtl">
+                <p className="text-xl md:text-2xl leading-relaxed">
+                  بدأت قصة <span className="font-bold text-tea-green">شاي لولا</span> من حب خالص للشاي الفاخر. لولا، التي كانت دائماً تقدّر فن الشاي الاستثنائي، كانت تستمتع بتلقي هدايا الشاي النادرة وتعتز بكل مزيج فريد.
+                </p>
+                <p className="text-xl md:text-2xl leading-relaxed">
+                  بشغف وخبرة، بدأت لولا في صنع مزيجاتها الخاصة، تجمع بين أفضل أنواع الشاي الفاخر لصنع الكوب المثالي. كل مزيج كان يُحفظ بعناية في برطمانات جميلة، جاهز للاستمتاع به في اللحظات اليومية أو لمشاركته مع الضيوف الأعزاء.
+                </p>
+                <p className="text-xl md:text-2xl leading-relaxed">
+                  وفي كل مرة يزورها أحد، كانت الضيافة السعودية الأصيلة تعني تقديم كوب من هذا الشاي المميز. وكانت النتيجة دائماً واحدة: يقع الضيوف في حب الشاي ويسألون "هل يمكننا أخذ بعضه للمنزل؟"
+                </p>
+                <p className="text-xl md:text-2xl leading-relaxed font-semibold text-tea-green">
+                  من هنا وُلدت الفكرة. ما بدأ كشغف شخصي أصبح رسالة: مشاركة هذه التجربة الاستثنائية مع الجميع. شاي لولا ليس مجرد منتج، بل هو قصة حب للشاي وللضيافة السعودية الدافئة.
+                </p>
               </div>
-            ))}
+            ) : (
+              <div className="space-y-6 text-tea-brown">
+                <p className="text-xl md:text-2xl leading-relaxed">
+                  The story of <span className="font-bold text-tea-green">Lula Tea</span> began with a pure love for exceptional tea. Lula, who has always appreciated the art of premium tea, would receive exquisite tea gifts and treasure each unique blend.
+                </p>
+                <p className="text-xl md:text-2xl leading-relaxed">
+                  With passion and expertise, Lula started crafting her own custom blends, combining the finest premium varieties to create the perfect cup. Each carefully crafted blend was stored in beautiful jars, ready to be enjoyed during daily moments or shared with beloved guests.
+                </p>
+                <p className="text-xl md:text-2xl leading-relaxed">
+                  Every time someone visited, true Saudi hospitality meant serving a cup of this special tea. And the response was always the same: guests would fall in love with it and ask, "Can we take some home?"
+                </p>
+                <p className="text-xl md:text-2xl leading-relaxed font-semibold text-tea-green">
+                  That's where the idea was born. What started as a personal passion became a mission: to share this exceptional experience with everyone. Lula Tea isn't just a product—it's a love story for tea and warm Saudi hospitality.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>

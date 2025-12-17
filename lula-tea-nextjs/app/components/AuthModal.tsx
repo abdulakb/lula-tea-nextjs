@@ -84,8 +84,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
 
     const sanitizedPhone = sanitizePhone(phone);
     
-    // Saudi phone validation - accepts all mobile prefixes
-    if (!sanitizedPhone.match(/^\+966(5[0-9])\d{7}$/)) {
+    // Basic Saudi phone validation
+    if (!sanitizedPhone.match(/^\+9665\d{8}$/)) {
       setError(
         language === 'en'
           ? 'Please enter a valid Saudi phone number (e.g., 0501234567)'
@@ -112,9 +112,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
         throw new Error(data.error || 'Failed to send OTP');
       }
 
-      // Store OTP if provided (for testing)
-      if (data.otp) {
-        setDevOTP(data.otp);
+      // Store dev OTP if provided
+      if (data.devOTP) {
+        setDevOTP(data.devOTP);
       }
 
       setStep('otp');
@@ -403,7 +403,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder={language === 'en' ? '0501234567' : '٠٥٠١٢٣٤٥٦٧'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
               dir="ltr"
             />
             <p className="text-xs text-gray-500 mb-4">
@@ -566,7 +566,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
             
             {devOTP && (
               <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-sm">
-                <strong>{language === 'en' ? 'Your OTP Code' : 'رمز التحقق الخاص بك'}:</strong> <code className="font-mono text-2xl font-bold">{devOTP}</code>
+                <strong>Development Mode:</strong> OTP Code: <code className="font-mono">{devOTP}</code>
               </div>
             )}
 
@@ -579,7 +579,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="123456"
               maxLength={6}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-center text-2xl tracking-widest font-mono text-gray-900"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-center text-2xl tracking-widest font-mono"
               dir="ltr"
             />
             

@@ -52,61 +52,26 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Check if customer exists first
-    const { data: existingCustomer } = await supabase
+    // Update customer profile
+    const { data: customer, error } = await supabase
       .from('customers')
-      .select('*')
+      .update({
+        name: name || null,
+        email: email || null,
+        address: address || null,
+        city: city || null,
+        updated_at: new Date().toISOString(),
+      })
       .eq('phone', phone)
+      .select()
       .single();
 
-    let customer;
-
-    if (existingCustomer) {
-      // Update existing customer
-      const { data: updated, error } = await supabase
-        .from('customers')
-        .update({
-          name: name || null,
-          email: email || null,
-          address: address || null,
-          city: city || null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('phone', phone)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Database error:', error);
-        return NextResponse.json(
-          { error: 'Failed to update profile' },
-          { status: 500 }
-        );
-      }
-      customer = updated;
-    } else {
-      // Create new customer if doesn't exist
-      const { data: created, error } = await supabase
-        .from('customers')
-        .insert([{
-          phone,
-          name: name || null,
-          email: email || null,
-          address: address || null,
-          city: city || null,
-          verified: true,
-        }])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Database error:', error);
-        return NextResponse.json(
-          { error: 'Failed to create profile' },
-          { status: 500 }
-        );
-      }
-      customer = created;
+    if (error) {
+      console.error('Database error:', error);
+      return NextResponse.json(
+        { error: 'Failed to update profile' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

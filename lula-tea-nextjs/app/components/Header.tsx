@@ -83,6 +83,12 @@ export default function Header() {
                 {t("contactUs")}
               </Link>
               <Link 
+                href="/customer/dashboard" 
+                className="text-deep-brown hover:text-tea-green transition-colors font-medium"
+              >
+                {language === "ar" ? "طلباتي" : "Orders"}
+              </Link>
+              <Link 
                 href="/account" 
                 className="text-deep-brown hover:text-tea-green transition-colors font-medium"
               >
@@ -201,6 +207,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               {t("contactUs")}
+            </Link>
+            <Link 
+              href="/customer/dashboard" 
+              className="block py-2 text-deep-brown hover:text-tea-green transition-colors font-medium text-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {language === "ar" ? "طلباتي" : "Orders"}
             </Link>
             <Link 
               href="/account" 

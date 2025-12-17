@@ -492,7 +492,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={language === 'en' ? 'your@email.com' : 'your@email.com'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
               dir="ltr"
             />
             
@@ -504,7 +504,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={language === 'en' ? '••••••••' : '••••••••'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-gray-900"
             />
             
             <div className="text-right mb-4">
@@ -549,7 +549,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={language === 'en' ? 'Ahmed Abdullah' : 'أحمد عبدالله'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
             />
             
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -560,7 +560,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={language === 'en' ? 'your@email.com' : 'your@email.com'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
               dir="ltr"
             />
             
@@ -572,7 +572,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={language === 'en' ? '••••••••' : '••••••••'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
             />
             
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -583,7 +583,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder={language === 'en' ? '••••••••' : '••••••••'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-gray-900"
             />
             
             <p className="text-xs text-gray-500 mb-4">
@@ -736,7 +736,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={language === 'en' ? 'Ahmed Abdullah' : 'أحمد عبدالله'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
             />
 
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -747,7 +747,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={language === 'en' ? 'ahmed@example.com' : 'ahmed@example.com'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-4 text-gray-900"
               dir="ltr"
             />
 

@@ -85,7 +85,7 @@ export default function StoryPage() {
                   بدأت قصة <span className="font-bold text-tea-green">شاي لولا</span> من حب خالص للشاي الفاخر. بشغف وخبرة، بدأت لولا في صنع مزيجاتها الخاصة، تجمع بين أفضل أنواع الشاي لصنع الكوب المثالي.
                 </p>
                 <p className="text-xl md:text-2xl leading-relaxed font-semibold text-tea-green">
-                  وعندما بدأ الضيوف يسألون "هل يمكننا أخذ بعضه للمنزل؟" وُلدت الفكرة. شاي لولا هو قصة حب للشاي وللضيافة السعودية الدافئة.
+                  وعندما بدأ الضيوف يسألون "هل يمكننا أخذ بعضه للمنزل؟" وُلدت الفكرة. شاي لولا هو قصة حب للشاي الاستثنائي.
                 </p>
               </div>
             ) : (
@@ -94,7 +94,7 @@ export default function StoryPage() {
                   The story of <span className="font-bold text-tea-green">Lula Tea</span> began with a pure love for exceptional tea. With passion and expertise, Lula started crafting custom blends, combining the finest varieties to create the perfect cup.
                 </p>
                 <p className="text-xl md:text-2xl leading-relaxed font-semibold text-tea-green">
-                  When guests started asking "Can we take some home?" the idea was born. Lula Tea is a love story for tea and warm Saudi hospitality.
+                  When guests started asking "Can we take some home?" the idea was born. Lula Tea is a love story for exceptional tea.
                 </p>
               </div>
             )}

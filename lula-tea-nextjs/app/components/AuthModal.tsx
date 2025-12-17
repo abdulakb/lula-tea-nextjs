@@ -10,7 +10,7 @@ interface AuthModalProps {
   language: 'en' | 'ar';
 }
 
-type AuthStep = 'phone' | 'otp' | 'profile' | 'email-login' | 'email-signup';
+type AuthStep = 'phone' | 'otp' | 'profile' | 'email-login' | 'email-signup' | 'email-verify';
 type AuthMethod = 'phone' | 'email';
 
 export default function AuthModal({ isOpen, onClose, onSuccess, language }: AuthModalProps) {
@@ -27,6 +27,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
   const [error, setError] = useState('');
   const [countdown, setCountdown] = useState(0);
   const [devOTP, setDevOTP] = useState('');
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState('');
 
   useEffect(() => {
     if (countdown > 0) {
@@ -262,16 +263,72 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
         throw new Error(data.error || 'Signup failed');
       }
 
-      // Save to session and close
-      saveCustomerSession(data.customer);
-      onSuccess(data.customer);
-      onClose();
+      // Check if verification is required
+      if (data.requiresVerification) {
+        setPendingVerificationEmail(data.email);
+        setOtp('');
+        setCountdown(600); // 10 minutes
+        setStep('email-verify');
+        
+        // Store dev OTP if provided
+        if (data.otp) {
+          setDevOTP(data.otp);
+        }
+      } else {
+        // Old flow - auto verified
+        saveCustomerSession(data.customer);
+        onSuccess(data.customer);
+        onClose();
+      }
     } catch (err) {
       console.error('Error signing up:', err);
       setError(
         language === 'en'
           ? (err as Error).message || 'Failed to create account'
           : 'فشل في إنشاء الحساب'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    setError('');
+    
+    if (!otp.trim() || otp.length !== 6) {
+      setError(language === 'en' ? 'Please enter the 6-digit code' : 'الرجاء إدخال الرمز المكون من 6 أرقام');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'verify-email',
+          email: pendingVerificationEmail,
+          otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Verification failed');
+      }
+
+      // Email verified successfully
+      saveCustomerSession(data.customer);
+      onSuccess(data.customer);
+      onClose();
+    } catch (err) {
+      console.error('Error verifying email:', err);
+      setError(
+        language === 'en'
+          ? (err as Error).message || 'Invalid or expired code. Please try again.'
+          : 'رمز غير صحيح أو منتهي الصلاحية. يرجى المحاولة مرة أخرى.'
       );
     } finally {
       setLoading(false);
@@ -349,6 +406,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
         <h2 className="text-2xl font-bold text-deep-brown mb-6">
           {(step === 'phone' || step === 'email-login' || step === 'email-signup') && (language === 'en' ? 'Sign In / Sign Up' : 'تسجيل الدخول / إنشاء حساب')}
           {step === 'otp' && (language === 'en' ? 'Verify Your Phone' : 'تحقق من هاتفك')}
+          {step === 'email-verify' && (language === 'en' ? 'Verify Your Email' : 'تحقق من بريدك الإلكتروني')}
           {step === 'profile' && (language === 'en' ? 'Complete Your Profile' : 'أكمل ملفك الشخصي')}
         </h2>
 
@@ -552,6 +610,59 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
                 {language === 'en' ? 'Already have an account? Sign In' : 'لديك حساب؟ سجل الدخول'}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Email Verification Step */}
+        {step === 'email-verify' && (
+          <div>
+            <p className="text-sm text-gray-600 mb-4">
+              {language === 'en'
+                ? `We sent a 6-digit verification code to ${pendingVerificationEmail}. Please check your inbox.`
+                : `أرسلنا رمز تحقق مكون من 6 أرقام إلى ${pendingVerificationEmail}. يرجى التحقق من بريدك الوارد.`}
+            </p>
+            
+            {devOTP && (
+              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-sm">
+                <strong>{language === 'en' ? 'Your Verification Code' : 'رمز التحقق الخاص بك'}:</strong> <code className="font-mono text-2xl font-bold">{devOTP}</code>
+              </div>
+            )}
+
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {language === 'en' ? 'Verification Code' : 'رمز التحقق'}
+            </label>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="123456"
+              maxLength={6}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green mb-2 text-center text-2xl tracking-widest font-mono text-gray-900"
+              dir="ltr"
+            />
+            
+            {countdown > 0 && (
+              <p className="text-xs text-gray-500 mb-4 text-center">
+                {language === 'en' ? 'Code expires in' : 'ينتهي الرمز في'} {formatCountdown(countdown)}
+              </p>
+            )}
+
+            <button
+              onClick={handleVerifyEmail}
+              disabled={loading || otp.length !== 6}
+              className="w-full bg-tea-green text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 disabled:opacity-50 transition mb-3"
+            >
+              {loading
+                ? (language === 'en' ? 'Verifying...' : 'جاري التحقق...')
+                : (language === 'en' ? 'Verify Email' : 'تحقق من البريد')}
+            </button>
+
+            <button
+              onClick={() => setStep('email-signup')}
+              className="w-full text-tea-green py-2 text-sm hover:underline"
+            >
+              {language === 'en' ? 'Change Email' : 'تغيير البريد الإلكتروني'}
+            </button>
           </div>
         )}
 

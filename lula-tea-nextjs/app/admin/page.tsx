@@ -435,6 +435,27 @@ export default function AdminDashboard() {
           </Link>
 
           <Link
+            href="/admin/insights"
+            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center gap-4">
+              <div className="bg-purple-500/10 p-4 rounded-lg">
+                <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-deep-brown mb-1">
+                  Insights 📊
+                </h3>
+                <p className="text-tea-brown text-sm">
+                  Visitor behavior & shopping analytics
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
             href="/admin/reviews"
             className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow"
           >

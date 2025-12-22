@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
           { stage: "Checkout Info", count: Math.floor((checkoutEvents.length - (orders?.length || 0)) * 0.5) },
           { stage: "Payment", count: Math.floor((checkoutEvents.length - (orders?.length || 0)) * 0.2) },
         ],
-        byHour: generateHourlyData(checkoutEvents, orders),
+        byHour: generateHourlyData(checkoutEvents, orders || []),
       },
       devices: deviceStats,
       browsers: browserStats,

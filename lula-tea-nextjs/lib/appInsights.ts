@@ -91,3 +91,26 @@ export const trackChatMessage = (messageLength: number, language: string) => {
 export const trackReviewSubmitted = (ratings: Record<string, number>) => {
   trackEvent('ReviewSubmitted', ratings);
 };
+
+export const trackCheckoutAbandoned = (reason: string, stage: string, totalAmount?: number) => {
+  trackEvent('CheckoutAbandoned', {
+    reason,
+    stage, // 'cart', 'checkout_info', 'payment'
+    totalAmount,
+    timestamp: new Date().toISOString()
+  });
+};
+
+export const trackPaymentMethodSelected = (method: string) => {
+  trackEvent('PaymentMethodSelected', {
+    method
+  });
+};
+
+export const trackProductViewed = (productId: string, productName: string, price: number) => {
+  trackEvent('ProductViewed', {
+    productId,
+    productName,
+    price
+  });
+};

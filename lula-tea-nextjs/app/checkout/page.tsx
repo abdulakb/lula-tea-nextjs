@@ -9,7 +9,7 @@ import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
 import { useToast } from "@/context/ToastContext";
 import { openWhatsApp } from "@/lib/whatsapp";
-import { trackCheckoutStarted } from "@/lib/appInsights";
+import { trackCheckoutStarted, trackCheckoutAbandoned } from "@/lib/appInsights";
 import CheckoutProgress from "../components/CheckoutProgress";
 
 const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
@@ -39,6 +39,13 @@ export default function CheckoutPage() {
     // Track in Azure App Insights
     trackCheckoutStarted(subtotal, items.length);
 
+    // Track abandonment when user leaves
+    const handleBeforeUnload = () => {
+      trackCheckoutAbandoned('page_exit', 'checkout_info', subtotal);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     // Auto-scroll to form on mobile to avoid confusion
     // Wait for page to fully load before scrolling
     const timer = setTimeout(() => {
@@ -49,7 +56,10 @@ export default function CheckoutPage() {
       }
     }, 300);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
   
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "stcpay" | "whatsapp">("cod");

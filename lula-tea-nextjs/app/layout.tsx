@@ -14,7 +14,7 @@ import AppInsightsProvider from "./components/AppInsightsProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AnalyticsProvider } from "@/context/AnalyticsContext";
-import { ThemeProvider } from "@/context/ThemeProvider";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
 
 const geistSans = Geist({

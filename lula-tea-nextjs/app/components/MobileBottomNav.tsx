@@ -9,9 +9,7 @@ import { motion } from "framer-motion";
 const MobileBottomNav = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { cart } = useCart();
-
-  const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const { items, itemCount } = useCart();
 
   const navItems = [
     {
@@ -28,7 +26,7 @@ const MobileBottomNav = () => {
       label: "Cart",
       icon: ShoppingCart,
       path: "/cart",
-      badge: cartItemsCount,
+      badge: itemCount,
     },
     {
       label: "Account",
@@ -95,13 +93,13 @@ const MobileBottomNav = () => {
                   <Icon size={22} strokeWidth={active ? 2.5 : 2} />
                   
                   {/* Cart Badge */}
-                  {item.label === "Cart" && cartItemsCount > 0 && (
+                  {item.label === "Cart" && item.badge && item.badge > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
                     >
-                      {cartItemsCount > 99 ? "99+" : cartItemsCount}
+                      {item.badge > 99 ? "99+" : item.badge}
                     </motion.span>
                   )}
                 </div>

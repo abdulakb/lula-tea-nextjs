@@ -13,6 +13,7 @@ const AnalyticsContext = createContext<AnalyticsContextType | undefined>(undefin
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const [visitorId, setVisitorId] = useState<string>("");
   const [sessionStart, setSessionStart] = useState<number>(Date.now());
+  const [lastTrackedPage, setLastTrackedPage] = useState<string>("");
 
   useEffect(() => {
     // Get or create visitor ID
@@ -27,9 +28,6 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     const start = Date.now();
     setSessionStart(start);
     localStorage.setItem("session_start", start.toString());
-
-    // Track page view
-    trackPageView();
 
     // Track session end on page unload
     const handleBeforeUnload = () => {
@@ -46,6 +44,19 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  // Track page views separately - only when pathname changes
+  useEffect(() => {
+    if (typeof window === "undefined" || !visitorId) return;
+    
+    const currentPage = window.location.pathname;
+    
+    // Only track if this is a new page (not already tracked)
+    if (currentPage !== lastTrackedPage) {
+      trackPageView();
+      setLastTrackedPage(currentPage);
+    }
+  }, [visitorId, lastTrackedPage]);
 
   const trackPageView = () => {
     if (typeof window === "undefined") return;

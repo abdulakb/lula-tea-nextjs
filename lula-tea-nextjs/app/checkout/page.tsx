@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 import { useAnalytics } from "@/context/AnalyticsContext";
@@ -70,6 +71,9 @@ export default function CheckoutPage() {
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
+  const [giftMessage, setGiftMessage] = useState("");
+  const [isGift, setIsGift] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState<Array<{name: string, address: string, phone: string}>>([]);
   const [gpsCoordinates, setGpsCoordinates] = useState("");
   const [transactionReference, setTransactionReference] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

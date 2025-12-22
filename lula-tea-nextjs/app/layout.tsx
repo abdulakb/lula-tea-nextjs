@@ -7,11 +7,12 @@ import ChatWidget from "./components/ChatWidget";
 import FloatingCartButton from "./components/FloatingCartButton";
 import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
 import BackToTopButton from "./components/BackToTopButton";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import AppInsightsProvider from "./components/AppInsightsProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AnalyticsProvider } from "@/context/AnalyticsContext";
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeProvider } from "@/context/ThemeProvider";
 import { ToastProvider } from "@/context/ToastContext";
 
 const geistSans = Geist({
@@ -28,6 +29,24 @@ export const metadata: Metadata = {
   title: "Lula Tea - Homemade with Love",
   description: "Discover our finest blend of loose leaf teas, carefully crafted with love. Each ingredient is thoughtfully selected to give you a unique taste experience.",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Lula Tea",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#7a9b76" },
+    { media: "(prefers-color-scheme: dark)", color: "#8fb38a" },
+  ],
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   icons: {
     icon: [
       { url: '/images/logo.jpg', sizes: '32x32', type: 'image/jpeg' },
@@ -82,6 +101,7 @@ export default function RootLayout({
                     <FloatingCartButton />
                     <FloatingWhatsAppButton />
                     <BackToTopButton />
+                    <PWAInstallPrompt />
                   </ToastProvider>
                 </CartProvider>
               </LanguageProvider>

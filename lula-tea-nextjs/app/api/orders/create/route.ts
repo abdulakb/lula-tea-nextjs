@@ -326,11 +326,11 @@ export async function POST(request: NextRequest) {
       console.log("Sending admin WhatsApp notification for order:", orderId);
       
       // Send WhatsApp notification to admin
-      const whatsappResponse = await fetch(`${process.env.SITE_URL || 'https://lulatee.com'}/api/notifications/whatsapp`, {
+      const whatsappResponse = await fetch(`${process.env.SITE_URL || 'http://localhost:3000'}/api/notifications/whatsapp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "966539666654",
+          phoneNumber: process.env.ADMIN_WHATSAPP || "+966539666654",
           message: adminWhatsappMessage
         })
       });

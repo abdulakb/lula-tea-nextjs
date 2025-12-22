@@ -69,6 +69,7 @@ export default function CheckoutPage() {
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [buildingNumber, setBuildingNumber] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
@@ -400,6 +401,7 @@ export default function CheckoutPage() {
         customerEmail,
         customerPhone,
         customerAddress: deliveryAddress,
+        buildingNumber,
         deliveryNotes: paymentMethod === "stcpay" 
           ? `${deliveryNotes}\n\n💳 Transaction Ref: ${transactionReference}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
           : `${deliveryNotes}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`,
@@ -1373,6 +1375,23 @@ export default function CheckoutPage() {
                         </>
                       )}
                     </button>
+                  </div>
+
+                  {/* Building Number Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                      {language === "ar" ? "رقم المبنى" : "Building Number"}
+                    </label>
+                    <input
+                      type="text"
+                      value={buildingNumber}
+                      onChange={(e) => setBuildingNumber(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                      placeholder={language === "ar" ? "مثال: 1234" : "e.g., 1234"}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      {language === "ar" ? "يساعد السائق في العثور على موقعك بسهولة" : "Helps the driver find your location easily"}
+                    </p>
                   </div>
 
                   <div>

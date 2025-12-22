@@ -190,6 +190,7 @@ export async function POST(request: NextRequest) {
           customer_email: customerEmail || null,
           customer_phone: customerPhone,
           customer_address: customerAddress,
+          building_number: body.buildingNumber || null,
           delivery_address_formatted: customerAddress,
           gps_coordinates: gpsCoordinates || null,
           delivery_time_preference: deliveryTime || null,
@@ -303,9 +304,24 @@ export async function POST(request: NextRequest) {
 
     // Send WhatsApp notification to admin about new order
     try {
+      // Create Google Maps link from address
+      const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(customerAddress)}`;
+      
+      // Build address line with building number if provided
+      const fullAddress = body.buildingNumber 
+        ? `${customerAddress} (${language === "ar" ? "مبنى" : "Building"} ${body.buildingNumber})`
+        : customerAddress;
+      
+      // Only include amount for COD orders
+      const amountLine = paymentMethod === "cod" 
+        ? (language === "ar" 
+          ? `\n💰 المبلغ المطلوب: ${total} ريال (الدفع عند الاستلام)`
+          : `\n💰 Amount to Collect: ${total} SAR (Cash on Delivery)`)
+        : "";
+      
       const adminWhatsappMessage = language === "ar"
-        ? `🔔 *طلب جديد!*\n\nرقم الطلب: ${orderId}\nالعميل: ${customerName}\nالهاتف: ${customerPhone}\nالإجمالي: ${total} ريال\nطريقة الدفع: ${paymentMethod === "cod" ? "الدفع عند الاستلام" : "واتساب"}\n\nعرض التفاصيل: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}\n\n--\nلولة تي - الإدارة`
-        : `🔔 *New Order Alert!*\n\nOrder ID: ${orderId}\nCustomer: ${customerName}\nPhone: ${customerPhone}\nTotal: ${total} SAR\nPayment: ${paymentMethod === "cod" ? "Cash on Delivery" : "WhatsApp"}\n\nView details: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}\n\n--\nLula Tea Admin`;
+        ? `🔔 *طلب جديد!*\n\n📋 رقم الطلب: ${orderId}\n👤 العميل: ${customerName}\n📞 الهاتف: ${customerPhone}\n📍 العنوان: ${fullAddress}\n🗺️ خرائط جوجل: ${googleMapsLink}${amountLine}\n⏰ وقت التوصيل: ${deliveryTime || "في أقرب وقت"}\n\n🛒 المنتجات:\n${items.map((item: any) => `• ${item.nameAr || item.name} × ${item.quantity}`).join('\n')}\n\nعرض التفاصيل: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}`
+        : `🔔 *New Order!*\n\n📋 Order: ${orderId}\n👤 Customer: ${customerName}\n📞 Phone: ${customerPhone}\n📍 Address: ${fullAddress}\n🗺️ Google Maps: ${googleMapsLink}${amountLine}\n⏰ Delivery Time: ${deliveryTime || "ASAP"}\n\n🛒 Items:\n${items.map((item: any) => `• ${item.name} × ${item.quantity}`).join('\n')}\n\nView details: ${process.env.SITE_URL || 'https://lulatee.com'}/admin/orders/${orderData?.[0]?.id}`;
 
       console.log("Sending admin WhatsApp notification for order:", orderId);
       

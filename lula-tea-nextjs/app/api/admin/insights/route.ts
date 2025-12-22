@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     const insightsData = {
       visitors: {
-        total: events?.length || 0,
+        total: uniqueVisitors, // Total should be unique visitors, not all events
         unique: uniqueVisitors,
         new: Math.floor(uniqueVisitors * 0.3), // Approximate new visitors
         returning: Math.floor(uniqueVisitors * 0.7),

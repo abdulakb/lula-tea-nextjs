@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import SocialShare from "./components/SocialShare";
 
 const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
   ssr: false,
@@ -156,16 +157,129 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Limited Quantity Teaser Banner */}
+      <section className="py-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-red-600 via-orange-600 to-red-600 relative overflow-hidden">
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          animate={{
+            backgroundPosition: ["0% 0%", "100% 100%"],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+          style={{
+            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
+          }}
+        />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <motion.div
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="inline-flex items-center gap-3 mb-3"
+            >
+              <motion.span
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+                className="text-4xl"
+              >
+                🔥
+              </motion.span>
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+                {language === "ar" 
+                  ? "اطلب تذوقك الآن - كمية محدودة!" 
+                  : "Order Your Teaster Now - Limited Quantity!"}
+              </h3>
+              <motion.span
+                animate={{ rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+                className="text-4xl"
+              >
+                ⚡
+              </motion.span>
+            </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-white/90 text-lg md:text-xl mb-4"
+            >
+              {language === "ar"
+                ? "فقط 50 عبوة متبقية من دفعتنا الحصرية! لا تفوت الفرصة 🎁"
+                : "Only 50 packs left from our exclusive batch! Don't miss out 🎁"}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <motion.a
+                href="#product"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-red-600 px-8 py-4 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transition-all"
+              >
+                {language === "ar" ? "احصل على مذاقك الآن! 🛒" : "Get Your Teaster Now! 🛒"}
+              </motion.a>
+              <div className="flex items-center gap-2 text-white text-sm">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="w-2 h-2 bg-white rounded-full"
+                />
+                <span>{language === "ar" ? "التوصيل السريع متاح" : "Fast delivery available"}</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Product Section */}
       <section id="product" className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-deep-brown mb-3 md:mb-4">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-deep-brown mb-3 md:mb-4"
+            >
               {t('productTitle')}
-            </h2>
-            <p className="text-lg md:text-xl text-tea-brown">
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-lg md:text-xl text-tea-brown mb-4"
+            >
               {t('productSubtitle')}
-            </p>
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center"
+            >
+              <SocialShare
+                title={language === "ar" ? "شاي لولا - مزيج الشاي السعودي المميز" : "Lula Tea - Premium Saudi Tea Blend"}
+                description={language === "ar" 
+                  ? "جرب أفضل مزيج شاي من السعودية. طعم لا يُنسى!" 
+                  : "Experience the finest tea blend from Saudi Arabia. Unforgettable taste!"}
+              />
+            </motion.div>
           </div>
 
           <div className="max-w-4xl mx-auto bg-warm-cream rounded-3xl shadow-xl overflow-hidden">
@@ -609,6 +723,106 @@ export default function Home() {
               {t('comingSoonSubtext')}
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Social Proof & Instagram Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-warm-cream via-white to-soft-sage/10">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-deep-brown mb-4">
+              {language === "ar" ? "انضم إلى عائلتنا" : "Join Our Community"}
+            </h2>
+            <p className="text-lg text-tea-brown mb-6">
+              {language === "ar" 
+                ? "شارك لحظات الشاي الخاصة بك معنا على Instagram" 
+                : "Share your tea moments with us on Instagram"}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <motion.a
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                href="https://instagram.com/lulatea.sa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span>@lulatea.sa</span>
+              </motion.a>
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  const text = language === "ar" 
+                    ? "أحب شاي لولا! 🍵✨ جربوه الآن على www.lulatee.com"
+                    : "Loving Lula Tea! 🍵✨ Try it now at www.lulatee.com";
+                  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+                  window.open(url, '_blank');
+                }}
+                className="bg-gradient-to-r from-sky-500 to-blue-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+                <span>{language === "ar" ? "غرد عنا" : "Tweet About Us"}</span>
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Instagram Feed Placeholder */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((item) => (
+              <motion.div
+                key={item}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: item * 0.1 }}
+                whileHover={{ scale: 1.05, rotate: 2 }}
+                className="relative aspect-square bg-gradient-to-br from-tea-green/20 to-accent-gold/20 rounded-2xl overflow-hidden cursor-pointer group"
+              >
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div
+                    whileHover={{ scale: 1.2 }}
+                    className="text-6xl opacity-30 group-hover:opacity-60 transition-opacity"
+                  >
+                    🍵
+                  </motion.div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-deep-brown/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
+                  <p className="text-white font-semibold text-center">
+                    {language === "ar" ? `شاي لولا #${item}` : `Lula Tea #${item}`}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="text-center mt-8"
+          >
+            <p className="text-tea-brown/70 text-sm mb-4">
+              {language === "ar" 
+                ? "استخدم #LulaTea و @lulatea.sa لتظهر هنا!" 
+                : "Use #LulaTea and @lulatea.sa to be featured here!"}
+            </p>
+            <SocialShare
+              title={language === "ar" ? "شارك تجربتك مع شاي لولا" : "Share Your Lula Tea Experience"}
+              description={language === "ar" ? "انضم إلى عائلة شاي لولا!" : "Join the Lula Tea family!"}
+            />
+          </motion.div>
         </div>
       </section>
 

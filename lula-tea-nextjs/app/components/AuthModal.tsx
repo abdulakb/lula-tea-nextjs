@@ -13,10 +13,16 @@ interface AuthModalProps {
 type AuthStep = 'phone' | 'otp' | 'profile' | 'email-login' | 'email-signup' | 'email-verify';
 type AuthMethod = 'phone' | 'email';
 
+// Email validation helper
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 export default function AuthModal({ isOpen, onClose, onSuccess, language }: AuthModalProps) {
   const t = translations[language];
-  const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
-  const [step, setStep] = useState<AuthStep>('phone');
+  const [authMethod, setAuthMethod] = useState<AuthMethod>('email');
+  const [step, setStep] = useState<AuthStep>('email-login');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [name, setName] = useState('');
@@ -39,8 +45,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
   useEffect(() => {
     if (!isOpen) {
       // Reset state when modal closes
-      setAuthMethod('phone');
-      setStep('phone');
+      setAuthMethod('email');
+      setStep('email-login');
       setPhone('');
       setOtp('');
       setName('');
@@ -190,6 +196,11 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
       return;
     }
 
+    if (!isValidEmail(email.trim())) {
+      setError(language === 'en' ? 'Please enter a valid email address' : 'الرجاء إدخال بريد إلكتروني صحيح');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -230,6 +241,11 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
     
     if (!email.trim() || !name.trim() || !password.trim()) {
       setError(language === 'en' ? 'Please fill in all required fields' : 'الرجاء ملء جميع الحقول المطلوبة');
+      return;
+    }
+
+    if (!isValidEmail(email.trim())) {
+      setError(language === 'en' ? 'Please enter a valid email address' : 'الرجاء إدخال بريد إلكتروني صحيح');
       return;
     }
 
@@ -411,38 +427,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess, language }: Auth
         </h2>
 
         {/* Auth Method Tabs */}
-        {(step === 'phone' || step === 'email-login' || step === 'email-signup') && (
-          <div className="flex gap-2 mb-6 bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => {
-                setAuthMethod('phone');
-                setStep('phone');
-                setError('');
-              }}
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition ${
-                authMethod === 'phone'
-                  ? 'bg-white text-tea-green shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {language === 'en' ? '📱 Phone' : '📱 الهاتف'}
-            </button>
-            <button
-              onClick={() => {
-                setAuthMethod('email');
-                setStep('email-login');
-                setError('');
-              }}
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition ${
-                authMethod === 'email'
-                  ? 'bg-white text-tea-green shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {language === 'en' ? '✉️ Email' : '✉️ البريد'}
-            </button>
-          </div>
-        )}
+        {/* Phone authentication temporarily disabled - WhatsApp sandbox requires user verification */}
+        {/* Email-only authentication enabled */}
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">

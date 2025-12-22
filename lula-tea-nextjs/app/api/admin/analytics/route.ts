@@ -25,7 +25,7 @@ export async function GET(request: Request) {
         break;
     }
 
-    // Fetch all orders
+    // Fetch orders for the selected period
     const { data: orders, error: ordersError } = await supabase
       .from("orders")
       .select("*")
@@ -33,6 +33,14 @@ export async function GET(request: Request) {
       .order("created_at", { ascending: false });
 
     if (ordersError) throw ordersError;
+
+    // Fetch ALL orders for all-time stats
+    const { data: allTimeOrders, error: allTimeError } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (allTimeError) throw allTimeError;
 
     // Calculate metrics
     const today = new Date();
@@ -126,17 +134,20 @@ export async function GET(request: Request) {
       .sort((a, b) => b.totalSpent - a.totalSpent)
       .slice(0, 5);
 
+    // Calculate all-time revenue
+    const allTimeRevenue = calculateRevenue(allTimeOrders || []);
+
     const analytics = {
       summary: {
-        totalOrders: orders?.length || 0,
+        totalOrders: allTimeOrders?.length || 0,
         todayOrders: todayOrders.length,
         weekOrders: weekOrders.length,
         monthOrders: monthOrders.length,
-        totalRevenue,
+        totalRevenue: allTimeRevenue,
         todayRevenue,
         weekRevenue,
         monthRevenue,
-        averageOrderValue: totalRevenue / (orders?.length || 1),
+        averageOrderValue: allTimeRevenue / (allTimeOrders?.length || 1),
       },
       statusBreakdown,
       bestSellingProducts,

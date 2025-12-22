@@ -8,6 +8,12 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// Email validation helper
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { action, email, token, newPassword } = await request.json();
@@ -17,6 +23,13 @@ export async function POST(request: NextRequest) {
       if (!email) {
         return NextResponse.json(
           { error: "Email is required" },
+          { status: 400 }
+        );
+      }
+
+      if (!isValidEmail(email)) {
+        return NextResponse.json(
+          { error: "Please enter a valid email address" },
           { status: 400 }
         );
       }

@@ -1,72 +1,40 @@
 # Production Deployment Guide
 
-## ⚠️ WhatsApp OTP Not Working in Production - FIX REQUIRED
+## ✅ Authentication Status
 
-### Problem
-WhatsApp verification codes are failing in production because Twilio environment variables are not configured in Vercel.
+**Current Setup: Email Authentication Only**
 
-### Solution: Add Twilio Environment Variables in Vercel
+WhatsApp/Phone authentication has been **temporarily disabled** because:
+- Twilio WhatsApp Sandbox requires users to manually "join" before receiving messages
+- Not user-friendly for production customers
+- Will be re-enabled once WhatsApp Business API is approved
 
-1. **Go to Vercel Dashboard**
-   - Visit: https://vercel.com/dashboard
-   - Select your project: `lula-tea-nextjs`
-
-2. **Navigate to Environment Variables**
-   - Click on **Settings** tab
-   - Click on **Environment Variables** in the left sidebar
-
-3. **Add These Variables** (one by one):
-
-   ```
-   Variable Name: TWILIO_ACCOUNT_SID
-   Value: [Get from TWILIO_SETUP.md file - your Twilio Account SID]
-   Environment: Production, Preview, Development
-   ```
-
-   ```
-   Variable Name: TWILIO_AUTH_TOKEN
-   Value: [Get from TWILIO_SETUP.md file - your Twilio Auth Token]
-   Environment: Production, Preview, Development
-   ```
-
-   ```
-   Variable Name: TWILIO_WHATSAPP_NUMBER
-   Value: [Get from TWILIO_SETUP.md file - WhatsApp sandbox number]
-   Environment: Production, Preview, Development
-   ```
-   
-   **📝 Note**: Find your actual Twilio credentials in the `TWILIO_SETUP.md` file in this repository.
-
-4. **Verify Existing Variables**
-   Make sure these are already configured:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `RESEND_API_KEY`
-   - `STRIPE_SECRET_KEY`
-   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-
-5. **Redeploy**
-   After adding variables:
-   - Go to **Deployments** tab
-   - Click the **...** menu on the latest deployment
-   - Click **Redeploy**
-   - ✅ Check "Use existing Build Cache"
-   - Click **Redeploy**
-
-### Testing After Deployment
-
-1. Visit https://www.lulatee.com
-2. Click Account → Sign In/Sign Up
-3. Enter phone number: 0566668958
-4. Click "Send Code"
-5. Check WhatsApp for verification code
-6. If it fails, check email as fallback
+**Active Authentication Methods:**
+- ✅ Email + Password (with verification code)
+- ✅ Password reset via email
+- 🚫 Phone/WhatsApp OTP (disabled until production-ready)
 
 ---
 
-## 📱 WhatsApp Sandbox Limitation (Current Setup)
+## ⚠️ WhatsApp OTP - Currently Disabled
 
-### Current Status: Development Sandbox
+**Why disabled?**  
+The WhatsApp Sandbox requires every user to send "join [code]" to +14155238886 before they can receive messages. This is not practical for real customers.
+
+**To re-enable WhatsApp authentication in the future:**
+
+1. **Apply for WhatsApp Business API** (see instructions below)
+2. **Add Twilio environment variables to Vercel:**
+   - `TWILIO_ACCOUNT_SID`
+   - `TWILIO_AUTH_TOKEN`
+   - `TWILIO_WHATSAPP_NUMBER` (your approved number)
+3. **Re-enable phone authentication in the code:**
+   - Update [AuthModal.tsx](app/components/AuthModal.tsx) to show phone/email tabs again
+4. **Redeploy**
+
+---
+
+## 📱 WhatsApp Business API Setup (For Future Use)
 - You're using Twilio's **WhatsApp Sandbox**: `+14155238886`
 - **Limitation**: Users must send "join <code>" to the sandbox number before receiving messages
 - **Not ideal for production**
@@ -110,7 +78,7 @@ These migrations have been run on your Supabase database:
 ### Before Each Deployment:
 
 - [ ] Run `npm run build` locally to check for errors
-- [ ] Test authentication flows (phone OTP, email OTP, password login)
+- [ ] Test authentication flows (email signup, email login, password reset)
 - [ ] Test order creation and checkout
 - [ ] Verify Stripe test mode vs. live mode keys
 - [ ] Check all environment variables in Vercel
@@ -118,8 +86,8 @@ These migrations have been run on your Supabase database:
 ### After Deployment:
 
 - [ ] Test on production: https://www.lulatee.com
-- [ ] Verify WhatsApp OTP delivery
-- [ ] Test email OTP as fallback
+- [ ] Test email signup with verification code
+- [ ] Test email login
 - [ ] Place a test order
 - [ ] Check order appears in admin dashboard
 - [ ] Test password reset flow
@@ -150,10 +118,9 @@ These migrations have been run on your Supabase database:
 
 ### Common Issues:
 
-**"Failed to send OTP"**
-- Missing Twilio environment variables → Add them in Vercel
-- Twilio account suspended → Check Twilio console balance
-- WhatsApp sandbox not joined → User needs to join sandbox first
+**"Please enter a valid email address"**
+- Email validation now enforces proper format (must contain @)
+- Check that email has format: username@domain.com
 
 **Database Errors**
 - PGRST404: Check if migrations ran successfully
@@ -167,8 +134,8 @@ These migrations have been run on your Supabase database:
 
 ## 🎯 Next Steps
 
-1. **Immediate**: Add Twilio environment variables in Vercel (see top of this document)
-2. **Short-term**: Apply for WhatsApp Business API approval
+1. **Test email authentication** on production (https://www.lulatee.com)
+2. **Optional**: Apply for WhatsApp Business API if you want to re-enable phone auth later
 3. **Optional**: Set up monitoring alerts (Sentry, LogRocket, etc.)
 4. **Optional**: Configure custom domain email for professional look
 
@@ -179,10 +146,9 @@ These migrations have been run on your Supabase database:
 - Test with small amounts first (Stripe test mode)
 - Keep development and production environment variables separate
 - Always test authentication flows after deployment
-- Monitor Twilio usage to avoid unexpected charges
-- Consider adding rate limiting for OTP requests
+- Email authentication is more reliable than SMS/WhatsApp for most use cases
 
 ---
 
-**Last Updated**: December 17, 2025
-**Status**: Production deployment ready after adding Twilio env vars
+**Last Updated**: December 21, 2025
+**Status**: Email-only authentication active. WhatsApp/Phone auth disabled until WhatsApp Business API approved.

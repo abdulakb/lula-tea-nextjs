@@ -4,6 +4,12 @@ import { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import Link from 'next/link';
 
+// Email validation helper
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 export default function ForgotPasswordPage() {
   const { language } = useLanguage();
   const [email, setEmail] = useState('');
@@ -18,6 +24,11 @@ export default function ForgotPasswordPage() {
     
     if (!email.trim()) {
       setError(language === 'en' ? 'Please enter your email' : 'الرجاء إدخال بريدك الإلكتروني');
+      return;
+    }
+
+    if (!isValidEmail(email.trim())) {
+      setError(language === 'en' ? 'Please enter a valid email address' : 'الرجاء إدخال بريد إلكتروني صحيح');
       return;
     }
 

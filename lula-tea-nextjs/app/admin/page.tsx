@@ -257,36 +257,36 @@ export default function AdminDashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8 dark-transition">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Order Status</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="text-center">
+            <Link href="/admin/orders?status=pending" className="block text-center cursor-pointer hover:scale-105 transition-transform">
               <div className="bg-yellow-100 text-yellow-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.pending}</p>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Pending</p>
-            </div>
-            <div className="text-center">
+            </Link>
+            <Link href="/admin/orders?status=processing" className="block text-center cursor-pointer hover:scale-105 transition-transform">
               <div className="bg-blue-100 text-blue-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.processing}</p>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Processing</p>
-            </div>
-            <div className="text-center">
+            </Link>
+            <Link href="/admin/orders?status=shipped" className="block text-center cursor-pointer hover:scale-105 transition-transform">
               <div className="bg-purple-100 text-purple-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.shipped}</p>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Shipped</p>
-            </div>
-            <div className="text-center">
+            </Link>
+            <Link href="/admin/orders?status=delivered" className="block text-center cursor-pointer hover:scale-105 transition-transform">
               <div className="bg-green-100 text-green-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.delivered}</p>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Delivered</p>
-            </div>
-            <div className="text-center">
+            </Link>
+            <Link href="/admin/orders?status=cancelled" className="block text-center cursor-pointer hover:scale-105 transition-transform">
               <div className="bg-red-100 text-red-800 rounded-lg p-4 mb-2">
                 <p className="text-3xl font-bold">{analytics.statusBreakdown.cancelled}</p>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Cancelled</p>
-            </div>
+            </Link>
           </div>
         </div>
 

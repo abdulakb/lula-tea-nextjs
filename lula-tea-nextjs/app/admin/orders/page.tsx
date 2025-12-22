@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
 import { supabase } from "@/lib/supabaseClient";
@@ -24,6 +24,7 @@ interface Order {
 
 export default function OrdersManagement() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -40,8 +41,15 @@ export default function OrdersManagement() {
       router.push("/admin");
       return;
     }
+    
+    // Check for status filter from URL query parameter
+    const statusParam = searchParams.get('status');
+    if (statusParam && ['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(statusParam)) {
+      setFilter(statusParam);
+    }
+    
     fetchOrders();
-  }, [router]);
+  }, [router, searchParams]);
 
   const fetchOrders = async () => {
     try {

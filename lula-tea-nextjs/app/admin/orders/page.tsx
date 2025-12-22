@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
@@ -22,7 +22,7 @@ interface Order {
   notes?: string;
 }
 
-export default function OrdersManagement() {
+function OrdersManagementContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -589,5 +589,13 @@ export default function OrdersManagement() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrdersManagement() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <OrdersManagementContent />
+    </Suspense>
   );
 }

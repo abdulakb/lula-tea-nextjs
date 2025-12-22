@@ -72,7 +72,7 @@ export default function Home() {
           className="max-w-7xl mx-auto mb-4 md:mb-6 relative z-10"
         >
           <div className="glass-card rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center hover-glow">
-            <p className="text-deep-brown font-semibold text-sm md:text-lg">
+            <p className="text-gray-900 dark:text-white font-semibold text-sm md:text-lg">
               {t('softOpening')}
             </p>
           </div>
@@ -91,7 +91,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-deep-brown mb-4 md:mb-6 leading-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 leading-tight"
               >
                 {t('heroTitle')}
               </motion.h1>
@@ -99,7 +99,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-lg sm:text-xl md:text-2xl text-tea-brown mb-4 md:mb-8"
+                className="text-lg sm:text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-4 md:mb-8"
               >
                 {t('heroSubtitle')}
               </motion.p>
@@ -107,7 +107,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="text-base md:text-lg text-deep-brown/80 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0"
+                className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0"
               >
                 {t('heroDescription')}
               </motion.p>
@@ -179,7 +179,7 @@ export default function Home() {
             </motion.p>
           </div>
 
-          <div className="max-w-4xl mx-auto glass-card rounded-3xl shadow-strong overflow-hidden hover-lift gradient-overlay">
+          <div className="max-w-4xl mx-auto glass-card rounded-3xl shadow-strong overflow-hidden hover-lift">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
               {/* Product Image */}
               <div className="relative h-80 md:h-auto">
@@ -193,10 +193,10 @@ export default function Home() {
 
               {/* Product Details */}
               <div className="p-8 md:p-12 flex flex-col justify-center">
-                <h3 className="text-3xl font-bold text-deep-brown mb-4">
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                   {t('productName')}
                 </h3>
-                <p className="text-tea-brown mb-6">
+                <p className="text-gray-700 dark:text-gray-200 mb-6">
                   {t('productDescription')}
                 </p>
 
@@ -205,25 +205,25 @@ export default function Home() {
                     <svg className="w-5 h-5 text-tea-green" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-deep-brown">{t('feature1')}</span>
+                    <span className="text-gray-800 dark:text-gray-100">{t('feature1')}</span>
                   </div>
                   <div className="flex items-center gap-2 mb-3">
                     <svg className="w-5 h-5 text-tea-green" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-deep-brown">{t('feature2')}</span>
+                    <span className="text-gray-800 dark:text-gray-100">{t('feature2')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-tea-green" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-deep-brown">{t('feature3')}</span>
+                    <span className="text-gray-800 dark:text-gray-100">{t('feature3')}</span>
                   </div>
                 </div>
 
                 {/* Price with dynamic calculation */}
                 <div className="mb-6">
-                  <div className="text-3xl font-bold text-deep-brown mb-1">
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                     {language === "ar" 
                       ? `${(60 * quantity)} ريال` 
                       : `${(60 * quantity)} SAR`}

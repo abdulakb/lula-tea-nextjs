@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
-import SocialShare from "./components/SocialShare";
 
 const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
   ssr: false,
@@ -178,20 +177,6 @@ export default function Home() {
             >
               {t('productSubtitle')}
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center"
-            >
-              <SocialShare
-                title={language === "ar" ? "شاي لولا - مزيج الشاي السعودي المميز" : "Lula Tea - Premium Saudi Tea Blend"}
-                description={language === "ar" 
-                  ? "جرب أفضل مزيج شاي من السعودية. طعم لا يُنسى!" 
-                  : "Experience the finest tea blend from Saudi Arabia. Unforgettable taste!"}
-              />
-            </motion.div>
           </div>
 
           <div className="max-w-4xl mx-auto glass-card rounded-3xl shadow-strong overflow-hidden hover-lift gradient-overlay">

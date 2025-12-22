@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
     const pageStats = calculatePageStats(pageViews);
 
     const insightsData = {
-    const insightsData = {
       visitors: {
         total: events?.length || 0,
         unique: uniqueVisitors,

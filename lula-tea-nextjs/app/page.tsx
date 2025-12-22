@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
 
@@ -36,47 +37,113 @@ export default function Home() {
     <main className="min-h-screen">
       <ThemeToggle />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-12 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-12 md:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Animated background circles */}
+        <motion.div
+          className="absolute top-20 left-10 w-72 h-72 bg-tea-green/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-10 w-96 h-96 bg-accent-gold/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
         {/* Soft Opening Banner */}
-        <div className="max-w-7xl mx-auto mb-4 md:mb-6">
-          <div className="bg-accent-gold/10 border-2 border-accent-gold/30 rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto mb-4 md:mb-6 relative z-10"
+        >
+          <div className="bg-gradient-to-r from-accent-gold/10 via-accent-gold/20 to-accent-gold/10 border-2 border-accent-gold/30 rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center backdrop-blur-sm">
             <p className="text-deep-brown font-semibold text-sm md:text-lg">
               {t('softOpening')}
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-deep-brown mb-4 md:mb-6 leading-tight">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-center lg:text-left"
+            >
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-deep-brown mb-4 md:mb-6 leading-tight"
+              >
                 {t('heroTitle')}
-              </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-tea-brown mb-4 md:mb-8">
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-lg sm:text-xl md:text-2xl text-tea-brown mb-4 md:mb-8"
+              >
                 {t('heroSubtitle')}
-              </p>
-              <p className="text-base md:text-lg text-deep-brown/80 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0">
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="text-base md:text-lg text-deep-brown/80 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0"
+              >
                 {t('heroDescription')}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a 
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              >
+                <motion.a 
                   href="#product"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                   className="bg-tea-green hover:bg-tea-green/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-xl"
                 >
                   {t('orderNow')}
-                </a>
-                <Link 
-                  href="/contact"
-                  className="bg-white hover:bg-warm-cream text-tea-brown px-8 py-4 rounded-full text-lg font-semibold transition-all border-2 border-tea-brown/20"
-                >
-                  {t('contactUs')}
-                </Link>
-              </div>
-            </div>
+                </motion.a>
+                <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  <Link 
+                    href="/contact"
+                    className="block bg-white hover:bg-warm-cream text-tea-brown px-8 py-4 rounded-full text-lg font-semibold transition-all border-2 border-tea-brown/20"
+                  >
+                    {t('contactUs')}
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
 
             {/* Right Image */}
-            <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl">
+            <motion.div
+              initial={{ opacity: 0, x: 50, rotate: -5 }}
+              animate={{ opacity: 1, x: 0, rotate: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              whileHover={{ scale: 1.02, rotate: 1 }}
+              className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl"
+            >
               <Image
                 src="/images/logo.jpg"
                 alt="Lula Tea Premium Blend"
@@ -84,7 +151,7 @@ export default function Home() {
                 className="object-cover"
                 priority
               />
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>

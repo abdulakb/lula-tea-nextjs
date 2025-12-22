@@ -13,11 +13,11 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-warm-cream/95 backdrop-blur-sm border-b border-tea-brown/20 shadow-sm">
+      <header className="sticky top-0 z-50 glass border-b border-tea-brown/20 shadow-soft">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 hover-lift" onClick={() => setMobileMenuOpen(false)}>
               <Image
                 src="/images/logo.jpg"
                 alt="Lula Tea Logo"
@@ -35,11 +35,11 @@ export default function Header() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               {/* Language Toggle */}
-              <div className="flex items-center gap-2 bg-white rounded-full p-1 shadow-sm">
+              <div className="flex items-center gap-2 glass-card rounded-full p-1">
                 <button
                   onClick={() => setLanguage("en")}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 ${
-                    language === "en" ? "bg-tea-green text-white shadow-md" : "text-deep-brown hover:bg-tea-green/10"
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 micro-interact ${
+                    language === "en" ? "bg-tea-green text-white shadow-medium" : "text-deep-brown hover:bg-tea-green/10"
                   }`}
                   aria-label="English"
                 >
@@ -48,8 +48,8 @@ export default function Header() {
                 </button>
                 <button
                   onClick={() => setLanguage("ar")}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 ${
-                    language === "ar" ? "bg-tea-green text-white shadow-md" : "text-deep-brown hover:bg-tea-green/10"
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 micro-interact ${
+                    language === "ar" ? "bg-tea-green text-white shadow-medium" : "text-deep-brown hover:bg-tea-green/10"
                   }`}
                   aria-label="العربية"
                 >
@@ -60,19 +60,19 @@ export default function Header() {
 
               <Link 
                 href="/" 
-                className="text-deep-brown hover:text-tea-green transition-colors font-medium"
+                className="text-deep-brown hover:text-tea-green transition-colors font-medium micro-interact"
               >
                 {t("home")}
               </Link>
               <Link 
                 href="/product" 
-                className="text-deep-brown hover:text-tea-green transition-colors font-medium"
+                className="text-deep-brown hover:text-tea-green transition-colors font-medium micro-interact"
               >
                 {t("product")}
               </Link>
               <Link 
                 href="/story" 
-                className="text-deep-brown hover:text-tea-green transition-colors font-medium"
+                className="text-deep-brown hover:text-tea-green transition-colors font-medium micro-interact"
               >
                 {language === "ar" ? "قصتنا" : "Our Story"}
               </Link>

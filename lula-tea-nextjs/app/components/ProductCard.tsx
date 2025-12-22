@@ -130,7 +130,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="bg-warm-cream rounded-3xl shadow-xl overflow-hidden"
+      className="glass-card rounded-3xl shadow-strong overflow-hidden hover-lift gradient-overlay"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {/* Product Image */}
@@ -338,7 +338,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAddToCart}
                   disabled={product.isOutOfStock}
-                  className="w-full bg-tea-green hover:bg-tea-green/90 text-white px-6 py-4 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="button-ripple w-full bg-tea-green hover:bg-tea-green/90 text-white px-6 py-4 rounded-full font-semibold transition-all shadow-strong hover-glow disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {product.isOutOfStock 
                     ? (language === "ar" ? "نفذت الكمية" : "Out of Stock")

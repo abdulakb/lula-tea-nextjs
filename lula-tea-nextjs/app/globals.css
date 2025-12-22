@@ -47,3 +47,289 @@ body {
 .dark-transition {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
+/* Glassmorphism Effects */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass {
+  background: rgba(42, 36, 25, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(122, 155, 118, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(122, 155, 118, 0.15);
+}
+
+.dark .glass-card {
+  background: rgba(42, 36, 25, 0.65);
+  border: 1px solid rgba(143, 179, 138, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(143, 179, 138, 0.15);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px) saturate(200%);
+  -webkit-backdrop-filter: blur(16px) saturate(200%);
+  border: 1px solid rgba(122, 155, 118, 0.3);
+  box-shadow: 0 12px 48px 0 rgba(122, 155, 118, 0.2);
+}
+
+.dark .glass-strong {
+  background: rgba(42, 36, 25, 0.85);
+  border: 1px solid rgba(143, 179, 138, 0.3);
+  box-shadow: 0 12px 48px 0 rgba(143, 179, 138, 0.2);
+}
+
+/* Gradient Backgrounds */
+.gradient-mesh {
+  background: linear-gradient(135deg, #f5f1e8 0%, #e8dfd0 25%, #d4c4a8 50%, #e8dfd0 75%, #f5f1e8 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.dark .gradient-mesh {
+  background: linear-gradient(135deg, #1a1511 0%, #2a2419 25%, #3d2817 50%, #2a2419 75%, #1a1511 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.gradient-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    rgba(122, 155, 118, 0.1) 0%, 
+    rgba(201, 169, 97, 0.1) 50%, 
+    rgba(168, 181, 160, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.gradient-overlay:hover::before {
+  opacity: 1;
+}
+
+/* Animated Gradients */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(
+    -45deg,
+    var(--tea-green),
+    var(--accent-gold),
+    var(--soft-sage),
+    var(--tea-green)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 12s ease infinite;
+}
+
+/* Micro-interactions */
+.micro-interact {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.micro-interact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(122, 155, 118, 0.15);
+}
+
+.micro-interact:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(122, 155, 118, 0.1);
+}
+
+.button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.button-ripple:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Smooth Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(122, 155, 118, 0.2);
+}
+
+.hover-glow {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.hover-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--tea-green), var(--accent-gold));
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.hover-glow:hover::before {
+  opacity: 0.7;
+}
+
+/* Typography Animations */
+.text-reveal {
+  overflow: hidden;
+  display: inline-block;
+}
+
+.text-reveal span {
+  display: inline-block;
+  animation: text-reveal-anim 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes text-reveal-anim {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Parallax Container */
+.parallax-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.parallax-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  cursor: none;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--tea-green);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease-out, background-color 0.15s ease;
+  mix-blend-mode: difference;
+}
+
+.cursor-outline {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--tea-green);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.2s ease-out, width 0.2s ease, height 0.2s ease;
+  mix-blend-mode: difference;
+}
+
+.cursor-hover .cursor-outline {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(122, 155, 118, 0.1);
+}
+
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced Shadows */
+.shadow-soft {
+  box-shadow: 0 4px 20px rgba(122, 155, 118, 0.08),
+              0 2px 8px rgba(122, 155, 118, 0.04);
+}
+
+.shadow-medium {
+  box-shadow: 0 8px 30px rgba(122, 155, 118, 0.12),
+              0 4px 12px rgba(122, 155, 118, 0.08);
+}
+
+.shadow-strong {
+  box-shadow: 0 16px 48px rgba(122, 155, 118, 0.16),
+              0 8px 20px rgba(122, 155, 118, 0.12);
+}
+
+/* Loading Shimmer Effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(245, 241, 232, 0) 0%,
+    rgba(245, 241, 232, 0.3) 50%,
+    rgba(245, 241, 232, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(42, 36, 25, 0) 0%,
+    rgba(42, 36, 25, 0.3) 50%,
+    rgba(42, 36, 25, 0) 100%
+  );
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

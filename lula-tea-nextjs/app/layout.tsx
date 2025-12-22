@@ -9,6 +9,7 @@ import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
 import BackToTopButton from "./components/BackToTopButton";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import MobileBottomNav from "./components/MobileBottomNav";
+import CustomCursor from "./components/CustomCursor";
 import AppInsightsProvider from "./components/AppInsightsProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
@@ -104,6 +105,7 @@ export default function RootLayout({
                     <BackToTopButton />
                     <PWAInstallPrompt />
                     <MobileBottomNav />
+                    <CustomCursor />
                   </ToastProvider>
                 </CartProvider>
               </LanguageProvider>

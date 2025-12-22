@@ -38,7 +38,7 @@ export default function Home() {
     <main className="min-h-screen">
       <ThemeToggle />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-tea-green/20 via-warm-cream to-soft-sage/20 py-12 md:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative gradient-mesh py-12 md:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated background circles */}
         <motion.div
           className="absolute top-20 left-10 w-72 h-72 bg-tea-green/10 rounded-full blur-3xl"
@@ -72,7 +72,7 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           className="max-w-7xl mx-auto mb-4 md:mb-6 relative z-10"
         >
-          <div className="bg-gradient-to-r from-accent-gold/10 via-accent-gold/20 to-accent-gold/10 border-2 border-accent-gold/30 rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center backdrop-blur-sm">
+          <div className="glass-card rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center hover-glow">
             <p className="text-deep-brown font-semibold text-sm md:text-lg">
               {t('softOpening')}
             </p>
@@ -122,14 +122,14 @@ export default function Home() {
                   href="#product"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-tea-green hover:bg-tea-green/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-xl"
+                  className="button-ripple bg-tea-green hover:bg-tea-green/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-strong hover-glow"
                 >
                   {t('orderNow')}
                 </motion.a>
                 <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                   <Link 
                     href="/contact"
-                    className="block bg-white hover:bg-warm-cream text-tea-brown px-8 py-4 rounded-full text-lg font-semibold transition-all border-2 border-tea-brown/20"
+                    className="block glass-strong text-tea-brown px-8 py-4 rounded-full text-lg font-semibold transition-all micro-interact"
                   >
                     {t('contactUs')}
                   </Link>
@@ -143,7 +143,7 @@ export default function Home() {
               animate={{ opacity: 1, x: 0, rotate: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               whileHover={{ scale: 1.02, rotate: 1 }}
-              className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl"
+              className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-strong hover-lift gradient-overlay"
             >
               <Image
                 src="/images/logo.jpg"
@@ -228,7 +228,7 @@ export default function Home() {
                 href="#product"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-white text-red-600 px-8 py-4 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transition-all"
+                className="button-ripple glass-strong text-red-600 px-8 py-4 rounded-full text-lg font-bold shadow-strong hover-glow transition-all"
               >
                 {language === "ar" ? "احصل على مذاقك الآن! 🛒" : "Get Your Teaster Now! 🛒"}
               </motion.a>
@@ -282,7 +282,7 @@ export default function Home() {
             </motion.div>
           </div>
 
-          <div className="max-w-4xl mx-auto bg-warm-cream rounded-3xl shadow-xl overflow-hidden">
+          <div className="max-w-4xl mx-auto glass-card rounded-3xl shadow-strong overflow-hidden hover-lift gradient-overlay">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
               {/* Product Image */}
               <div className="relative h-80 md:h-auto">

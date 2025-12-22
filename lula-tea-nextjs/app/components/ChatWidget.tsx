@@ -90,7 +90,7 @@ export default function ChatWidget() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-tea-green hover:bg-tea-green/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center group"
+        className="fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 bg-tea-green hover:bg-tea-green/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center group"
         aria-label="Chat Assistant"
       >
         {isOpen ? (
@@ -116,7 +116,7 @@ export default function ChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[90vw] md:w-96 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[600px]">
+        <div className="fixed bottom-44 md:bottom-24 right-6 z-50 w-[90vw] md:w-96 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[600px]">
           {/* Header */}
           <div className="bg-gradient-to-r from-tea-green to-soft-sage text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">

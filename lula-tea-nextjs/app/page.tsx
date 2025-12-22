@@ -72,7 +72,7 @@ export default function Home() {
           className="max-w-7xl mx-auto mb-4 md:mb-6 relative z-10"
         >
           <div className="glass-card rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center hover-glow">
-            <p className="text-gray-900 dark:text-white font-semibold text-sm md:text-lg">
+            <p className="text-gray-900 font-semibold text-sm md:text-lg">
               {t('softOpening')}
             </p>
           </div>
@@ -91,7 +91,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 leading-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight"
               >
                 {t('heroTitle')}
               </motion.h1>
@@ -99,7 +99,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-lg sm:text-xl md:text-2xl text-gray-700 dark:text-gray-200 mb-4 md:mb-8"
+                className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-4 md:mb-8"
               >
                 {t('heroSubtitle')}
               </motion.p>
@@ -107,7 +107,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0"
+                className="text-base md:text-lg text-gray-600 mb-6 md:mb-8 max-w-xl mx-auto lg:mx-0"
               >
                 {t('heroDescription')}
               </motion.p>

@@ -97,7 +97,7 @@ body {
 }
 
 .dark .gradient-mesh {
-  background: linear-gradient(135deg, #4a4540 0%, #5a5550 25%, #6a6560 50%, #5a5550 75%, #4a4540 100%);
+  background: linear-gradient(135deg, #d4c4a8 0%, #e8dfd0 25%, #f5f1e8 50%, #e8dfd0 75%, #d4c4a8 100%);
   background-size: 200% 200%;
   animation: gradient-shift 15s ease infinite;
 }

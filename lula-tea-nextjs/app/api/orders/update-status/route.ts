@@ -81,7 +81,8 @@ export async function POST(request: NextRequest) {
       whatsappUrl: notificationResult?.whatsappUrl,
       phone: notificationResult?.phone,
       preview: getMessagePreview(status),
-      notificationSent: notificationResult?.success || false
+      notificationSent: notificationResult?.success || false,
+      autoSent: notificationResult?.autoSent || false
     });
   } catch (error) {
     console.error("Order status update error:", error);

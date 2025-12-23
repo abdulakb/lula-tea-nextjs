@@ -70,7 +70,7 @@ export default function ContactPage() {
           {/* Contact Information */}
           <div className="space-y-8">
             {/* Why Contact Us */}
-            <div className="bg-gradient-to-br from-tea-green/10 to-soft-sage/10 rounded-3xl p-8 md:p-12">
+            <div className="bg-warm-cream dark:bg-warm-cream rounded-3xl p-8 md:p-12">
               <h2 className="text-3xl font-bold text-deep-brown mb-6">
                 {t('whyContactTitle')}
               </h2>
@@ -115,7 +115,7 @@ export default function ContactPage() {
             </div>
 
             {/* Business Hours */}
-            <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+            <div className="bg-white dark:bg-white rounded-3xl shadow-xl p-8 md:p-12">
               <h2 className="text-3xl font-bold text-deep-brown mb-6">
                 {language === "ar" ? "لنتواصل" : "Let's Connect"}
               </h2>

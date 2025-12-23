@@ -3,14 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
-
-const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
-  ssr: false,
-});
 
 export default function Home() {
   const [quantity, setQuantity] = useState(1);
@@ -34,9 +29,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen">
-      <ThemeToggle />
-      {/* Hero Section */}
+    <main className="min-h-screen">{/* Hero Section */}
       <section className="relative gradient-mesh py-12 md:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated background circles */}
         <motion.div

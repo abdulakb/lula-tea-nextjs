@@ -115,42 +115,39 @@ async function sendStatusNotification(order: any, status: string) {
       }
     }
     
-    // Build bilingual message
-    let message = `مرحباً ${order.customer_name}! 🌿\nHello ${order.customer_name}!\n\n`;
-    message += `📦 رقم الطلب / Order: ${order.order_id}\n\n`;
+    // Get customer's first name only
+    const firstName = order.customer_name.split(' ')[0];
+    
+    // Detect language (default to English if not set)
+    const isArabic = order.language === 'ar';
+    
+    let message = '';
     
     // Status-specific messages
     if (status === "confirmed") {
-      message += `✅ تم تأكيد طلبك!\n✅ Your order is confirmed!\n\n`;
-      message += `نحن نحضر الشاي بحب ❤️\nWe're preparing your tea with love ❤️\n\n`;
+      message = isArabic
+        ? `مرحباً ${firstName}! 🌿\n\n📦 رقم الطلب: ${order.order_id}\n\n✅ تم تأكيد طلبك!\n\nنحن نحضر الشاي بحب ❤️\n\nأي استفسار؟ رد على هذه الرسالة\n\n💚 لولة تي - مصنوع بحب`
+        : `Hello ${firstName}! 🌿\n\n📦 Order: ${order.order_id}\n\n✅ Your order is confirmed!\n\nWe're preparing your tea with love ❤️\n\nAny questions? Reply to this message\n\n💚 Lula Tea - Homemade with Love`;
     } else if (status === "processing") {
-      message += `📦 يتم تحضير طلبك\n📦 Your order is being prepared\n\n`;
-      message += `سنقوم بالتوصيل قريباً\nWill be delivered soon\n\n`;
+      message = isArabic
+        ? `مرحباً ${firstName}! 🌿\n\n📦 رقم الطلب: ${order.order_id}\n\n📦 يتم تحضير طلبك\n\nسنقوم بالتوصيل قريباً\n\nأي استفسار؟ رد على هذه الرسالة\n\n💚 لولة تي - مصنوع بحب`
+        : `Hello ${firstName}! 🌿\n\n📦 Order: ${order.order_id}\n\n📦 Your order is being prepared\n\nWill be delivered soon\n\nAny questions? Reply to this message\n\n💚 Lula Tea - Homemade with Love`;
     } else if (status === "shipped") {
-      message += `🚚 طلبك في الطريق إليك!\n🚚 Your order is on its way!\n\n`;
-      message += `التوصيل المتوقع: خلال ٢-٣ أيام\nExpected delivery: Within 2-3 days\n\n`;
+      message = isArabic
+        ? `مرحباً ${firstName}! 🌿\n\n📦 رقم الطلب: ${order.order_id}\n\n🚚 طلبك في الطريق إليك!\n\nالتوصيل المتوقع: خلال ٢-٣ أيام\n\nأي استفسار؟ رد على هذه الرسالة\n\n💚 لولة تي - مصنوع بحب`
+        : `Hello ${firstName}! 🌿\n\n📦 Order: ${order.order_id}\n\n🚚 Your order is on its way!\n\nExpected delivery: Within 2-3 days\n\nAny questions? Reply to this message\n\n💚 Lula Tea - Homemade with Love`;
     } else if (status === "delivered") {
-      message += `✨ تم توصيل طلبك بنجاح!\n✨ Your order has been delivered!\n\n`;
-      message += `🍵 *بالعافية* 🍵\n🍵 *Enjoy your tea!* 🍵\n\n`;
-      message += `شكراً لثقتك بلولة تي 💚\nThank you for trusting Lula Tea 💚\n\n`;
+      // Generate review link with first name
+      const reviewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://lulatea.com'}/review?order=${encodeURIComponent(order.order_id)}&name=${encodeURIComponent(firstName)}`;
       
-      // Review request - after trying the tea
-      message += `---\n\n`;
-      message += `⭐ بعد ما تجرب الشاي، نحب نسمع رأيك!\n⭐ Once you've tried the tea, we'd love your feedback!\n\n`;
-      message += `شاركنا تجربتك في دقيقة واحدة:\nShare your experience in 1 minute:\n\n`;
-      
-      // Generate review link with order details
-      const reviewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://lulatea.com'}/review?order=${encodeURIComponent(order.order_id)}&name=${encodeURIComponent(order.customer_name.split(' ')[0])}`;
-      message += `🔗 ${reviewUrl}\n\n`;
-      
-      message += `رأيك يساعدنا نطور ويساعد عملاء جدد 💚\nYour feedback helps us improve & helps new customers 💚\n\n`;
+      message = isArabic
+        ? `مرحباً ${firstName}! 🌿\n\n📦 رقم الطلب: ${order.order_id}\n\n✨ تم توصيل طلبك بنجاح!\n\n🍵 *بالعافية* 🍵\n\nشكراً لثقتك بلولة تي 💚\n\n---\n\n⭐ بعد ما تجرب الشاي، نحب نسمع رأيك!\n\nشاركنا تجربتك في دقيقة واحدة:\n🔗 ${reviewUrl}\n\nرأيك يساعدنا نطور ويساعد عملاء جدد 💚\n\nأي استفسار؟ رد على هذه الرسالة\n\n💚 لولة تي - مصنوع بحب`
+        : `Hello ${firstName}! 🌿\n\n📦 Order: ${order.order_id}\n\n✨ Your order has been delivered!\n\n🍵 *Enjoy your tea!* 🍵\n\nThank you for trusting Lula Tea 💚\n\n---\n\n⭐ Once you've tried the tea, we'd love your feedback!\n\nShare your experience in 1 minute:\n🔗 ${reviewUrl}\n\nYour feedback helps us improve & helps new customers 💚\n\nAny questions? Reply to this message\n\n💚 Lula Tea - Homemade with Love`;
     } else if (status === "cancelled") {
-      message += `❌ تم إلغاء الطلب\n❌ Order cancelled\n\n`;
-      message += `نأسف لإلغاء طلبك\nSorry for the cancellation\n\n`;
+      message = isArabic
+        ? `مرحباً ${firstName}! 🌿\n\n📦 رقم الطلب: ${order.order_id}\n\n❌ تم إلغاء الطلب\n\nنأسف لإلغاء طلبك\n\nأي استفسار؟ رد على هذه الرسالة\n\n💚 لولة تي - مصنوع بحب`
+        : `Hello ${firstName}! 🌿\n\n📦 Order: ${order.order_id}\n\n❌ Order cancelled\n\nSorry for the cancellation\n\nAny questions? Reply to this message\n\n💚 Lula Tea - Homemade with Love`;
     }
-    
-    message += `أي استفسار؟ رد على هذه الرسالة\nAny questions? Reply to this message\n\n`;
-    message += `💚 لولة تي - مصنوع بحب\n💚 Lula Tea - Homemade with Love`;
     
     // Use wa.me link for fallback/manual sending
     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;

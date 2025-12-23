@@ -160,12 +160,18 @@ function OrdersManagementContent() {
               );
               
               if (sendNow) {
-                window.open(notificationData.whatsappUrl, '_blank');
-                alert("✅ WhatsApp opened! Message is ready to send.");
+                // Use window.location for better compatibility (especially mobile)
+                window.location.href = notificationData.whatsappUrl;
               } else {
                 // Copy link to clipboard as backup
                 navigator.clipboard.writeText(notificationData.whatsappUrl).then(() => {
-                  alert('💡 WhatsApp link copied to clipboard! You can send it later.');
+                  alert('💡 WhatsApp link copied to clipboard! You can paste it in browser to send.');
+                }).catch(() => {
+                  // Fallback if clipboard fails
+                  const copyLink = confirm(`WhatsApp link ready. Click OK to open it manually:\n\n${notificationData.whatsappUrl.substring(0, 100)}...`);
+                  if (copyLink) {
+                    window.location.href = notificationData.whatsappUrl;
+                  }
                 });
               }
               return; // Don't show the generic success message

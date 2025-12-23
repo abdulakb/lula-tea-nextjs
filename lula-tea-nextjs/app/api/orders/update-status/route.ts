@@ -151,28 +151,62 @@ async function sendStatusNotification(order: any, status: string) {
     message += `أي استفسار؟ رد على هذه الرسالة\nAny questions? Reply to this message\n\n`;
     message += `💚 لولة تي - مصنوع بحب\n💚 Lula Tea - Homemade with Love`;
     
-    // Use wa.me link for simplicity
+    // Use wa.me link for fallback/manual sending
     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     
-    console.log(`WhatsApp notification prepared for ${order.customer_name}:`, whatsappUrl);
+    console.log(`📱 Sending WhatsApp notification to ${order.customer_name} (${cleanPhone})`);
     
-    // In a real implementation, you would:
-    // 1. Store this in a notification queue
-    // 2. Use WhatsApp Business API to auto-send
-    // 3. Or return the URL to admin to click and send
-    
-    // For now, we'll just log it and return success
-    return {
-      success: true,
-      whatsappUrl,
-      phone: cleanPhone
-    };
+    // Actually send via Twilio WhatsApp API
+    try {
+      const whatsappResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/notifications/whatsapp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: `+${cleanPhone}`,
+          message: message
+        })
+      });
+
+      const whatsappResult = await whatsappResponse.json();
+      
+      if (whatsappResult.success) {
+        console.log(`✅ WhatsApp sent successfully! SID: ${whatsappResult.twilioSid}`);
+        return {
+          success: true,
+          whatsappUrl,
+          phone: cleanPhone,
+          twilioSid: whatsappResult.twilioSid,
+          autoSent: true
+        };
+      } else {
+        console.error(`❌ Twilio failed:`, whatsappResult.error);
+        // Return URL as fallback for manual sending
+        return {
+          success: false,
+          whatsappUrl,
+          phone: cleanPhone,
+          error: whatsappResult.error,
+          autoSent: false
+        };
+      }
+    } catch (twilioError) {
+      console.error('❌ Failed to call Twilio API:', twilioError);
+      // Return URL as fallback
+      return {
+        success: false,
+        whatsappUrl,
+        phone: cleanPhone,
+        error: String(twilioError),
+        autoSent: false
+      };
+    }
     
   } catch (error) {
     console.error("Failed to prepare WhatsApp notification:", error);
     return {
       success: false,
-      error: String(error)
+      error: String(error),
+      autoSent: false
     };
   }
 }

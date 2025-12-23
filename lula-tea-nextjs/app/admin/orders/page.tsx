@@ -131,8 +131,8 @@ function OrdersManagementContent() {
         });
       }
 
-      // Send WhatsApp notification
-      if (order && order.customer_phone) {
+      // Send WhatsApp notification only for delivered status
+      if (order && order.customer_phone && newStatus === "delivered") {
         try {
           const notificationResponse = await fetch("/api/orders/update-status", {
             method: "POST",
@@ -147,28 +147,34 @@ function OrdersManagementContent() {
           if (notificationResponse.ok) {
             const notificationData = await notificationResponse.json();
             
+            console.log("WhatsApp notification response:", notificationData);
+            
             // Check if message was auto-sent via Twilio
             if (notificationData.notificationSent && notificationData.autoSent) {
               alert(`✅ Status updated & WhatsApp sent automatically to ${order.customer_name}!`);
+              return; // Don't show the generic success message
             } else if (notificationData.whatsappUrl) {
               // Twilio failed (sandbox restrictions) - show WhatsApp link prominently
               const sendNow = confirm(
-                `✅ Status updated!\n\n📱 Click OK to send WhatsApp message to ${order.customer_name}\n\nMessage: ${notificationData.preview || 'Status update with review link'}`
+                `✅ Status updated to Delivered!\n\n📱 Click OK to send WhatsApp message to ${order.customer_name}\n\nMessage: ${notificationData.preview || 'Delivery confirmation with review link'}`
               );
               
               if (sendNow) {
                 window.open(notificationData.whatsappUrl, '_blank');
+                alert("✅ WhatsApp opened! Message is ready to send.");
               } else {
                 // Copy link to clipboard as backup
                 navigator.clipboard.writeText(notificationData.whatsappUrl).then(() => {
                   alert('💡 WhatsApp link copied to clipboard! You can send it later.');
                 });
               }
+              return; // Don't show the generic success message
             }
           }
         } catch (whatsappError) {
           console.error("WhatsApp notification error:", whatsappError);
-          // Don't fail the status update if WhatsApp fails
+          alert(`⚠️ Status updated but WhatsApp notification failed: ${whatsappError}`);
+          return;
         }
       }
 

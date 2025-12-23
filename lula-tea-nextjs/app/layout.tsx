@@ -14,7 +14,6 @@ import AppInsightsProvider from "./components/AppInsightsProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AnalyticsProvider } from "@/context/AnalyticsContext";
-import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
 
 const geistSans = Geist({
@@ -88,10 +87,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark-transition`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-warm-cream`}
       >
         <AppInsightsProvider>
-          <ThemeProvider>
             <AnalyticsProvider>
               <LanguageProvider>
                 <CartProvider>
@@ -110,7 +108,6 @@ export default function RootLayout({
                 </CartProvider>
               </LanguageProvider>
             </AnalyticsProvider>
-          </ThemeProvider>
         </AppInsightsProvider>
       </body>
     </html>

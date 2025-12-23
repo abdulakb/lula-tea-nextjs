@@ -64,20 +64,6 @@ export default function Home() {
           }}
         />
 
-        {/* Soft Opening Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-7xl mx-auto mb-4 md:mb-6 relative z-10"
-        >
-          <div className="glass-card rounded-xl md:rounded-2xl px-4 md:px-6 py-2 md:py-3 text-center hover-glow">
-            <p className="text-gray-900 font-semibold text-sm md:text-lg">
-              {t('softOpening')}
-            </p>
-          </div>
-        </motion.div>
-
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
@@ -126,9 +112,9 @@ export default function Home() {
                   {t('orderNow')}
                 </motion.a>
                 <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                  <Link 
+                  <Link
                     href="/contact"
-                    className="block glass-strong text-tea-brown px-8 py-4 rounded-full text-lg font-semibold transition-all micro-interact"
+                    className="block bg-tea-green hover:bg-tea-green/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-xl"
                   >
                     {t('contactUs')}
                   </Link>
@@ -142,7 +128,7 @@ export default function Home() {
               animate={{ opacity: 1, x: 0, rotate: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               whileHover={{ scale: 1.02, rotate: 1 }}
-              className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-strong hover-lift gradient-overlay"
+              className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl md:rounded-3xl overflow-hidden shadow-strong hover-lift"
             >
               <Image
                 src="/images/logo.jpg"

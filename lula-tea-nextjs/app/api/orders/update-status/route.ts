@@ -131,18 +131,18 @@ async function sendStatusNotification(order: any, status: string) {
     } else if (status === "delivered") {
       message += `✨ تم توصيل طلبك بنجاح!\n✨ Your order has been delivered!\n\n`;
       message += `🍵 *بالعافية* 🍵\n🍵 *Enjoy your tea!* 🍵\n\n`;
-      message += `نتمنى أن تستمتع بالشاي الفاخر من لولة تي\nWe hope you enjoy your premium Lula Tea\n\n`;
+      message += `شكراً لثقتك بلولة تي 💚\nThank you for trusting Lula Tea 💚\n\n`;
       
-      // Interactive review request with link
+      // Review request - after trying the tea
       message += `---\n\n`;
-      message += `⭐ *قيّم تجربتك في دقيقة!* ⭐\n⭐ *Rate your experience in 1 minute!* ⭐\n\n`;
-      message += `اضغط هنا لتقييم الطلب بنجوم:\nClick to rate with stars:\n\n`;
+      message += `⭐ بعد ما تجرب الشاي، نحب نسمع رأيك!\n⭐ Once you've tried the tea, we'd love your feedback!\n\n`;
+      message += `شاركنا تجربتك في دقيقة واحدة:\nShare your experience in 1 minute:\n\n`;
       
       // Generate review link with order details
       const reviewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://lulatea.com'}/review?order=${encodeURIComponent(order.order_id)}&name=${encodeURIComponent(order.customer_name.split(' ')[0])}`;
       message += `🔗 ${reviewUrl}\n\n`;
       
-      message += `تقييمك يساعد عملاء جدد! 💚\nYour rating helps new customers! 💚\n\n`;
+      message += `رأيك يساعدنا نطور ويساعد عملاء جدد 💚\nYour feedback helps us improve & helps new customers 💚\n\n`;
     } else if (status === "cancelled") {
       message += `❌ تم إلغاء الطلب\n❌ Order cancelled\n\n`;
       message += `نأسف لإلغاء طلبك\nSorry for the cancellation\n\n`;

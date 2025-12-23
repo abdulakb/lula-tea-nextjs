@@ -147,14 +147,22 @@ function OrdersManagementContent() {
           if (notificationResponse.ok) {
             const notificationData = await notificationResponse.json();
             
-            if (notificationData.whatsappUrl) {
-              // Open WhatsApp in new tab for admin to send
+            // Check if message was auto-sent via Twilio
+            if (notificationData.notificationSent && notificationData.autoSent) {
+              alert(`✅ Status updated & WhatsApp sent automatically to ${order.customer_name}!`);
+            } else if (notificationData.whatsappUrl) {
+              // Twilio failed (sandbox restrictions) - show WhatsApp link prominently
               const sendNow = confirm(
-                `Status updated! Send WhatsApp notification to ${order.customer_name}?\n\nMessage preview: ${notificationData.preview || 'Status update notification'}`
+                `✅ Status updated!\n\n📱 Click OK to send WhatsApp message to ${order.customer_name}\n\nMessage: ${notificationData.preview || 'Status update with review link'}`
               );
               
               if (sendNow) {
                 window.open(notificationData.whatsappUrl, '_blank');
+              } else {
+                // Copy link to clipboard as backup
+                navigator.clipboard.writeText(notificationData.whatsappUrl).then(() => {
+                  alert('💡 WhatsApp link copied to clipboard! You can send it later.');
+                });
               }
             }
           }

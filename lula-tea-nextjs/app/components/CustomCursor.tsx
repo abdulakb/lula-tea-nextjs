@@ -38,8 +38,12 @@ const CustomCursor = () => {
       el.addEventListener("mouseleave", handleMouseLeave);
     });
 
-    // Add custom-cursor class to body
+    // Add custom-cursor classes to body
     document.body.classList.add("custom-cursor");
+    // Add cursor-active class to actually hide the default cursor
+    setTimeout(() => {
+      document.body.classList.add("cursor-active");
+    }, 100);
 
     return () => {
       window.removeEventListener("mousemove", updatePosition);
@@ -49,6 +53,7 @@ const CustomCursor = () => {
         el.removeEventListener("mouseleave", handleMouseLeave);
       });
       document.body.classList.remove("custom-cursor");
+      document.body.classList.remove("cursor-active");
     };
   }, []);
 

@@ -26,6 +26,12 @@ export default function CheckoutPage() {
 
   // Track checkout start
   useEffect(() => {
+    // Redirect if cart is empty
+    if (!items || items.length === 0) {
+      router.push('/cart');
+      return;
+    }
+
     trackEvent("checkout_start", {
       cart_value: subtotal,
       item_count: items.length,

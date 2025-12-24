@@ -253,6 +253,10 @@ body {
 
 /* Custom Cursor */
 .custom-cursor {
+  /* cursor: none; - Removed to prevent cursor disappearing */
+}
+
+.custom-cursor.cursor-active {
   cursor: none;
 }
 

@@ -10,6 +10,8 @@ export default function PWAInstallPrompt() {
   const { language } = useLanguage();
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     // Register service worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -57,11 +59,14 @@ export default function PWAInstallPrompt() {
   const handleDismiss = () => {
     setShowPrompt(false);
     // Don't show again for 7 days
-    localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pwa-prompt-dismissed', Date.now().toString());
+    }
   };
 
   // Check if already dismissed recently
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const dismissed = localStorage.getItem('pwa-prompt-dismissed');
     if (dismissed) {
       const dismissedTime = parseInt(dismissed);

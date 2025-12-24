@@ -17,17 +17,21 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Load language from localStorage on mount
-    const stored = localStorage.getItem("language") as Language;
-    if (stored === "ar" || stored === "en") {
-      setLanguageState(stored);
-      updateDocumentLang(stored);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem("language") as Language;
+      if (stored === "ar" || stored === "en") {
+        setLanguageState(stored);
+        updateDocumentLang(stored);
+      }
     }
     setIsLoaded(true);
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("language", lang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("language", lang);
+    }
     updateDocumentLang(lang);
   };
 

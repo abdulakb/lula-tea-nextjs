@@ -16,6 +16,8 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const [lastTrackedPage, setLastTrackedPage] = useState<string>("");
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     // Get or create visitor ID
     let id = localStorage.getItem("visitor_id");
     if (!id) {
@@ -80,6 +82,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getVisitedPages = () => {
+    if (typeof window === 'undefined') return [];
     try {
       return JSON.parse(localStorage.getItem("visited_pages") || "[]");
     } catch {
@@ -88,7 +91,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const trackEvent = (eventType: string, data: any = {}) => {
-    if (!visitorId) return;
+    if (!visitorId || typeof window === 'undefined') return;
 
     // Add session duration to all events
     const sessionDuration = Math.floor((Date.now() - sessionStart) / 1000);
@@ -113,6 +116,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const saveEvent = async (event: any) => {
+    if (typeof window === 'undefined') return;
     try {
       // Save to localStorage first (for offline support)
       const events = JSON.parse(localStorage.getItem("analytics_events") || "[]");

@@ -17,16 +17,20 @@ const MobileViewToggle: React.FC<ViewToggleProps> = ({
 
   useEffect(() => {
     // Load saved preference from localStorage
-    const savedView = localStorage.getItem("productView") as "grid" | "list" | null;
-    if (savedView) {
-      setView(savedView);
-      onViewChange?.(savedView);
+    if (typeof window !== 'undefined') {
+      const savedView = localStorage.getItem("productView") as "grid" | "list" | null;
+      if (savedView) {
+        setView(savedView);
+        onViewChange?.(savedView);
+      }
     }
   }, [onViewChange]);
 
   const handleViewChange = (newView: "grid" | "list") => {
     setView(newView);
-    localStorage.setItem("productView", newView);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("productView", newView);
+    }
     onViewChange?.(newView);
   };
 

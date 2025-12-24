@@ -130,7 +130,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="glass-card rounded-3xl shadow-strong overflow-hidden hover-lift"
+      className="bg-white dark:bg-gray-800 rounded-3xl shadow-strong overflow-hidden hover-lift border border-tea-green/20"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {/* Product Image */}

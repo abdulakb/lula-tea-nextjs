@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       transactionReference,
       language,
       qualifiesForFreeDelivery,
+      deliveryCity,
     } = body;
 
     // Validate required fields
@@ -42,6 +43,34 @@ export async function POST(request: NextRequest) {
         { error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    // Validate delivery city - only Riyadh and Jeddah allowed
+    if (gpsCoordinates) {
+      // Extract city from GPS coordinates if provided
+      const coords = gpsCoordinates.split(',');
+      if (coords.length === 2) {
+        const lat = parseFloat(coords[0]);
+        const lng = parseFloat(coords[1]);
+        
+        // Riyadh boundaries
+        const isRiyadh = lat >= 24.4 && lat <= 25.0 && lng >= 46.3 && lng <= 47.0;
+        // Jeddah boundaries
+        const isJeddah = lat >= 21.3 && lat <= 21.8 && lng >= 39.0 && lng <= 39.4;
+        
+        if (!isRiyadh && !isJeddah) {
+          console.error("Order rejected: Location outside Riyadh/Jeddah", { lat, lng });
+          return NextResponse.json(
+            { 
+              error: language === "ar" 
+                ? "عذراً، نوصل حالياً فقط في الرياض وجدة"
+                : "Sorry, we currently deliver only in Riyadh and Jeddah",
+              invalidLocation: true 
+            },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     // Generate order ID

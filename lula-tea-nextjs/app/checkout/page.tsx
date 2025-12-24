@@ -363,6 +363,19 @@ export default function CheckoutPage() {
       errors.deliveryTime = language === "ar" ? "وقت التوصيل مطلوب" : "Delivery time is required";
     }
 
+    // Validate delivery city - only Riyadh and Jeddah allowed
+    if (!deliveryCity || (deliveryCity !== "Riyadh" && deliveryCity !== "Jeddah")) {
+      errors.deliveryAddress = language === "ar" 
+        ? "عذراً، نوصل حالياً فقط في الرياض وجدة. يرجى مشاركة موقعك للتحقق من المنطقة."
+        : "Sorry, we currently deliver only in Riyadh and Jeddah. Please share your location to verify your area.";
+      showToast(
+        language === "ar" 
+          ? "التوصيل متاح فقط في الرياض وجدة 📍" 
+          : "Delivery available only in Riyadh and Jeddah 📍",
+        "error"
+      );
+    }
+
     // Validate transaction reference for STC Pay
     if (paymentMethod === "stcpay" && !transactionReference.trim()) {
       errors.transactionReference = language === "ar" ? "رقم المعاملة مطلوب" : "Transaction reference required";
@@ -407,6 +420,7 @@ export default function CheckoutPage() {
           : `${deliveryNotes}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`,
         deliveryTime,
         gpsCoordinates,
+        deliveryCity,
         items: orderItems,
         subtotal,
         deliveryFee: 0,
@@ -473,19 +487,24 @@ export default function CheckoutPage() {
           <p className="text-xl text-gray-700 dark:text-gray-300">{t("checkoutDescription")}</p>
         </div>
 
-        {/* Free Delivery Teaser - Before location shared */}
+        {/* Location Required Notice - Before location shared */}
         {distanceFromWarehouse === null && (
           <div className="mb-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
             <div className="flex items-center gap-4">
               <div className="text-5xl">📍</div>
               <div className="flex-1">
                 <h3 className="text-2xl font-bold mb-2">
-                  {language === "ar" ? "قد تكون مؤهلاً للتوصيل المجاني!" : "You might qualify for FREE delivery!"}
+                  {language === "ar" ? "التوصيل متاح في الرياض وجدة فقط" : "Delivery available in Riyadh and Jeddah only"}
                 </h3>
-                <p className="text-white/90">
+                <p className="text-white/90 mb-2">
                   {language === "ar" 
-                    ? "شارك موقعك لنتحقق من أهليتك للتوصيل المجاني"
-                    : "Share your location to check if you qualify for free delivery"}
+                    ? "يرجى مشاركة موقعك للتحقق من المنطقة وأهليتك للتوصيل المجاني"
+                    : "Please share your location to verify your area and check free delivery eligibility"}
+                </p>
+                <p className="text-white/80 text-sm">
+                  {language === "ar" 
+                    ? "🎁 توصيل مجاني: 3+ أكياس قرب المستودع | 5+ أكياس في الرياض وجدة"
+                    : "🎁 Free delivery: 3+ packs near warehouse | 5+ packs in Riyadh & Jeddah"}
                 </p>
               </div>
             </div>
@@ -495,7 +514,23 @@ export default function CheckoutPage() {
         {/* Eligibility Result - After location shared */}
         {distanceFromWarehouse !== null && (
           <>
-            {qualifiesForFreeDelivery ? (
+            {!deliveryCity ? (
+              <div className="mb-8 bg-red-100 dark:bg-red-900/30 border-2 border-red-500 rounded-2xl p-6">
+                <div className="flex items-center gap-3">
+                  <div className="text-4xl">🚫</div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-red-800 dark:text-red-200 mb-2">
+                      {language === "ar" ? "عذراً، لا نوصل إلى منطقتك حالياً" : "Sorry, we don't deliver to your area yet"}
+                    </h3>
+                    <p className="text-red-700 dark:text-red-300">
+                      {language === "ar" 
+                        ? "نوصل حالياً فقط في الرياض وجدة. نعمل على التوسع قريباً! 🚀"
+                        : "We currently deliver only in Riyadh and Jeddah. We're expanding soon! 🚀"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : qualifiesForFreeDelivery ? (
               <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 animate-pulse">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">🎉</span>

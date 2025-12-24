@@ -130,7 +130,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="glass-card rounded-3xl shadow-strong overflow-hidden hover-lift gradient-overlay"
+      className="glass-card rounded-3xl shadow-strong overflow-hidden hover-lift"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {/* Product Image */}
@@ -196,40 +196,28 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
         </motion.div>
 
         {/* Product Details */}
-        <div className="p-8 md:p-12 flex flex-col justify-center">
+        <div className="p-8 md:p-12 flex flex-col justify-center bg-white dark:bg-gray-800">
           <motion.h3
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-3xl font-bold text-deep-brown mb-4"
+            initial={{ opacity: 1, x: 0 }}
+            className="text-3xl font-bold text-deep-brown dark:text-white mb-4"
           >
             {language === "ar" ? product.nameAr : product.name}
           </motion.h3>
           <motion.p
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="text-tea-brown mb-6"
+            initial={{ opacity: 1, x: 0 }}
+            className="text-deep-brown dark:text-gray-200 mb-6 text-lg font-normal"
           >
             {language === "ar" ? product.descriptionAr : product.description}
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
+            initial={{ opacity: 1 }}
             className="mb-6"
           >
             {[t("feature1"), t("feature2"), t("feature3")].map((feature, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 + idx * 0.1 }}
+                initial={{ opacity: 1, x: 0 }}
                 className="flex items-center gap-2 mb-3"
               >
                 <motion.svg
@@ -245,7 +233,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
                     clipRule="evenodd"
                   />
                 </motion.svg>
-                <span className="text-deep-brown">{feature}</span>
+                <span className="text-deep-brown dark:text-gray-200 text-base font-medium">{feature}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -261,12 +249,12 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
           )}
 
           <div className="mb-6">
-            <div className="text-3xl font-bold text-deep-brown mb-1">
+            <div className="text-3xl font-bold text-deep-brown dark:text-white mb-1">
               {language === "ar" 
                 ? `${(product.price * quantity).toFixed(0)} ريال` 
                 : `${(product.price * quantity).toFixed(0)} SAR`}
             </div>
-            <p className="text-sm text-tea-brown/70">
+            <p className="text-sm text-deep-brown dark:text-gray-300 font-medium">
               {language === "ar" 
                 ? `${product.price} ريال للكيس • ٢٠٠ جرام`
                 : `${product.price} SAR per pack • 200g per pack`}

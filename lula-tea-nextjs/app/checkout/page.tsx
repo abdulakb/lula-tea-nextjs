@@ -27,6 +27,11 @@ export default function CheckoutPage() {
 
   // Track checkout start
   useEffect(() => {
+    // Wait for cart to load
+    if (items === undefined) {
+      return;
+    }
+
     // Redirect if cart is empty
     if (!items || items.length === 0) {
       router.push('/cart');
@@ -70,7 +75,7 @@ export default function CheckoutPage() {
       clearTimeout(timer);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+  }, [items, subtotal, router, trackEvent]);
   
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "stcpay" | "whatsapp">("cod");
   const [showStcInstructions, setShowStcInstructions] = useState(false);

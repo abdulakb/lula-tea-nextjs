@@ -207,7 +207,7 @@ export default function Home() {
                       ? `${(60 * quantity)} ريال` 
                       : `${(60 * quantity)} SAR`}
                   </div>
-                  <p className="text-sm text-tea-brown/70">
+                  <p className="text-sm text-tea-brown/70 dark:text-gray-300">
                     {language === "ar" 
                       ? `٦٠ ريال للكيس • ٢٠٠ جرام`
                       : `60 SAR per pack • 200g per pack`}
@@ -216,7 +216,7 @@ export default function Home() {
 
                 {/* Quantity Selector */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-deep-brown mb-2">
+                  <label className="block text-sm font-medium text-deep-brown dark:text-warm-cream mb-2">
                     {t('quantity')}
                   </label>
                   <div className="flex items-center gap-4">
@@ -226,7 +226,7 @@ export default function Home() {
                     >
                       -
                     </button>
-                    <span className="text-2xl font-semibold text-deep-brown w-12 text-center">
+                    <span className="text-2xl font-semibold text-deep-brown dark:text-white w-12 text-center">
                       {quantity}
                     </span>
                     <button

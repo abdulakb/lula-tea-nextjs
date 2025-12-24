@@ -158,7 +158,7 @@ export default function Home() {
             </motion.p>
           </div>
 
-          <div className="max-w-4xl mx-auto glass-card rounded-3xl shadow-strong overflow-hidden hover-lift">
+          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-strong overflow-hidden hover-lift border border-tea-green/20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
               {/* Product Image */}
               <div className="relative h-80 md:h-auto">

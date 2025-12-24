@@ -23,6 +23,7 @@ export default function CheckoutPage() {
   const { trackEvent } = useAnalytics();
   const { showToast } = useToast();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   // Track checkout start
   useEffect(() => {
@@ -31,6 +32,8 @@ export default function CheckoutPage() {
       router.push('/cart');
       return;
     }
+    
+    setIsLoading(false);
 
     trackEvent("checkout_start", {
       cart_value: subtotal,
@@ -480,6 +483,17 @@ export default function CheckoutPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tea-green mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">{language === "ar" ? "جاري التحميل..." : "Loading..."}</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream dark:bg-gray-900 dark-transition">

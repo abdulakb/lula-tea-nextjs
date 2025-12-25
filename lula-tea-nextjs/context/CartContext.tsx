@@ -30,7 +30,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem("lula-tea-cart");
       if (stored) {
@@ -47,6 +46,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
+    setMounted(true);
   }, []);
 
   // Save cart to localStorage whenever it changes (after mount)

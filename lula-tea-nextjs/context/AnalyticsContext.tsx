@@ -12,8 +12,9 @@ const AnalyticsContext = createContext<AnalyticsContextType | undefined>(undefin
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const [visitorId, setVisitorId] = useState<string>("");
-  const [sessionStart, setSessionStart] = useState<number>(Date.now());
+  const [sessionStart, setSessionStart] = useState<number>(0);
   const [lastTrackedPage, setLastTrackedPage] = useState<string>("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -41,6 +42,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
+    setMounted(true);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);

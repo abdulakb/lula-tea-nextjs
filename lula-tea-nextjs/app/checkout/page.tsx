@@ -500,9 +500,7 @@ export default function CheckoutPage() {
             ? `${deliveryNotes}\n\n💳 Transaction Ref: ${transactionReference}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
             : `${deliveryNotes}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`,
         deliveryMethod,
-        pickupLocation: deliveryMethod === "pickup" ? pickupLocationText : undefined, 
-          ? `${deliveryNotes}\n\n💳 Transaction Ref: ${transactionReference}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
-          : `${deliveryNotes}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`,
+        pickupLocation: deliveryMethod === "pickup" ? pickupLocationText : undefined,
         deliveryTime,
         gpsCoordinates,
         deliveryCity,

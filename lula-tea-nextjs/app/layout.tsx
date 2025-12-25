@@ -14,6 +14,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { CartProvider } from "@/context/CartContext";
 import { AnalyticsProvider } from "@/context/AnalyticsContext";
 import { ToastProvider } from "@/context/ToastContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "Lula Tea - Homemade with Love",
@@ -102,8 +103,9 @@ export default function RootLayout({
         <AppInsightsProvider>
             <AnalyticsProvider>
               <LanguageProvider>
-                <CartProvider>
-                  <ToastProvider>
+                <ThemeProvider>
+                  <CartProvider>
+                    <ToastProvider>
                     <Header />
                     {children}
                     <Footer />
@@ -114,8 +116,9 @@ export default function RootLayout({
                     <PWAInstallPrompt />
                     <MobileBottomNav />
                     <CustomCursor />
-                  </ToastProvider>
-                </CartProvider>
+                    </ToastProvider>
+                  </CartProvider>
+                </ThemeProvider>
               </LanguageProvider>
             </AnalyticsProvider>
         </AppInsightsProvider>

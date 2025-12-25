@@ -198,7 +198,8 @@ export default function CartPage() {
       try {
         const response = await fetch('/api/products');
         const data = await response.json();
-        const product = data.find((p: any) => p.sku === 'LULA-TEA-001');
+        const products = data.products || [];
+        const product = products.find((p: any) => p.sku === 'LULA-TEA-001');
         setAvailableStock(product?.stock || 0);
       } catch (error) {
         console.error('Error fetching stock:', error);

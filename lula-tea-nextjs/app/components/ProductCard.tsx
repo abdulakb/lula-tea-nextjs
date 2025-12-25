@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
@@ -37,6 +38,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
   const { addItem } = useCart();
   const { trackEvent } = useAnalytics();
   const { showToast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     fetchProduct();
@@ -116,12 +118,12 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
 
   const handleBuyNow = () => {
     handleAddToCart();
-    window.location.href = "/checkout";
+    router.push("/checkout");
   };
 
   const handleOrderViaWhatsApp = () => {
     handleAddToCart();
-    window.location.href = "/checkout";
+    router.push("/checkout");
   };
 
   return (

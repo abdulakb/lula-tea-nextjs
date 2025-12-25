@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Language } from "@/lib/i18n";
+import { Language, translations } from "@/lib/i18n";
 
 interface LanguageContextType {
   language: Language;
@@ -43,8 +43,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string): string => {
-    // Dynamic import would be better, but for simplicity:
-    const { translations } = require("@/lib/i18n");
     return translations[language]?.[key] || translations.en[key] || key;
   };
 

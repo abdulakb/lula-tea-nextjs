@@ -1,17 +1,67 @@
-﻿{
+{
+  // Exclude files from file watcher to improve performance
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/node_modules/**": true,
     "**/.next/**": true,
     "**/dist/**": true,
-    "**/build/**": true
+    "**/build/**": true,
+    "**/*.tsbuildinfo": true,
+    "**/package-lock.json": true,
+    "**/.env*": true
   },
+  
+  // Exclude from search to speed up searches
   "search.exclude": {
     "**/node_modules": true,
     "**/.next": true,
     "**/dist": true,
-    "**/build": true
+    "**/build": true,
+    "**/*.tsbuildinfo": true,
+    "**/package-lock.json": true
   },
-  "typescript.tsserver.maxTsServerMemory": 4096
+  
+  // Exclude from file tree to reduce memory
+  "files.exclude": {
+    "**/.next": true,
+    "**/*.tsbuildinfo": true
+  },
+  
+  // TypeScript performance optimizations
+  "typescript.tsserver.maxTsServerMemory": 8192,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  
+  // GitHub Copilot optimizations
+  "github.copilot.advanced": {
+    "debug.overrideEngine": "gpt-4",
+    "debug.overrideProxyUrl": "",
+    "debug.testOverrideProxyUrl": "",
+    "debug.overrideCapiUrl": "",
+    "debug.filterLogCategories": []
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  
+  // Disable features that slow down the editor
+  "editor.bracketPairColorization.enabled": false,
+  "editor.guides.bracketPairs": false,
+  "editor.renderWhitespace": "none",
+  "editor.minimap.enabled": false,
+  
+  // Limit file processing
+  "files.maxMemoryForLargeFilesMB": 4096,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  
+  // Next.js specific
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ]
 }

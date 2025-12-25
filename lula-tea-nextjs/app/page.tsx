@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
@@ -11,6 +12,7 @@ export default function Home() {
   const [quantity, setQuantity] = useState(1);
   const { t, language } = useLanguage();
   const { addItem } = useCart();
+  const router = useRouter();
 
   const handleOrderNow = () => {
     // Add item to cart first
@@ -25,7 +27,7 @@ export default function Home() {
       quantity
     );
     // Redirect to checkout
-    window.location.href = "/checkout";
+    router.push("/checkout");
   };
 
   return (

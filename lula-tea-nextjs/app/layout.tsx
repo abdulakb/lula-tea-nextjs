@@ -79,6 +79,24 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Suppress Next.js client-side error overlay in production
+              if (typeof window !== 'undefined') {
+                window.addEventListener('error', function(e) {
+                  if (e.message && e.message.includes('Application error')) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                });
+                window.addEventListener('unhandledrejection', function(e) {
+                  e.preventDefault();
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className="antialiased bg-warm-cream font-sans">
         <AppInsightsProvider>

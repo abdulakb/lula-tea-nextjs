@@ -77,6 +77,8 @@ export default function CheckoutPage() {
     };
   }, [items, subtotal, router, trackEvent]);
   
+  const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">("delivery");
+  const [pickupLocation, setPickupLocation] = useState<"riyadh" | "jeddah" | "">(""); 
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "stcpay" | "whatsapp">("cod");
   const [showStcInstructions, setShowStcInstructions] = useState(false);
   const [customerName, setCustomerName] = useState("");
@@ -157,6 +159,9 @@ export default function CheckoutPage() {
     minLat: 21.3, maxLat: 21.8,
     minLng: 39.0, maxLng: 39.4
   };
+  // King Abdulaziz International Airport latitude (approximately 21.68)
+  // Orders north of this (heading to Madinah) have higher delivery fee
+  const JEDDAH_AIRPORT_LAT = 21.68;
 
   const isInCity = (lat: number, lng: number): string => {
     if (lat >= RIYADH_BOUNDS.minLat && lat <= RIYADH_BOUNDS.maxLat &&
@@ -168,6 +173,17 @@ export default function CheckoutPage() {
       return "Jeddah";
     }
     return "";
+  };
+
+  // Check if location is in Jeddah northern area (after airport heading to Madinah)
+  const isJeddahNorthernArea = (lat: number, lng: number): boolean => {
+    // First check if in Jeddah bounds
+    if (lat >= JEDDAH_BOUNDS.minLat && lat <= JEDDAH_BOUNDS.maxLat &&
+        lng >= JEDDAH_BOUNDS.minLng && lng <= JEDDAH_BOUNDS.maxLng) {
+      // Check if north of the airport
+      return lat > JEDDAH_AIRPORT_LAT;
+    }
+    return false;
   };
 
   // Calculate distance between two coordinates using Haversine formula
@@ -191,16 +207,17 @@ export default function CheckoutPage() {
     const city = isInCity(latitude, longitude);
     setDeliveryCity(city);
     
-    // Check eligibility:
-    // 1. Within 20km radius AND 3+ packs
-    // 2. OR within Riyadh/Jeddah AND 5+ packs
-    const nearWarehouse = distance <= FREE_DELIVERY_RADIUS_KM && totalPacks >= MIN_PACKS_FOR_FREE_DELIVERY_NEAR;
-    const inMajorCity = !!city && totalPacks >= MIN_PACKS_FOR_FREE_DELIVERY_CITY;
+    // Only free delivery if within 20km from warehouse
+    // 25 SAR for Jeddah northern area (after airport heading to Madinah)
+    // 15 SAR delivery fee for all others in Riyadh/Jeddah
+    const nearWarehouse = distance <= FREE_DELIVERY_RADIUS_KM;
+    const inMajorCity = !!city; // Just check if in Riyadh or Jeddah for delivery eligibility
+    const isNorthernJeddah = isJeddahNorthernArea(latitude, longitude);
     
-    const qualifies = nearWarehouse || inMajorCity;
+    const qualifies = nearWarehouse;
     setQualifiesForFreeDelivery(qualifies);
     
-    return { qualifies, distance, totalPacks, city, nearWarehouse, inMajorCity };
+    return { qualifies, distance, totalPacks, city, nearWarehouse, inMajorCity, isNorthernJeddah };
   };
 
   const handleGetLocation = async () => {
@@ -286,22 +303,13 @@ export default function CheckoutPage() {
           
           let notesText = `GPS: ${coordsString}\nMaps: https://maps.google.com/?q=${latitude},${longitude}`;
           
-          // Add eligibility info to notes
-          if (eligibility.qualifies) {
-            notesText += `\n✅ FREE DELIVERY QUALIFIED`;
-            if (eligibility.nearWarehouse) {
-              notesText += ` (Within ${eligibility.distance.toFixed(1)}km from warehouse)`;
-            } else if (eligibility.inMajorCity) {
-              notesText += ` (${eligibility.city} - ${eligibility.totalPacks} packs)`;
-            }
-          } else {
-            if (eligibility.city) {
-              const needed = MIN_PACKS_FOR_FREE_DELIVERY_CITY - eligibility.totalPacks;
-              notesText += `\n📦 Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery in ${eligibility.city}`;
-            } else if (eligibility.distance <= FREE_DELIVERY_RADIUS_KM) {
-              const needed = MIN_PACKS_FOR_FREE_DELIVERY_NEAR - eligibility.totalPacks;
-              notesText += `\n📦 Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery (${eligibility.distance.toFixed(1)}km from warehouse)`;
-            }
+          // Add delivery info to notes
+          if (eligibility.nearWarehouse) {
+            notesText += `\n✅ FREE DELIVERY (Within ${eligibility.distance.toFixed(1)}km from warehouse)`;
+          } else if (eligibility.isNorthernJeddah) {
+            notesText += `\n💰 Delivery Fee: 25 SAR (Jeddah - Northern Area)`;
+          } else if (eligibility.city) {
+            notesText += `\n💰 Delivery Fee: 15 SAR`;
           }
           
           setDeliveryNotes(notesText);
@@ -367,17 +375,41 @@ export default function CheckoutPage() {
       errors.customerEmail = language === "ar" ? "البريد الإلكتروني غير صالح" : "Invalid email address";
     }
     
-    if (!deliveryAddress.trim()) {
-      errors.deliveryAddress = language === "ar" ? "العنوان مطلوب" : "Address is required";
-    } else if (deliveryAddress.trim().length < 10) {
-      errors.deliveryAddress = language === "ar" ? "يرجى إدخال عنوان مفصل" : "Please enter a detailed address";
-    }
-    
-    if (!deliveryTime) {
-      errors.deliveryTime = language === "ar" ? "وقت التوصيل مطلوب" : "Delivery time is required";
-    }
+    // Validate based on delivery method
+    if (deliveryMethod === "pickup") {
+      // For pickup: only validate pickup location
+      if (!pickupLocation) {
+        errors.pickupLocation = language === "ar" ? "يرجى اختيار موقع الاستلام" : "Please select a pickup location";
+        showToast(
+          language === "ar" ? "يرجى اختيار موقع الاستلام" : "Please select a pickup location",
+          "error"
+        );
+      }
+    } else {
+      // For delivery: validate address and location
+      if (!deliveryAddress.trim()) {
+        errors.deliveryAddress = language === "ar" ? "العنوان مطلوب" : "Address is required";
+      } else if (deliveryAddress.trim().length < 10) {
+        errors.deliveryAddress = language === "ar" ? "يرجى إدخال عنوان مفصل" : "Please enter a detailed address";
+      }
+      
+      if (!deliveryTime) {
+        errors.deliveryTime = language === "ar" ? "وقت التوصيل مطلوب" : "Delivery time is required";
+      }
 
-    // Validate delivery city - only Riyadh and Jeddah allowed
+      // Validate delivery city - only Riyadh and Jeddah allowed
+      if (!deliveryCity || (deliveryCity !== "Riyadh" && deliveryCity !== "Jeddah")) {
+        errors.deliveryAddress = language === "ar" 
+          ? "عذراً، نوصل حالياً فقط في الرياض وجدة. يرجى مشاركة موقعك للتحقق من المنطقة."
+          : "Sorry, we currently deliver only in Riyadh and Jeddah. Please share your location to verify your area.";
+        showToast(
+          language === "ar" 
+            ? "التوصيل متاح فقط في الرياض وجدة 📍" 
+            : "Delivery available only in Riyadh and Jeddah 📍",
+          "error"
+        );
+      }
+    }
     if (!deliveryCity || (deliveryCity !== "Riyadh" && deliveryCity !== "Jeddah")) {
       errors.deliveryAddress = language === "ar" 
         ? "عذراً، نوصل حالياً فقط في الرياض وجدة. يرجى مشاركة موقعك للتحقق من المنطقة."
@@ -423,13 +455,52 @@ export default function CheckoutPage() {
         price: item.price,
       }));
 
+      // Calculate delivery fee: Free for pickup or if near warehouse (within 20km)
+      // 25 SAR for Jeddah northern area (after airport heading to Madinah)
+      // 15 SAR for standard Riyadh/Jeddah
+      let deliveryFee = 0;
+      if (deliveryMethod !== "pickup") {
+        if (distanceFromWarehouse !== null && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
+          deliveryFee = 0; // Free delivery within 20km from warehouse
+        } else if (gpsCoordinates) {
+          const coords = gpsCoordinates.split(',');
+          if (coords.length === 2) {
+            const lat = parseFloat(coords[0]);
+            const lng = parseFloat(coords[1]);
+            if (isJeddahNorthernArea(lat, lng)) {
+              deliveryFee = 25; // Higher fee for Jeddah northern area
+            } else {
+              deliveryFee = 15; // Standard fee
+            }
+          } else {
+            deliveryFee = 15; // Default to standard fee if coordinates unclear
+          }
+        } else {
+          deliveryFee = 15; // Default to standard fee if no GPS
+        }
+      }
+      const totalAmount = subtotal + deliveryFee;
+
+      // Prepare pickup location string
+      const pickupLocationText = pickupLocation === "riyadh" 
+        ? "Lula Lab Mursalat, Riyadh"
+        : pickupLocation === "jeddah"
+        ? "Lula Lab AL-Hamrah, Jeddah"
+        : "";
+
       const orderData = {
         customerName,
         customerEmail,
         customerPhone,
-        customerAddress: deliveryAddress,
-        buildingNumber,
-        deliveryNotes: paymentMethod === "stcpay" 
+        customerAddress: deliveryMethod === "pickup" ? pickupLocationText : deliveryAddress,
+        buildingNumber: deliveryMethod === "pickup" ? "" : buildingNumber,
+        deliveryNotes: deliveryMethod === "pickup"
+          ? `PICKUP ORDER - Location: ${pickupLocationText}\nContact via WhatsApp for exact location.${paymentMethod === "stcpay" ? `\n\n💳 Transaction Ref: ${transactionReference}` : ''}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
+          : paymentMethod === "stcpay" 
+            ? `${deliveryNotes}\n\n💳 Transaction Ref: ${transactionReference}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
+            : `${deliveryNotes}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`,
+        deliveryMethod,
+        pickupLocation: deliveryMethod === "pickup" ? pickupLocationText : undefined, 
           ? `${deliveryNotes}\n\n💳 Transaction Ref: ${transactionReference}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
           : `${deliveryNotes}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`,
         deliveryTime,
@@ -437,12 +508,12 @@ export default function CheckoutPage() {
         deliveryCity,
         items: orderItems,
         subtotal,
-        deliveryFee: 0,
-        total: subtotal,
+        deliveryFee,
+        total: totalAmount,
         paymentMethod,
         transactionReference: paymentMethod === "stcpay" ? transactionReference : undefined,
         language,
-        qualifiesForFreeDelivery: deliveryEligibility?.qualifies || false,
+        qualifiesForFreeDelivery: deliveryFee === 0,
         isGift,
         giftMessage: isGift ? giftMessage : undefined,
       };
@@ -512,32 +583,148 @@ export default function CheckoutPage() {
           <p className="text-xl text-gray-700 dark:text-gray-300">{t("checkoutDescription")}</p>
         </div>
 
-        {/* Location Required Notice - Before location shared */}
-        {distanceFromWarehouse === null && (
+        {/* Delivery Method Selection */}
+        <div className="mb-8 bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            {language === "ar" ? "طريقة الاستلام" : "Fulfillment Method"}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+              deliveryMethod === "delivery" 
+                ? "border-tea-green bg-tea-green/5" 
+                : "border-gray-300 dark:border-gray-600 hover:border-tea-green/50"
+            }`}>
+              <input
+                type="radio"
+                name="deliveryMethod"
+                value="delivery"
+                checked={deliveryMethod === "delivery"}
+                onChange={(e) => setDeliveryMethod(e.target.value as "delivery")}
+                className="w-4 h-4 text-tea-green focus:ring-tea-green"
+              />
+              <span className="ml-3 flex-1">
+                <span className="block font-semibold text-gray-900 dark:text-white">
+                  🚚 {language === "ar" ? "التوصيل" : "Delivery"}
+                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {language === "ar" ? "توصيل لباب منزلك" : "Deliver to your door"}
+                </span>
+              </span>
+            </label>
+            
+            <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+              deliveryMethod === "pickup" 
+                ? "border-tea-green bg-tea-green/5" 
+                : "border-gray-300 dark:border-gray-600 hover:border-tea-green/50"
+            }`}>
+              <input
+                type="radio"
+                name="deliveryMethod"
+                value="pickup"
+                checked={deliveryMethod === "pickup"}
+                onChange={(e) => setDeliveryMethod(e.target.value as "pickup")}
+                className="w-4 h-4 text-tea-green focus:ring-tea-green"
+              />
+              <span className="ml-3 flex-1">
+                <span className="block font-semibold text-gray-900 dark:text-white">
+                  📦 {language === "ar" ? "الاستلام" : "Pickup"}
+                </span>
+                <span className="text-sm text-green-600 dark:text-green-400 font-semibold">
+                  {language === "ar" ? "مجاناً - بدون رسوم" : "FREE - No charge"}
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Pickup Location Selection */}
+        {deliveryMethod === "pickup" && (
+          <div className="mb-8 bg-gradient-to-br from-green-50 to-tea-green/10 dark:from-green-900/20 dark:to-tea-green/10 rounded-3xl shadow-xl p-6 border-2 border-green-200 dark:border-green-800">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              {language === "ar" ? "اختر موقع الاستلام" : "Select Pickup Location"}
+            </h3>
+            <div className="space-y-3 mb-4">
+              <label className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                pickupLocation === "riyadh" 
+                  ? "border-tea-green bg-white dark:bg-gray-800" 
+                  : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-tea-green/50"
+              }`}>
+                <input
+                  type="radio"
+                  name="pickupLocation"
+                  value="riyadh"
+                  checked={pickupLocation === "riyadh"}
+                  onChange={(e) => setPickupLocation(e.target.value as "riyadh")}
+                  className="w-4 h-4 text-tea-green focus:ring-tea-green mt-1"
+                />
+                <span className="ml-3 flex-1">
+                  <span className="block font-semibold text-gray-900 dark:text-white">
+                    📍 Lula Lab Mursalat, Riyadh
+                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {language === "ar" ? "المرسلات، الرياض" : "Mursalat, Riyadh"}
+                  </span>
+                </span>
+              </label>
+              
+              <label className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                pickupLocation === "jeddah" 
+                  ? "border-tea-green bg-white dark:bg-gray-800" 
+                  : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-tea-green/50"
+              }`}>
+                <input
+                  type="radio"
+                  name="pickupLocation"
+                  value="jeddah"
+                  checked={pickupLocation === "jeddah"}
+                  onChange={(e) => setPickupLocation(e.target.value as "jeddah")}
+                  className="w-4 h-4 text-tea-green focus:ring-tea-green mt-1"
+                />
+                <span className="ml-3 flex-1">
+                  <span className="block font-semibold text-gray-900 dark:text-white">
+                    📍 Lula Lab AL-Hamrah, Jeddah
+                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {language === "ar" ? "الحمراء، جدة" : "AL-Hamrah, Jeddah"}
+                  </span>
+                </span>
+              </label>
+            </div>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <p className="text-sm text-blue-900 dark:text-blue-100 flex items-start gap-2">
+                <span className="text-lg">💬</span>
+                <span>
+                  {language === "ar" 
+                    ? "للحصول على الموقع الدقيق على خرائط جوجل، يرجى التواصل معنا عبر واتساب"
+                    : "For the exact Google Maps location, please contact us on WhatsApp"}
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Location Required Notice - Before location shared (only for delivery) */}
+        {deliveryMethod === "delivery" && distanceFromWarehouse === null && (
           <div className="mb-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
             <div className="flex items-center gap-4">
               <div className="text-5xl">📍</div>
               <div className="flex-1">
                 <h3 className="text-2xl font-bold mb-2">
-                  {language === "ar" ? "التوصيل متاح في الرياض وجدة فقط" : "Delivery available in Riyadh and Jeddah only"}
+                  {language === "ar" ? "شارك موقعك للمتابعة" : "Share Your Location to Continue"}
                 </h3>
-                <p className="text-white/90 mb-2">
+                <p className="text-white/90">
                   {language === "ar" 
-                    ? "يرجى مشاركة موقعك للتحقق من المنطقة وأهليتك للتوصيل المجاني"
-                    : "Please share your location to verify your area and check free delivery eligibility"}
-                </p>
-                <p className="text-white/80 text-sm">
-                  {language === "ar" 
-                    ? "🎁 توصيل مجاني: 3+ أكياس قرب المستودع | 5+ أكياس في الرياض وجدة"
-                    : "🎁 Free delivery: 3+ packs near warehouse | 5+ packs in Riyadh & Jeddah"}
+                    ? "نحتاج موقعك للتحقق من أننا نوصل إلى منطقتك"
+                    : "We need your location to verify we deliver to your area"}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Eligibility Result - After location shared */}
-        {distanceFromWarehouse !== null && (
+        {/* Eligibility Result - After location shared (only for delivery) */}
+        {deliveryMethod === "delivery" && distanceFromWarehouse !== null && (
           <>
             {!deliveryCity ? (
               <div className="mb-8 bg-red-100 dark:bg-red-900/30 border-2 border-red-500 rounded-2xl p-6">
@@ -556,59 +743,42 @@ export default function CheckoutPage() {
                 </div>
               </div>
             ) : qualifiesForFreeDelivery ? (
-              <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6 animate-pulse">
+              <div className="mb-8 bg-green-100 border-2 border-green-500 rounded-2xl p-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl">🎉</span>
+                  <span className="text-4xl">✅</span>
                   <div>
                     <p className="text-xl font-bold text-green-800">
                       {language === "ar" 
-                        ? "مبروك! أنت مؤهل للتوصيل المجاني!" 
-                        : "Congratulations! You qualify for FREE delivery!"}
+                        ? `موقعك في ${deliveryCity} - توصيل مجاني!` 
+                        : `Your location in ${deliveryCity} - FREE delivery!`}
                     </p>
-                    <p className="text-green-700">
-                      {deliveryCity && (
-                        language === "ar"
-                          ? `موقعك في ${deliveryCity} - التوصيل مجاني!`
-                          : `Your location in ${deliveryCity} - Delivery is FREE!`
-                      )}
-                      {!deliveryCity && distanceFromWarehouse && (
-                        language === "ar"
-                          ? `موقعك على بُعد ${distanceFromWarehouse.toFixed(1)} كم - التوصيل مجاني!`
-                          : `Your location is ${distanceFromWarehouse.toFixed(1)}km away - Delivery is FREE!`
-                      )}
+                    <p className="text-green-700 text-sm">
+                      {language === "ar"
+                        ? `موقعك على بُعد ${distanceFromWarehouse.toFixed(1)} كم من المستودع`
+                        : `You're ${distanceFromWarehouse.toFixed(1)}km from our warehouse`}
                     </p>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="mb-8 bg-amber-100 border-2 border-amber-500 rounded-2xl p-6">
+              <div className="mb-8 bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500 rounded-2xl p-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl">📦</span>
+                  <span className="text-4xl">🚚</span>
                   <div>
-                    <p className="text-xl font-bold text-amber-800">
-                      {language === "ar" 
-                        ? "رسوم التوصيل: 25 ريال" 
-                        : "Delivery Fee: 25 SAR"}
-                    </p>
-                    <p className="text-amber-700 text-sm mt-1">
+                    <p className="text-xl font-bold text-blue-800 dark:text-blue-200">
                       {(() => {
-                        const totalPacks = items.reduce((sum, item) => sum + item.quantity, 0);
-                        if (deliveryCity) {
-                          const needed = MIN_PACKS_FOR_FREE_DELIVERY_CITY - totalPacks;
-                          return language === "ar"
-                            ? `أضف ${needed} علبة أخرى للحصول على توصيل مجاني في ${deliveryCity}`
-                            : `Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery in ${deliveryCity}`;
-                        } else if (distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
-                          const needed = MIN_PACKS_FOR_FREE_DELIVERY_NEAR - totalPacks;
-                          return language === "ar"
-                            ? `أضف ${needed} علبة أخرى للحصول على توصيل مجاني (${distanceFromWarehouse.toFixed(1)} كم من المستودع)`
-                            : `Add ${needed} more pack${needed > 1 ? 's' : ''} for FREE delivery (${distanceFromWarehouse.toFixed(1)}km from warehouse)`;
-                        } else {
-                          return language === "ar"
-                            ? "موقعك خارج نطاق التوصيل المجاني"
-                            : "Your location is outside the free delivery area";
-                        }
+                        const coords = gpsCoordinates.split(',');
+                        const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                        const fee = isNorthern ? 25 : 15;
+                        return language === "ar" 
+                          ? `موقعك في ${deliveryCity} - رسوم التوصيل: ${fee} ريال` 
+                          : `Your location in ${deliveryCity} - Delivery Fee: ${fee} SAR`;
                       })()}
+                    </p>
+                    <p className="text-blue-700 dark:text-blue-300 text-sm mt-1">
+                      {language === "ar"
+                        ? "سيتم إضافة رسوم التوصيل إلى إجمالي طلبك"
+                        : "Delivery fee will be added to your order total"}
                     </p>
                   </div>
                 </div>
@@ -671,11 +841,53 @@ export default function CheckoutPage() {
                 </div>
               </div>
             ))}
-            <div className="flex justify-between items-center pt-4 border-t-2 border-tea-green">
-              <span className="text-xl font-bold text-gray-900 dark:text-white">{t("subtotal")}</span>
-              <span className="text-2xl font-bold text-tea-green">
-                {language === "ar" ? `${subtotal} ريال` : `${subtotal} SAR`}
-              </span>
+            <div className="space-y-3 pt-4 border-t-2 border-tea-brown/20">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold text-gray-900 dark:text-white">{t("subtotal")}</span>
+                <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {language === "ar" ? `${subtotal} ريال` : `${subtotal} SAR`}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {language === "ar" ? "رسوم التوصيل" : "Delivery Fee"}
+                </span>
+                <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {deliveryMethod === "pickup" ? (
+                    <span className="text-green-600">{language === "ar" ? "مجاني" : "FREE"}</span>
+                  ) : (distanceFromWarehouse !== null && deliveryCity && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) ? (
+                    <span className="text-green-600">{language === "ar" ? "مجاني" : "FREE"}</span>
+                  ) : distanceFromWarehouse !== null && deliveryCity ? (
+                    (() => {
+                      const coords = gpsCoordinates.split(',');
+                      const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                      const fee = isNorthern ? 25 : 15;
+                      return language === "ar" ? `${fee} ريال` : `${fee} SAR`;
+                    })()
+                  ) : (
+                    <span className="text-gray-500">{language === "ar" ? "سيتم الحساب" : "TBD"}</span>
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t-2 border-tea-green">
+                <span className="text-xl font-bold text-gray-900 dark:text-white">{language === "ar" ? "الإجمالي" : "Total"}</span>
+                <span className="text-2xl font-bold text-tea-green">
+                  {(() => {
+                    let deliveryFee = 0;
+                    if (deliveryMethod !== "pickup") {
+                      if (distanceFromWarehouse !== null && deliveryCity && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
+                        deliveryFee = 0;
+                      } else if (distanceFromWarehouse !== null && deliveryCity) {
+                        const coords = gpsCoordinates.split(',');
+                        const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                        deliveryFee = isNorthern ? 25 : 15;
+                      }
+                    }
+                    const total = subtotal + deliveryFee;
+                    return language === "ar" ? `${total} ريال` : `${total} SAR`;
+                  })()}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -779,8 +991,33 @@ export default function CheckoutPage() {
                     <div className="text-center mt-4">
                       <p className="text-sm font-semibold text-gray-700">
                         {language === "ar" ? "المبلغ المطلوب: " : "Amount: "}
-                        <span className="text-2xl text-purple-600">{subtotal} {language === "ar" ? "ريال" : "SAR"}</span>
+                        <span className="text-2xl text-purple-600">
+                          {(() => {
+                            let deliveryFee = 0;
+                            if (deliveryMethod !== "pickup") {
+                              if (distanceFromWarehouse !== null && deliveryCity && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
+                                deliveryFee = 0;
+                              } else if (distanceFromWarehouse !== null && deliveryCity) {
+                                const coords = gpsCoordinates.split(',');
+                                const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                                deliveryFee = isNorthern ? 25 : 15;
+                              }
+                            }
+                            const total = subtotal + deliveryFee;
+                            return `${total} ${language === "ar" ? "ريال" : "SAR"}`;
+                          })()}
+                        </span>
                       </p>
+                      {deliveryMethod === "delivery" && distanceFromWarehouse !== null && deliveryCity && distanceFromWarehouse > FREE_DELIVERY_RADIUS_KM && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {(() => {
+                            const coords = gpsCoordinates.split(',');
+                            const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                            const fee = isNorthern ? 25 : 15;
+                            return language === "ar" ? `(${subtotal} ريال + ${fee} ريال توصيل)` : `(${subtotal} SAR + ${fee} SAR delivery)`;
+                          })()}
+                        </p>
+                      )}
                     </div>
                     
                     {/* Desktop: Download option */}
@@ -854,7 +1091,21 @@ export default function CheckoutPage() {
                               <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">٤</div>
                               <div className="flex-1">
                                 <p className="font-semibold text-gray-800 dark:text-white mb-2">أدخل المبلغ وأكمل الدفع</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">أدخل <strong className="text-purple-600">{subtotal} ريال</strong> واتبع التعليمات</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">أدخل <strong className="text-purple-600">
+                                  {(() => {
+                                    let deliveryFee = 0;
+                                    if (deliveryMethod !== "pickup") {
+                                      if (distanceFromWarehouse !== null && deliveryCity && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
+                                        deliveryFee = 0;
+                                      } else if (distanceFromWarehouse !== null && deliveryCity) {
+                                        const coords = gpsCoordinates.split(',');
+                                        const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                                        deliveryFee = isNorthern ? 25 : 15;
+                                      }
+                                    }
+                                    return `${subtotal + deliveryFee} ريال`;
+                                  })()}
+                                </strong> واتبع التعليمات</p>
                               </div>
                             </div>
 
@@ -909,7 +1160,21 @@ export default function CheckoutPage() {
                               <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
                               <div className="flex-1">
                                 <p className="font-semibold text-gray-800 dark:text-white mb-2">Enter amount and complete payment</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">Enter <strong className="text-purple-600">{subtotal} SAR</strong> and follow instructions</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Enter <strong className="text-purple-600">
+                                  {(() => {
+                                    let deliveryFee = 0;
+                                    if (deliveryMethod !== "pickup") {
+                                      if (distanceFromWarehouse !== null && deliveryCity && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
+                                        deliveryFee = 0;
+                                      } else if (distanceFromWarehouse !== null && deliveryCity) {
+                                        const coords = gpsCoordinates.split(',');
+                                        const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
+                                        deliveryFee = isNorthern ? 25 : 15;
+                                      }
+                                    }
+                                    return `${subtotal + deliveryFee} SAR`;
+                                  })()}
+                                </strong> and follow instructions</p>
                               </div>
                             </div>
 

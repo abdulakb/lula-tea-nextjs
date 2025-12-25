@@ -27,13 +27,13 @@ export default function CheckoutPage() {
 
   // Track checkout start
   useEffect(() => {
-    // Wait for cart to load
-    if (items === undefined) {
+    // Wait for cart to load - check both undefined and null
+    if (!items) {
       return;
     }
 
     // Redirect if cart is empty
-    if (!items || items.length === 0) {
+    if (items.length === 0) {
       router.push('/cart');
       return;
     }
@@ -791,7 +791,7 @@ export default function CheckoutPage() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               {language === "ar" ? "ملخص الطلب" : "Order Summary"}
             </h2>
-            {items.map((item) => (
+            {items?.map((item) => (
               <div key={item.id} className="mb-4 pb-4 border-b border-tea-brown/10">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">

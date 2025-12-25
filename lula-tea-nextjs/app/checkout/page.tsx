@@ -28,7 +28,7 @@ export default function CheckoutPage() {
   // Track checkout start
   useEffect(() => {
     // Wait for cart to load - check both undefined and null
-    if (!items) {
+    if (!items || !Array.isArray(items)) {
       return;
     }
 
@@ -563,6 +563,17 @@ export default function CheckoutPage() {
       <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tea-green mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">{language === "ar" ? "جاري التحميل..." : "Loading..."}</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Safety check - should not happen but prevents crashes
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return (
+      <main className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 bg-warm-cream dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
           <p className="text-gray-600 dark:text-gray-300">{language === "ar" ? "جاري التحميل..." : "Loading..."}</p>
         </div>
       </main>

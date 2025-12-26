@@ -607,11 +607,9 @@ export default function CheckoutPage() {
         items: orderItems,
       });
 
-      // Auto-open WhatsApp with invoice for customer
-      if (result.customerInvoiceWhatsappUrl) {
-        console.log("Opening WhatsApp with invoice for customer...");
-        window.open(result.customerInvoiceWhatsappUrl, '_blank');
-      }
+      // REMOVED: Auto-open WhatsApp redirect to customer's personal number
+      // Customer receives email confirmation instead
+      // Admin receives Twilio SMS notification
 
       // Clear cart before redirecting
       clearCart();

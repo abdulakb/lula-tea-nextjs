@@ -221,8 +221,19 @@ export default function CheckoutPage() {
   };
 
   const handleGetLocation = async () => {
+    // Check if geolocation is supported
     if (!navigator.geolocation) {
       const errorMsg = language === "ar" ? "المتصفح لا يدعم تحديد الموقع" : "Browser doesn't support geolocation";
+      setError(errorMsg);
+      showToast(errorMsg, "error");
+      return;
+    }
+
+    // Check if we're on HTTPS (required for geolocation on mobile)
+    if (typeof window !== 'undefined' && window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      const errorMsg = language === "ar" 
+        ? "يتطلب تحديد الموقع اتصال آمن (HTTPS)"
+        : "Location access requires a secure connection (HTTPS)";
       setError(errorMsg);
       showToast(errorMsg, "error");
       return;
@@ -231,6 +242,26 @@ export default function CheckoutPage() {
     setLoadingLocation(true);
     setError("");
     setFieldErrors({});
+
+    // Try to check permission status first (if supported)
+    if ('permissions' in navigator) {
+      try {
+        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+        
+        if (permissionStatus.state === 'denied') {
+          const errorMsg = language === "ar" 
+            ? "تم رفض إذن الموقع. يرجى تمكينه في إعدادات المتصفح."
+            : "Location permission denied. Please enable it in your browser settings.";
+          setError(errorMsg);
+          showToast(errorMsg, "error");
+          setLoadingLocation(false);
+          return;
+        }
+      } catch (permErr) {
+        // Permission API not fully supported, continue with geolocation request
+        console.log("Permission API not fully supported:", permErr);
+      }
+    }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -328,17 +359,29 @@ export default function CheckoutPage() {
       (err) => {
         console.error("Location error:", err);
         let errorMsg = "";
+        let helpText = "";
         
         switch(err.code) {
           case err.PERMISSION_DENIED:
             errorMsg = language === "ar" 
               ? "تم رفض الإذن. يرجى السماح بالوصول إلى الموقع في إعدادات المتصفح." 
               : "Permission denied. Please allow location access in your browser settings.";
+            
+            // Add device-specific help
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+              helpText = language === "ar"
+                ? "\n\nللسماح بالموقع:\n1. اذهب إلى إعدادات المتصفح\n2. ابحث عن إعدادات الموقع\n3. اسمح لموقع lulatee.com"
+                : "\n\nTo allow location:\n1. Go to browser settings\n2. Find location settings\n3. Allow lulatee.com";
+            }
             break;
           case err.POSITION_UNAVAILABLE:
             errorMsg = language === "ar" 
               ? "الموقع غير متاح. يرجى التحقق من إعدادات GPS." 
               : "Location unavailable. Please check your GPS settings.";
+            helpText = language === "ar"
+              ? "\n\nتأكد من تشغيل GPS في إعدادات الجهاز"
+              : "\n\nMake sure GPS is enabled in device settings";
             break;
           case err.TIMEOUT:
             errorMsg = language === "ar" 
@@ -351,7 +394,7 @@ export default function CheckoutPage() {
               : "Failed to get location. Please try again.";
         }
         
-        setError(errorMsg);
+        setError(errorMsg + helpText);
         showToast(errorMsg, "error");
         setLoadingLocation(false);
       },
@@ -1417,6 +1460,18 @@ export default function CheckoutPage() {
                           {fieldErrors.deliveryAddress}
                         </p>
                       )}
+                      
+                      {/* Mobile location permission help */}
+                      {typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && (
+                        <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                          <p className="text-xs text-blue-800 dark:text-blue-200">
+                            💡 {language === "ar" 
+                              ? "عند الضغط على زر الموقع، يجب أن يطلب المتصفح الإذن. إذا لم يظهر، تحقق من إعدادات المتصفح."
+                              : "When you tap the location button, your browser should ask for permission. If it doesn't appear, check your browser settings."}
+                          </p>
+                        </div>
+                      )}
+                      
                       <button
                         type="button"
                         onClick={handleGetLocation}

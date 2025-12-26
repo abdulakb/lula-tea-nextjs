@@ -29,9 +29,11 @@
   },
   
   // TypeScript performance optimizations
-  "typescript.tsserver.maxTsServerMemory": 8192,
+  "typescript.tsserver.maxTsServerMemory": 4096,
   "typescript.tsserver.experimental.enableProjectDiagnostics": false,
   "typescript.disableAutomaticTypeAcquisition": true,
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.surveys.enabled": false,
   
   // GitHub Copilot optimizations
   "github.copilot.advanced": {
@@ -63,5 +65,29 @@
   // Next.js specific
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
-  ]
+  ],
+  
+  // Additional performance improvements
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false,
+  "git.autofetch": false,
+  "git.decorations.enabled": true,
+  "git.untrackedChanges": "hidden",
+  "editor.semanticHighlighting.enabled": false,
+  "editor.foldingImportsByDefault": true,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "workbench.enableExperiments": false,
+  "telemetry.telemetryLevel": "off",
+  "update.mode": "none",
+  
+  // ESLint optimizations
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.options": {
+    "cache": true
+  }
 }

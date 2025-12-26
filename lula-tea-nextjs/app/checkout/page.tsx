@@ -222,12 +222,15 @@ export default function CheckoutPage() {
 
   const handleGetLocation = async () => {
     if (!navigator.geolocation) {
-      alert(language === "ar" ? "المتصفح لا يدعم تحديد الموقع" : "Browser doesn't support geolocation");
+      const errorMsg = language === "ar" ? "المتصفح لا يدعم تحديد الموقع" : "Browser doesn't support geolocation";
+      setError(errorMsg);
+      showToast(errorMsg, "error");
       return;
     }
 
     setLoadingLocation(true);
     setError("");
+    setFieldErrors({});
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -324,11 +327,32 @@ export default function CheckoutPage() {
       },
       (err) => {
         console.error("Location error:", err);
-        setError(
-          language === "ar" 
-            ? "فشل الحصول على الموقع. يرجى السماح بالوصول إلى الموقع." 
-            : "Failed to get location. Please allow location access."
-        );
+        let errorMsg = "";
+        
+        switch(err.code) {
+          case err.PERMISSION_DENIED:
+            errorMsg = language === "ar" 
+              ? "تم رفض الإذن. يرجى السماح بالوصول إلى الموقع في إعدادات المتصفح." 
+              : "Permission denied. Please allow location access in your browser settings.";
+            break;
+          case err.POSITION_UNAVAILABLE:
+            errorMsg = language === "ar" 
+              ? "الموقع غير متاح. يرجى التحقق من إعدادات GPS." 
+              : "Location unavailable. Please check your GPS settings.";
+            break;
+          case err.TIMEOUT:
+            errorMsg = language === "ar" 
+              ? "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى." 
+              : "Request timeout. Please try again.";
+            break;
+          default:
+            errorMsg = language === "ar" 
+              ? "فشل الحصول على الموقع. يرجى المحاولة مرة أخرى." 
+              : "Failed to get location. Please try again.";
+        }
+        
+        setError(errorMsg);
+        showToast(errorMsg, "error");
         setLoadingLocation(false);
       },
       {
@@ -1434,17 +1458,18 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium text-base ${
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-medium text-base ${
                           fieldErrors.deliveryTime 
-                            ? 'border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                            ? 'border-red-500 focus:ring-red-500 text-gray-900 dark:text-white' 
+                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500 text-gray-900 dark:text-white'
                         }`}
+                        style={{ color: 'inherit' }}
                       >
-                        <option value="">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                        <option value={t("deliveryTimeMorning")}>{t("deliveryTimeMorning")}</option>
-                        <option value={t("deliveryTimeAfternoon")}>{t("deliveryTimeAfternoon")}</option>
-                        <option value={t("deliveryTimeEvening")}>{t("deliveryTimeEvening")}</option>
-                        <option value={t("deliveryTimeAnytime")}>{t("deliveryTimeAnytime")}</option>
+                        <option value="" className="text-gray-900 dark:text-white">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                        <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white">{t("deliveryTimeMorning")}</option>
+                        <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white">{t("deliveryTimeAfternoon")}</option>
+                        <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white">{t("deliveryTimeEvening")}</option>
+                        <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white">{t("deliveryTimeAnytime")}</option>
                       </select>
                       {fieldErrors.deliveryTime && (
                         <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
@@ -1736,13 +1761,13 @@ export default function CheckoutPage() {
                       value={deliveryTime}
                       onChange={(e) => setDeliveryTime(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-deep-brown"
+                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
                     >
-                      <option value="">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                      <option value={t("deliveryTimeMorning")}>{t("deliveryTimeMorning")}</option>
-                      <option value={t("deliveryTimeAfternoon")}>{t("deliveryTimeAfternoon")}</option>
-                      <option value={t("deliveryTimeEvening")}>{t("deliveryTimeEvening")}</option>
-                      <option value={t("deliveryTimeAnytime")}>{t("deliveryTimeAnytime")}</option>
+                      <option value="" className="text-gray-900 dark:text-white">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                      <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white">{t("deliveryTimeMorning")}</option>
+                      <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white">{t("deliveryTimeAfternoon")}</option>
+                      <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white">{t("deliveryTimeEvening")}</option>
+                      <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white">{t("deliveryTimeAnytime")}</option>
                     </select>
                   </div>
 

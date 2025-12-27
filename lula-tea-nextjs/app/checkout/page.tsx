@@ -1511,18 +1511,18 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-lg sm:text-base ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-lg sm:text-base !text-gray-900 dark:!text-white ${
                           fieldErrors.deliveryTime 
-                            ? 'border-red-500 focus:ring-red-500 text-gray-900 dark:text-white' 
-                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500 text-gray-900 dark:text-white'
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
                         }`}
-                        style={{ color: 'inherit', WebkitAppearance: 'none', MozAppearance: 'none' }}
+                        style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                       >
-                        <option value="" className="text-gray-900 dark:text-white text-base">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                        <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeMorning")}</option>
-                        <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAfternoon")}</option>
-                        <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeEvening")}</option>
-                        <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAnytime")}</option>
+                        <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                        <option value={t("deliveryTimeMorning")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
+                        <option value={t("deliveryTimeAfternoon")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAfternoon")}</option>
+                        <option value={t("deliveryTimeEvening")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
+                        <option value={t("deliveryTimeAnytime")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAnytime")}</option>
                       </select>
                       {fieldErrors.deliveryTime && (
                         <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
@@ -1814,14 +1814,14 @@ export default function CheckoutPage() {
                       value={deliveryTime}
                       onChange={(e) => setDeliveryTime(e.target.value)}
                       required
-                      className="w-full px-4 py-4 sm:py-2 border-2 border-tea-brown/50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-tea-brown/50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 !text-gray-900 dark:!text-white font-semibold"
                       style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                     >
-                      <option value="" className="text-gray-900 dark:text-white text-base">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                      <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeMorning")}</option>
-                      <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAfternoon")}</option>
-                      <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeEvening")}</option>
-                      <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAnytime")}</option>
+                      <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                      <option value={t("deliveryTimeMorning")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
+                      <option value={t("deliveryTimeAfternoon")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAfternoon")}</option>
+                      <option value={t("deliveryTimeEvening")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
+                      <option value={t("deliveryTimeAnytime")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAnytime")}</option>
                     </select>
                   </div>
 

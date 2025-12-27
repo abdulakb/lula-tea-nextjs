@@ -611,8 +611,9 @@ export default function CheckoutPage() {
       // Customer receives email confirmation instead
       // Admin receives Twilio SMS notification
 
-      // Clear cart before redirecting
-      clearCart();
+      // NOTE: Do NOT clear cart here - it causes a race condition on mobile
+      // where the empty cart check in useEffect redirects to /cart
+      // The order confirmation page will clear it after mounting
 
       // Redirect to confirmation page with order details
       router.push(`/order-confirmation?orderId=${result.orderId}&invoice=${result.invoiceBase64}`);

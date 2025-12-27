@@ -3,12 +3,14 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { useCart } from "@/context/CartContext";
 import { t } from "@/lib/i18n";
 import Link from "next/link";
 import CheckoutProgress from "../components/CheckoutProgress";
 
 function OrderConfirmationContent() {
   const { language } = useLanguage();
+  const { clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -26,9 +28,9 @@ function OrderConfirmationContent() {
     setOrderId(id);
     setInvoiceBase64(invoice);
 
-    // Clear cart after successful order
-    localStorage.removeItem("cart");
-  }, [searchParams, router]);
+    // Clear cart after successful order (using CartContext to update both state and localStorage)
+    clearCart();
+  }, [searchParams, router, clearCart]);
 
   const handleDownloadInvoice = () => {
     if (!orderId) {

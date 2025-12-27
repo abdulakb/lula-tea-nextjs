@@ -1363,7 +1363,7 @@ export default function CheckoutPage() {
                   
                   <div className="space-y-4 mb-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                         {t("fullName")} *
                       </label>
                       <input
@@ -1378,15 +1378,15 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl text-base focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
                           fieldErrors.customerName 
                             ? 'border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
                         }`}
                       />
                       {fieldErrors.customerName && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                          <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
                           {fieldErrors.customerName}
@@ -1395,7 +1395,7 @@ export default function CheckoutPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                         {t("phoneNumber")} *
                       </label>
                       <input
@@ -1410,16 +1410,16 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl text-base focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
                           fieldErrors.customerPhone 
                             ? 'border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
                         }`}
                         dir={language === "ar" ? "rtl" : "ltr"}
                       />
                       {fieldErrors.customerPhone && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                          <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
                           {fieldErrors.customerPhone}
@@ -1428,7 +1428,7 @@ export default function CheckoutPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                         {t("deliveryAddress")} *
                       </label>
                       <textarea
@@ -1443,16 +1443,16 @@ export default function CheckoutPage() {
                         }}
                         required
                         rows={3}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl text-base focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
                           fieldErrors.deliveryAddress 
                             ? 'border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
                         }`}
                         dir={language === "ar" ? "rtl" : "ltr"}
                       />
                       {fieldErrors.deliveryAddress && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                          <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
                           {fieldErrors.deliveryAddress}
@@ -1497,7 +1497,7 @@ export default function CheckoutPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                         {t("deliveryTime")} *
                       </label>
                       <select
@@ -1511,22 +1511,22 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-medium text-base ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-lg sm:text-base ${
                           fieldErrors.deliveryTime 
                             ? 'border-red-500 focus:ring-red-500 text-gray-900 dark:text-white' 
-                            : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500 text-gray-900 dark:text-white'
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500 text-gray-900 dark:text-white'
                         }`}
-                        style={{ color: 'inherit' }}
+                        style={{ color: 'inherit', WebkitAppearance: 'none', MozAppearance: 'none' }}
                       >
-                        <option value="" className="text-gray-900 dark:text-white">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                        <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white">{t("deliveryTimeMorning")}</option>
-                        <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white">{t("deliveryTimeAfternoon")}</option>
-                        <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white">{t("deliveryTimeEvening")}</option>
-                        <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white">{t("deliveryTimeAnytime")}</option>
+                        <option value="" className="text-gray-900 dark:text-white text-base">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                        <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeMorning")}</option>
+                        <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAfternoon")}</option>
+                        <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeEvening")}</option>
+                        <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAnytime")}</option>
                       </select>
                       {fieldErrors.deliveryTime && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                          <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                           </svg>
                           {fieldErrors.deliveryTime}
@@ -1560,7 +1560,7 @@ export default function CheckoutPage() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3 }}
                         >
-                          <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                          <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                             {language === "ar" ? "رسالة الهدية (اختياري)" : "Gift Message (Optional)"}
                           </label>
                           <textarea
@@ -1571,7 +1571,7 @@ export default function CheckoutPage() {
                             placeholder={language === "ar" 
                               ? "أضف رسالة شخصية للمستلم... (مثال: عيد ميلاد سعيد!)" 
                               : "Add a personal message for the recipient... (e.g., Happy Birthday!)"}
-                            className="w-full px-4 py-3 border border-tea-green/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            className="w-full px-4 py-4 sm:py-3 border-2 border-tea-green/30 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                             dir={language === "ar" ? "rtl" : "ltr"}
                           />
                           <p className="mt-1 text-xs text-gray-500">
@@ -1584,7 +1584,7 @@ export default function CheckoutPage() {
                     </motion.div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                         {t("deliveryNotes")}
                       </label>
                       <textarea
@@ -1592,7 +1592,7 @@ export default function CheckoutPage() {
                         onChange={(e) => setDeliveryNotes(e.target.value)}
                         rows={2}
                         placeholder={t("deliveryNotesPlaceholder")}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="w-full px-4 py-4 sm:py-3 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         dir={language === "ar" ? "rtl" : "ltr"}
                       />
                     </div>
@@ -1613,7 +1613,7 @@ export default function CheckoutPage() {
 
                   {/* Transaction Reference Input */}
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {language === "ar" 
                         ? "رقم المعاملة / رمز التحويل *"
                         : "Transaction Reference / Transfer Code *"}
@@ -1626,7 +1626,7 @@ export default function CheckoutPage() {
                       placeholder={language === "ar" 
                         ? "أدخل رقم المعاملة من رسالة البنك"
                         : "Enter transaction reference from bank SMS"}
-                      className="w-full px-4 py-3 border-2 border-purple-300 dark:border-purple-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-lg"
+                      className="w-full px-4 py-4 sm:py-3 border-2 border-purple-400 dark:border-purple-600 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
                       dir="ltr"
                     />
                     <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -1708,7 +1708,7 @@ export default function CheckoutPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {t("fullName")} *
                     </label>
                     <input
@@ -1716,12 +1716,12 @@ export default function CheckoutPage() {
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {language === "ar" ? "البريد الإلكتروني (اختياري)" : "Email (Optional)"}
                     </label>
                     <input
@@ -1729,15 +1729,15 @@ export default function CheckoutPage() {
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
                       placeholder={language === "ar" ? "your@email.com" : "your@email.com"}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                     />
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm sm:text-xs text-gray-600 dark:text-gray-400 mt-2">
                       {language === "ar" ? "لتلقي تأكيد الطلب عبر البريد الإلكتروني" : "To receive order confirmation via email"}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {t("phoneNumber")} *
                     </label>
                     <input
@@ -1745,12 +1745,12 @@ export default function CheckoutPage() {
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {t("deliveryAddress")} *
                     </label>
                     <div className="flex gap-2">
@@ -1759,7 +1759,7 @@ export default function CheckoutPage() {
                         onChange={(e) => setDeliveryAddress(e.target.value)}
                         required
                         rows={3}
-                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                        className="flex-1 px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                         placeholder={language === "ar" ? "أدخل عنوانك أو استخدم موقعك" : "Enter your address or use your location"}
                       />
                     </div>
@@ -1791,41 +1791,42 @@ export default function CheckoutPage() {
 
                   {/* Building Number Field */}
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
                       {language === "ar" ? "رقم المبنى" : "Building Number"}
                     </label>
                     <input
                       type="text"
                       value={buildingNumber}
                       onChange={(e) => setBuildingNumber(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
                       placeholder={language === "ar" ? "مثال: 1234" : "e.g., 1234"}
                     />
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-2 text-sm sm:text-xs text-gray-500">
                       {language === "ar" ? "يساعد السائق في العثور على موقعك بسهولة" : "Helps the driver find your location easily"}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
                       {t("deliveryTime")} *
                     </label>
                     <select
                       value={deliveryTime}
                       onChange={(e) => setDeliveryTime(e.target.value)}
                       required
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-tea-brown/50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold"
+                      style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                     >
-                      <option value="" className="text-gray-900 dark:text-white">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                      <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white">{t("deliveryTimeMorning")}</option>
-                      <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white">{t("deliveryTimeAfternoon")}</option>
-                      <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white">{t("deliveryTimeEvening")}</option>
-                      <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white">{t("deliveryTimeAnytime")}</option>
+                      <option value="" className="text-gray-900 dark:text-white text-base">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                      <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeMorning")}</option>
+                      <option value={t("deliveryTimeAfternoon")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAfternoon")}</option>
+                      <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeEvening")}</option>
+                      <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white text-base">{t("deliveryTimeAnytime")}</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-deep-brown mb-2">
+                    <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
                       {t("deliveryNotes")}
                     </label>
                     <textarea
@@ -1833,7 +1834,7 @@ export default function CheckoutPage() {
                       onChange={(e) => setDeliveryNotes(e.target.value)}
                       rows={2}
                       placeholder={t("deliveryNotesPlaceholder")}
-                      className="w-full px-4 py-2 border border-tea-brown/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green resize-none text-deep-brown"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-tea-brown/50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green resize-none text-deep-brown"
                     />
                   </div>
 

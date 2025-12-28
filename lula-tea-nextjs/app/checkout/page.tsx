@@ -209,7 +209,7 @@ export default function CheckoutPage() {
     
     // Only free delivery if within 20km from warehouse
     // 25 SAR for Jeddah northern area (after airport heading to Madinah)
-    // 15 SAR delivery fee for all others in Riyadh/Jeddah
+    // 20 SAR for Riyadh, 15 SAR for standard Jeddah
     const nearWarehouse = distance <= FREE_DELIVERY_RADIUS_KM;
     const inMajorCity = !!city; // Just check if in Riyadh or Jeddah for delivery eligibility
     const isNorthernJeddah = isJeddahNorthernArea(latitude, longitude);
@@ -342,8 +342,10 @@ export default function CheckoutPage() {
             notesText += `\n✅ FREE DELIVERY (Within ${eligibility.distance.toFixed(1)}km from warehouse)`;
           } else if (eligibility.isNorthernJeddah) {
             notesText += `\n💰 Delivery Fee: 25 SAR (Jeddah - Northern Area)`;
-          } else if (eligibility.city) {
-            notesText += `\n💰 Delivery Fee: 15 SAR`;
+          } else if (eligibility.city === "Riyadh") {
+            notesText += `\n💰 Delivery Fee: 20 SAR (Riyadh)`;
+          } else if (eligibility.city === "Jeddah") {
+            notesText += `\n💰 Delivery Fee: 15 SAR (Jeddah)`;
           }
           
           setDeliveryNotes(notesText);
@@ -524,7 +526,7 @@ export default function CheckoutPage() {
 
       // Calculate delivery fee: Free for pickup or if near warehouse (within 20km)
       // 25 SAR for Jeddah northern area (after airport heading to Madinah)
-      // 15 SAR for standard Riyadh/Jeddah
+      // 20 SAR for Riyadh, 15 SAR for standard Jeddah
       let deliveryFee = 0;
       if (deliveryMethod !== "pickup") {
         if (distanceFromWarehouse !== null && distanceFromWarehouse <= FREE_DELIVERY_RADIUS_KM) {
@@ -534,16 +536,19 @@ export default function CheckoutPage() {
           if (coords.length === 2) {
             const lat = parseFloat(coords[0]);
             const lng = parseFloat(coords[1]);
+            const city = isInCity(lat, lng);
             if (isJeddahNorthernArea(lat, lng)) {
               deliveryFee = 25; // Higher fee for Jeddah northern area
+            } else if (city === "Riyadh") {
+              deliveryFee = 20; // Riyadh delivery fee
             } else {
-              deliveryFee = 15; // Standard fee
+              deliveryFee = 15; // Jeddah standard fee
             }
           } else {
-            deliveryFee = 15; // Default to standard fee if coordinates unclear
+            deliveryFee = 20; // Default to Riyadh fee if coordinates unclear
           }
         } else {
-          deliveryFee = 15; // Default to standard fee if no GPS
+          deliveryFee = 20; // Default to Riyadh fee if no GPS
         }
       }
       const totalAmount = subtotal + deliveryFee;
@@ -954,8 +959,19 @@ export default function CheckoutPage() {
                         deliveryFee = 0;
                       } else if (distanceFromWarehouse !== null && deliveryCity) {
                         const coords = gpsCoordinates.split(',');
-                        const isNorthern = coords.length === 2 && isJeddahNorthernArea(parseFloat(coords[0]), parseFloat(coords[1]));
-                        deliveryFee = isNorthern ? 25 : 15;
+                        if (coords.length === 2) {
+                          const lat = parseFloat(coords[0]);
+                          const lng = parseFloat(coords[1]);
+                          const isNorthern = isJeddahNorthernArea(lat, lng);
+                          const city = isInCity(lat, lng);
+                          if (isNorthern) {
+                            deliveryFee = 25; // Jeddah northern area
+                          } else if (city === "Riyadh") {
+                            deliveryFee = 20; // Riyadh
+                          } else {
+                            deliveryFee = 15; // Jeddah standard
+                          }
+                        }
                       }
                     }
                     const total = subtotal + deliveryFee;

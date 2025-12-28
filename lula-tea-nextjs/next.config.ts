@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   compress: true,
   
   // Build optimizations
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -15,15 +14,10 @@ const nextConfig: NextConfig = {
   // Experimental features for better performance
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
   },
+
+  // Empty turbopack config to silence warning
+  turbopack: {},
   
   images: {
     formats: ['image/webp', 'image/avif'],

@@ -479,17 +479,6 @@ export default function CheckoutPage() {
         );
       }
     }
-    if (!deliveryCity || (deliveryCity !== "Riyadh" && deliveryCity !== "Jeddah")) {
-      errors.deliveryAddress = language === "ar" 
-        ? "عذراً، نوصل حالياً فقط في الرياض وجدة. يرجى مشاركة موقعك للتحقق من المنطقة."
-        : "Sorry, we currently deliver only in Riyadh and Jeddah. Please share your location to verify your area.";
-      showToast(
-        language === "ar" 
-          ? "التوصيل متاح فقط في الرياض وجدة 📍" 
-          : "Delivery available only in Riyadh and Jeddah 📍",
-        "error"
-      );
-    }
 
     // Validate transaction reference for STC Pay
     if (paymentMethod === "stcpay" && !transactionReference.trim()) {

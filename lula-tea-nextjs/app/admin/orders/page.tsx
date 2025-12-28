@@ -73,12 +73,15 @@ function OrdersManagementContent() {
     }
 
     try {
-      const { error } = await supabase
-        .from("orders")
-        .delete()
-        .eq("id", orderId);
+      const response = await fetch('/api/admin/orders/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId })
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to delete order');
+      }
 
       // Update local state
       setOrders(orders.filter(order => order.id !== orderId));
@@ -239,12 +242,15 @@ function OrdersManagementContent() {
     try {
       const orderIds = Array.from(selectedOrders);
       
-      const { error } = await supabase
-        .from("orders")
-        .delete()
-        .in("id", orderIds);
+      const response = await fetch('/api/admin/orders/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIds })
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to delete orders');
+      }
 
       // Update local state
       setOrders(orders.filter(order => !selectedOrders.has(order.id)));

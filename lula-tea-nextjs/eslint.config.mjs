@@ -12,6 +12,19 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Additional performance ignores:
+    "node_modules/**",
+    "dist/**",
+    "coverage/**",
+    "public/videos/**",
+    "**/*.config.js",
+    "**/*.config.mjs",
+    ".vscode/**",
+    ".github/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
   ]),
 ]);
 

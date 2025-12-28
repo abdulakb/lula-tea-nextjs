@@ -39,6 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+*.js.map
+*.d.ts.map
 
 # VS Code
 .vscode/*
@@ -47,3 +49,14 @@ next-env.d.ts
 
 # Logs
 *.log
+
+# Cache and temporary files
+.eslintcache
+.next/cache/
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Large media files (optional - uncomment if you don't want to commit videos)
+# public/videos/*.mp4

@@ -1,0 +1,21 @@
+/* Dark mode select styling */
+.dark select {
+  color: white !important;
+  color-scheme: dark;
+}
+
+.dark select option {
+  background-color: rgb(31 41 55) !important; /* gray-800 */
+  color: white !important;
+}
+
+/* Light mode select styling */
+select {
+  color: rgb(17 24 39) !important; /* gray-900 */
+  color-scheme: light;
+}
+
+select option {
+  background-color: white !important;
+  color: rgb(17 24 39) !important; /* gray-900 */
+}

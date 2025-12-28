@@ -112,7 +112,7 @@ export function generateAdminOrderNotification(data: AdminNotificationData) {
                   <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Phone:</td>
                   <td style="color: #1f2937; font-weight: 500;">
                     <a href="tel:${data.customerPhone}" style="color: #2563eb; text-decoration: none;">${data.customerPhone}</a>
-                    <a href="https://wa.me/${data.customerPhone.replace(/\D/g, '')}" style="display: inline-block; margin-left: 8px; background-color: #25D366; color: #ffffff; padding: 4px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
+                    <a href="https://wa.me/966${data.customerPhone.replace(/\D/g, '').replace(/^0+/, '')}" style="display: inline-block; margin-left: 8px; background-color: #25D366; color: #ffffff; padding: 4px 12px; border-radius: 4px; text-decoration: none; font-size: 12px;">
                       WhatsApp
                     </a>
                   </td>

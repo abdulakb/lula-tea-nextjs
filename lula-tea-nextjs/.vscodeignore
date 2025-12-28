@@ -1,0 +1,38 @@
+# VS Code should ignore these files for indexing and search
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+*.log
+.env*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Large files
+public/videos/**
+**/*.mp4
+**/*.avi
+**/*.mov
+**/*.wmv
+
+# Source maps
+**/*.map
+
+# Test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Documentation (if not actively editing)
+*.md
+
+# Temporary files
+.DS_Store
+*.tmp
+*.temp
+Thumbs.db

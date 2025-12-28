@@ -9,7 +9,11 @@
     "**/build/**": true,
     "**/*.tsbuildinfo": true,
     "**/package-lock.json": true,
-    "**/.env*": true
+    "**/.env*": true,
+    "**/out/**": true,
+    "**/coverage/**": true,
+    "**/*.log": true,
+    "**/public/videos/**": true
   },
   
   // Exclude from search to speed up searches
@@ -19,21 +23,32 @@
     "**/dist": true,
     "**/build": true,
     "**/*.tsbuildinfo": true,
-    "**/package-lock.json": true
+    "**/package-lock.json": true,
+    "**/out": true,
+    "**/coverage": true,
+    "**/*.log": true,
+    "**/public/videos": true,
+    "**/*.map": true
   },
   
   // Exclude from file tree to reduce memory
   "files.exclude": {
     "**/.next": true,
-    "**/*.tsbuildinfo": true
+    "**/*.tsbuildinfo": true,
+    "**/out": false,
+    "**/*.log": true
   },
   
   // TypeScript performance optimizations
-  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.maxTsServerMemory": 8192,
   "typescript.tsserver.experimental.enableProjectDiagnostics": false,
   "typescript.disableAutomaticTypeAcquisition": true,
   "typescript.preferences.includePackageJsonAutoImports": "off",
   "typescript.surveys.enabled": false,
+  "typescript.tsserver.log": "off",
+  "typescript.tsserver.trace": "off",
+  "typescript.tsserver.pluginPaths": [],
+  "typescript.tsserver.useSyntaxServer": "auto",
   
   // GitHub Copilot optimizations
   "github.copilot.advanced": {
@@ -55,6 +70,9 @@
   "editor.guides.bracketPairs": false,
   "editor.renderWhitespace": "none",
   "editor.minimap.enabled": false,
+  "editor.codeLens": false,
+  "editor.inlayHints.enabled": "off",
+  "editor.stickyScroll.enabled": false,
   
   // Limit file processing
   "files.maxMemoryForLargeFilesMB": 4096,
@@ -79,6 +97,21 @@
   "workbench.enableExperiments": false,
   "telemetry.telemetryLevel": "off",
   "update.mode": "none",
+  "javascript.validate.enable": false,
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": false
+  },
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.snippetSuggestions": "top",
+  "emmet.triggerExpansionOnTab": false,
+  "files.trimTrailingWhitespace": false,
+  "files.insertFinalNewline": false,
   
   // ESLint optimizations
   "eslint.validate": [
@@ -88,6 +121,20 @@
     "typescriptreact"
   ],
   "eslint.options": {
-    "cache": true
-  }
+    "cache": true,
+    "cacheLocation": ".next/cache/.eslintcache"
+  },
+  "eslint.lintTask.enable": true,
+  "eslint.runtime": "node",
+  
+  // Copilot optimizations
+  "github.copilot.editor.enableAutoCompletions": true,
+  
+  // Workbench optimizations
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 10,
+  "workbench.editor.limit.perEditorGroup": true,
+  "workbench.editor.closeEmptyGroups": true,
+  
+  "liveServer.settings.multiRootWorkspaceName": "lula-tea-nextjs"
 }

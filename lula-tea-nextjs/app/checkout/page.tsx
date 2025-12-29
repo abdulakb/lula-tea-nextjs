@@ -503,6 +503,48 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Validate city-specific stock availability before submitting
+    const orderCity = deliveryMethod === "pickup" 
+      ? (pickupLocation === "riyadh" ? "Riyadh" : "Jeddah")
+      : deliveryCity;
+
+    if (orderCity && (orderCity === "Riyadh" || orderCity === "Jeddah")) {
+      try {
+        const response = await fetch(`/api/products/city-stock?city=${orderCity}`);
+        const stockData = await response.json();
+        
+        if (stockData.success && stockData.products.length > 0) {
+          const availableStock = stockData.products[0].stock;
+          const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+          
+          if (totalQuantity > availableStock) {
+            showToast(
+              language === "ar" 
+                ? `عذراً، الكمية المتوفرة في ${orderCity === 'Riyadh' ? 'الرياض' : 'جدة'} هي ${availableStock} فقط`
+                : `Sorry, only ${availableStock} bags available in ${orderCity}`,
+              "error"
+            );
+            setIsSubmitting(false);
+            return;
+          }
+          
+          if (availableStock === 0) {
+            showToast(
+              language === "ar" 
+                ? `عذراً، المنتج غير متوفر حالياً في ${orderCity === 'Riyadh' ? 'الرياض' : 'جدة'}`
+                : `Sorry, product is currently out of stock in ${orderCity}`,
+              "error"
+            );
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      } catch (stockError) {
+        console.error("Error checking stock:", stockError);
+        // Continue with order if stock check fails (fallback)
+      }
+    }
+
     setIsSubmitting(true);
 
     try {

@@ -60,19 +60,30 @@ export async function GET(request: NextRequest) {
 
     // Calculate metrics
     const events = data || [];
-    const uniqueVisitors = new Set(events.map((e) => e.visitor_id)).size;
+    const uniqueVisitors = new Set(events.filter(e => e.visitor_id).map((e) => e.visitor_id)).size;
     const pageViews = events.filter((e) => e.event_type === "page_view").length;
     const addToCartEvents = events.filter((e) => e.event_type === "add_to_cart").length;
     const checkoutStarts = events.filter((e) => e.event_type === "checkout_start").length;
     const purchases = events.filter((e) => e.event_type === "purchase").length;
     const sessionEnds = events.filter((e) => e.event_type === "session_end");
 
-    // Calculate abandoned carts (checkout started but no purchase)
+    // Get unique visitors who performed specific actions
+    const visitorsWhoAddedToCart = new Set(
+      events.filter((e) => e.event_type === "add_to_cart" && e.visitor_id).map((e) => e.visitor_id)
+    ).size;
+    const visitorsWhoStartedCheckout = new Set(
+      events.filter((e) => e.event_type === "checkout_start" && e.visitor_id).map((e) => e.visitor_id)
+    ).size;
+    const visitorsWhoPurchased = new Set(
+      events.filter((e) => e.event_type === "purchase" && e.visitor_id).map((e) => e.visitor_id)
+    ).size;
+
+    // Calculate abandoned carts (visitors who started checkout but didn't purchase)
     const checkoutVisitors = new Set(
-      events.filter((e) => e.event_type === "checkout_start").map((e) => e.visitor_id)
+      events.filter((e) => e.event_type === "checkout_start" && e.visitor_id).map((e) => e.visitor_id)
     );
     const purchaseVisitors = new Set(
-      events.filter((e) => e.event_type === "purchase").map((e) => e.visitor_id)
+      events.filter((e) => e.event_type === "purchase" && e.visitor_id).map((e) => e.visitor_id)
     );
     const abandonedCheckouts = Array.from(checkoutVisitors).filter(
       (id) => !purchaseVisitors.has(id)
@@ -104,12 +115,45 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Visitors who never ordered
-    const visitorsWithoutPurchase = uniqueVisitors - purchaseVisitors.size;
+    // Device statistics (counting unique visitors per device)
+    const deviceMap = new Map<string, Set<string>>();
+    events.forEach((e) => {
+      if (e.visitor_id && e.event_data?.device) {
+        if (!deviceMap.has(e.event_data.device)) {
+          deviceMap.set(e.event_data.device, new Set());
+        }
+        deviceMap.get(e.event_data.device)!.add(e.visitor_id);
+      }
+    });
 
-    const conversionRate = uniqueVisitors > 0 ? (purchases / uniqueVisitors) * 100 : 0;
-    const cartConversionRate = addToCartEvents > 0 ? (purchases / addToCartEvents) * 100 : 0;
-    const checkoutAbandonmentRate = checkoutStarts > 0 ? (abandonedCheckouts / checkoutStarts) * 100 : 0;
+    const devices = Array.from(deviceMap.entries()).map(([device, visitors]) => ({
+      name: device,
+      value: visitors.size,
+    }));
+
+    // Browser statistics (counting unique visitors per browser)
+    const browserMap = new Map<string, Set<string>>();
+    events.forEach((e) => {
+      if (e.visitor_id && e.event_data?.browser) {
+        if (!browserMap.has(e.event_data.browser)) {
+          browserMap.set(e.event_data.browser, new Set());
+        }
+        browserMap.get(e.event_data.browser)!.add(e.visitor_id);
+      }
+    });
+
+    const browsers = Array.from(browserMap.entries()).map(([browser, visitors]) => ({
+      name: browser,
+      value: visitors.size,
+    }));
+
+    // Visitors who never ordered
+    const visitorsWithoutPurchase = uniqueVisitors - visitorsWhoPurchased;
+
+    // Conversion rates (using unique visitors, not event counts)
+    const conversionRate = uniqueVisitors > 0 ? (visitorsWhoPurchased / uniqueVisitors) * 100 : 0;
+    const cartConversionRate = visitorsWhoAddedToCart > 0 ? (visitorsWhoPurchased / visitorsWhoAddedToCart) * 100 : 0;
+    const checkoutAbandonmentRate = visitorsWhoStartedCheckout > 0 ? (abandonedCheckouts / visitorsWhoStartedCheckout) * 100 : 0;
 
     return NextResponse.json({
       success: true,
@@ -127,6 +171,8 @@ export async function GET(request: NextRequest) {
         avgSessionDuration: Math.round(avgSessionDuration),
         timeOfDayData,
         dayOfWeekData,
+        devices,
+        browsers,
       },
       events,
     });

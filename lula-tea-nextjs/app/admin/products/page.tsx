@@ -18,6 +18,8 @@ interface Product {
   description_ar?: string;
   price: number;
   stock_quantity: number;
+  riyadh_stock: number;
+  jeddah_stock: number;
   low_stock_threshold: number;
   available: boolean;
   image_url?: string;
@@ -49,6 +51,8 @@ export default function ProductsManagement() {
     description_ar: "",
     price: "",
     stock_quantity: "",
+    riyadh_stock: "",
+    jeddah_stock: "",
     low_stock_threshold: "10",
     category: "",
     sku: "",
@@ -79,10 +83,14 @@ export default function ProductsManagement() {
     e.preventDefault();
 
     try {
+      const riyadhStock = parseInt(formData.riyadh_stock) || 0;
+      const jeddahStock = parseInt(formData.jeddah_stock) || 0;
       const productData = {
         ...formData,
         price: parseFloat(formData.price),
-        stock_quantity: parseInt(formData.stock_quantity),
+        riyadh_stock: riyadhStock,
+        jeddah_stock: jeddahStock,
+        stock_quantity: riyadhStock + jeddahStock, // Total stock is sum of both cities
         low_stock_threshold: parseInt(formData.low_stock_threshold),
       };
 
@@ -162,6 +170,8 @@ export default function ProductsManagement() {
       description_ar: product.description_ar || "",
       price: product.price.toString(),
       stock_quantity: product.stock_quantity.toString(),
+      riyadh_stock: product.riyadh_stock?.toString() || "0",
+      jeddah_stock: product.jeddah_stock?.toString() || "0",
       low_stock_threshold: product.low_stock_threshold.toString(),
       category: product.category || "",
       sku: product.sku || "",
@@ -184,6 +194,8 @@ export default function ProductsManagement() {
       description_ar: "",
       price: "",
       stock_quantity: "",
+      riyadh_stock: "",
+      jeddah_stock: "",
       low_stock_threshold: "10",
       category: "",
       sku: "",
@@ -431,7 +443,9 @@ export default function ProductsManagement() {
                   <th className="px-6 py-3 text-left text-sm font-semibold">SKU</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Category</th>
                   <th className="px-6 py-3 text-right text-sm font-semibold">Price</th>
-                  <th className="px-6 py-3 text-center text-sm font-semibold">Stock</th>
+                  <th className="px-6 py-3 text-center text-sm font-semibold">Riyadh</th>
+                  <th className="px-6 py-3 text-center text-sm font-semibold">Jeddah</th>
+                  <th className="px-6 py-3 text-center text-sm font-semibold">Total</th>
                   <th className="px-6 py-3 text-center text-sm font-semibold">Status</th>
                   <th className="px-6 py-3 text-center text-sm font-semibold">Actions</th>
                 </tr>
@@ -440,7 +454,7 @@ export default function ProductsManagement() {
                 {filteredProducts.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={9}
                       className="px-6 py-12 text-center text-tea-brown dark:text-gray-400"
                     >
                       No products found
@@ -472,6 +486,32 @@ export default function ProductsManagement() {
                       </td>
                       <td className="px-6 py-4 text-right font-semibold text-deep-brown dark:text-white">
                         {product.price.toFixed(2)} SAR
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span
+                          className={`inline-flex items-center justify-center px-2 py-1 rounded text-xs font-semibold ${
+                            (product.riyadh_stock || 0) === 0
+                              ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                              : (product.riyadh_stock || 0) <= Math.floor(product.low_stock_threshold / 2)
+                              ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                              : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          }`}
+                        >
+                          {product.riyadh_stock || 0}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span
+                          className={`inline-flex items-center justify-center px-2 py-1 rounded text-xs font-semibold ${
+                            (product.jeddah_stock || 0) === 0
+                              ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                              : (product.jeddah_stock || 0) <= Math.floor(product.low_stock_threshold / 2)
+                              ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                              : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          }`}
+                        >
+                          {product.jeddah_stock || 0}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span
@@ -674,16 +714,47 @@ export default function ProductsManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-deep-brown dark:text-gray-300 mb-2">
-                      Stock Quantity *
+                      Riyadh Stock *
                     </label>
                     <input
                       type="number"
                       required
-                      value={formData.stock_quantity}
+                      min="0"
+                      value={formData.riyadh_stock}
                       onChange={(e) =>
-                        setFormData({ ...formData, stock_quantity: e.target.value })
+                        setFormData({ ...formData, riyadh_stock: e.target.value })
                       }
                       className="w-full px-4 py-2 border border-tea-brown/30 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-700 text-deep-brown dark:text-white dark-transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-deep-brown dark:text-gray-300 mb-2">
+                      Jeddah Stock *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={formData.jeddah_stock}
+                      onChange={(e) =>
+                        setFormData({ ...formData, jeddah_stock: e.target.value })
+                      }
+                      className="w-full px-4 py-2 border border-tea-brown/30 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-700 text-deep-brown dark:text-white dark-transition"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-deep-brown dark:text-gray-300 mb-2">
+                      Total Stock (Auto-calculated)
+                    </label>
+                    <input
+                      type="number"
+                      disabled
+                      value={(parseInt(formData.riyadh_stock) || 0) + (parseInt(formData.jeddah_stock) || 0)}
+                      className="w-full px-4 py-2 border border-tea-brown/30 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
                     />
                   </div>
 

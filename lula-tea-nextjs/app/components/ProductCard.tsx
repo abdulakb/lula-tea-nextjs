@@ -34,6 +34,10 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userCity, setUserCity] = useState<string | null>(null);
+  const [cityStock, setCityStock] = useState<number | null>(null);
+  const [showCityStock, setShowCityStock] = useState(false);
+  const [locationDetected, setLocationDetected] = useState(false);
   const { language, t } = useLanguage();
   const { addItem } = useCart();
   const { trackEvent } = useAnalytics();
@@ -42,7 +46,62 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
 
   useEffect(() => {
     fetchProduct();
+    detectUserLocation();
   }, []);
+
+  const detectUserLocation = async () => {
+    // Try to detect location from browser geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          const city = determineCityFromCoords(latitude, longitude);
+          
+          if (city) {
+            setUserCity(city);
+            setLocationDetected(true);
+            // Fetch city-specific stock
+            await fetchCityStock(city);
+          }
+        },
+        (error) => {
+          console.log('Location permission denied or unavailable:', error);
+          // Don't show stock if location not available
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 300000, // Cache for 5 minutes
+        }
+      );
+    }
+  };
+
+  const determineCityFromCoords = (lat: number, lng: number): string | null => {
+    // Riyadh boundaries
+    const isRiyadh = lat >= 24.4 && lat <= 25.0 && lng >= 46.3 && lng <= 47.0;
+    // Jeddah boundaries
+    const isJeddah = lat >= 21.3 && lat <= 21.8 && lng >= 39.0 && lng <= 39.4;
+    
+    if (isRiyadh) return 'Riyadh';
+    if (isJeddah) return 'Jeddah';
+    return null;
+  };
+
+  const fetchCityStock = async (city: string) => {
+    try {
+      const response = await fetch(`/api/products/city-stock?city=${city}`);
+      const data = await response.json();
+      
+      if (data.success && data.products.length > 0) {
+        const productData = data.products[0];
+        setCityStock(productData.stock);
+        setShowCityStock(productData.showStockCount); // Only show if < 10
+      }
+    } catch (error) {
+      console.error('Error fetching city stock:', error);
+    }
+  };
 
   const fetchProduct = async () => {
     try {
@@ -154,8 +213,48 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
             className="absolute inset-0 bg-gradient-to-t from-deep-brown/50 to-transparent pointer-events-none"
           />
           
-          {/* Stock Badge */}
-          {product.isOutOfStock && (
+          {/* Stock Badge - Only show when location detected and stock < 10 */}
+          {locationDetected && userCity && cityStock !== null && (
+            <>
+              {cityStock === 0 && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                  className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg"
+                >
+                  {language === "ar" ? `نفذت الكمية في ${userCity === 'Riyadh' ? 'الرياض' : 'جدة'}` : `Out of Stock in ${userCity}`}
+                </motion.div>
+              )}
+              {showCityStock && cityStock > 0 && cityStock < 10 && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg"
+                >
+                  <div className="flex items-center gap-2">
+                    <motion.svg
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </motion.svg>
+                    <span>
+                      {language === "ar" 
+                        ? `${cityStock} متبقي فقط في ${userCity === 'Riyadh' ? 'الرياض' : 'جدة'}! ⚡` 
+                        : `Only ${cityStock} left in ${userCity}! ⚡`}
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </>
+          )}
+          {/* Fallback badges when location not detected - don't show stock numbers */}
+          {!locationDetected && product.isOutOfStock && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -165,7 +264,7 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
               {language === "ar" ? "نفذت الكمية" : "Out of Stock"}
             </motion.div>
           )}
-          {product.isLowStock && !product.isOutOfStock && (
+          {!locationDetected && product.isLowStock && !product.isOutOfStock && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: [1, 1.05, 1] }}
@@ -182,17 +281,8 @@ export default function ProductCard({ showActions = true }: ProductCardProps) {
                 >
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </motion.svg>
-                <span>{language === "ar" ? `${product.stock} متبقي فقط! ⚡` : `Only ${product.stock} left! ⚡`}</span>
+                <span>{language === "ar" ? "كمية محدودة! ⚡" : "Limited stock! ⚡"}</span>
               </div>
-            </motion.div>
-          )}
-          {product.stock > 10 && product.stock <= 20 && !product.isLowStock && !product.isOutOfStock && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="absolute top-4 right-4 bg-amber-500 text-white px-3 py-1.5 rounded-lg font-semibold shadow-lg text-sm"
-            >
-              {language === "ar" ? `${product.stock} متوفر` : `${product.stock} in stock`}
             </motion.div>
           )}
         </motion.div>

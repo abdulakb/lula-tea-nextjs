@@ -34,6 +34,8 @@ interface AnalyticsMetrics {
   avgSessionDuration: number;
   timeOfDayData: { [key: number]: number };
   dayOfWeekData: { [key: number]: number };
+  devices: { name: string; value: number }[];
+  browsers: { name: string; value: number }[];
 }
 
 interface AnalyticsEvent {
@@ -62,6 +64,8 @@ export default function AnalyticsDashboard() {
     avgSessionDuration: 0,
     timeOfDayData: {},
     dayOfWeekData: {},
+    devices: [],
+    browsers: [],
   });
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
 
@@ -467,6 +471,88 @@ export default function AnalyticsDashboard() {
           <p className="text-sm text-tea-brown text-center mt-4">
             Identify which days drive the most traffic and conversions
           </p>
+        </div>
+
+        {/* Device & Browser Statistics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Device Distribution */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-deep-brown mb-6">
+              Device Distribution
+            </h2>
+            {metrics.devices && metrics.devices.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={metrics.devices}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {metrics.devices.map((entry, index) => {
+                        const colors = ['#7a9b76', '#6b4423', '#f59e0b', '#10b981'];
+                        return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                      })}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="mt-4 space-y-2">
+                  {metrics.devices.map((device, index) => {
+                    const total = metrics.devices.reduce((sum, d) => sum + d.value, 0);
+                    const percentage = total > 0 ? ((device.value / total) * 100).toFixed(1) : '0.0';
+                    return (
+                      <div key={index} className="flex justify-between items-center">
+                        <span className="text-tea-brown">{device.name}</span>
+                        <span className="font-semibold text-deep-brown">{device.value} ({percentage}%)</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <p className="text-tea-brown text-center py-8">No device data available</p>
+            )}
+          </div>
+
+          {/* Browser Distribution */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-deep-brown mb-6">
+              Browser Distribution
+            </h2>
+            {metrics.browsers && metrics.browsers.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={metrics.browsers} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={80} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#7a9b76" name="Unique Visitors" />
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="mt-4 space-y-2">
+                  {metrics.browsers.map((browser, index) => {
+                    const total = metrics.browsers.reduce((sum, b) => sum + b.value, 0);
+                    const percentage = total > 0 ? ((browser.value / total) * 100).toFixed(1) : '0.0';
+                    return (
+                      <div key={index} className="flex justify-between items-center">
+                        <span className="text-tea-brown">{browser.name}</span>
+                        <span className="font-semibold text-deep-brown">{browser.value} ({percentage}%)</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <p className="text-tea-brown text-center py-8">No browser data available</p>
+            )}
+          </div>
         </div>
 
         {/* User Journey Stats */}

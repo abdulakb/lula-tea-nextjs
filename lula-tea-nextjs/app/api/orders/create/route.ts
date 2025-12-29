@@ -128,51 +128,82 @@ export async function POST(request: NextRequest) {
 
     console.log("Saving order to database...", { orderId, quantityOrdered });
 
-    // Deduct stock for each item
+    // Determine delivery city from GPS coordinates or use provided city
+    let orderCity = deliveryCity;
+    if (!orderCity && gpsCoordinates) {
+      const coords = gpsCoordinates.split(',');
+      if (coords.length === 2) {
+        const lat = parseFloat(coords[0]);
+        const lng = parseFloat(coords[1]);
+        
+        // Riyadh boundaries
+        const isRiyadh = lat >= 24.4 && lat <= 25.0 && lng >= 46.3 && lng <= 47.0;
+        // Jeddah boundaries
+        const isJeddah = lat >= 21.3 && lat <= 21.8 && lng >= 39.0 && lng <= 39.4;
+        
+        orderCity = isRiyadh ? 'Riyadh' : isJeddah ? 'Jeddah' : null;
+      }
+    }
+
+    // Validate city before stock deduction
+    if (!orderCity || (orderCity !== 'Riyadh' && orderCity !== 'Jeddah')) {
+      return NextResponse.json({
+        error: language === "ar" 
+          ? "عذراً، يجب تحديد مدينة التوصيل (الرياض أو جدة)"
+          : "Sorry, delivery city must be Riyadh or Jeddah",
+        invalidCity: true
+      }, { status: 400 });
+    }
+
+    // Deduct stock for each item from city-specific inventory
     const stockDeductionResults = [];
     for (const item of items) {
       try {
-        // Call the deduct_product_stock function
+        // Call the city-specific deduct_city_product_stock function
         const { data: stockResult, error: stockError } = await supabase
-          .rpc('deduct_product_stock', {
+          .rpc('deduct_city_product_stock', {
             p_product_id: item.id,
             p_quantity: item.quantity,
-            p_order_id: orderId
+            p_order_id: orderId,
+            p_city: orderCity
           });
 
         if (stockError) {
-          console.error(`Stock deduction error for item ${item.id}:`, stockError);
+          console.error(`Stock deduction error for item ${item.id} in ${orderCity}:`, stockError);
           stockDeductionResults.push({ 
             item: item.name, 
             success: false, 
             error: stockError.message 
           });
         } else if (!stockResult.success) {
-          console.error(`Insufficient stock for item ${item.name}:`, stockResult);
+          console.error(`Insufficient stock for item ${item.name} in ${orderCity}:`, stockResult);
           // Rollback: we should not continue if stock is insufficient
           return NextResponse.json({
-            error: `Insufficient stock for ${item.name}. Available: ${stockResult.available}, Requested: ${stockResult.requested}`,
+            error: `Insufficient stock for ${item.name} in ${orderCity}. Available: ${stockResult.available}, Requested: ${stockResult.requested}`,
             insufficientStock: true,
-            item: item.name
+            item: item.name,
+            city: orderCity
           }, { status: 400 });
         } else {
-          console.log(`Stock deducted successfully for ${item.name}:`, stockResult);
+          console.log(`Stock deducted successfully for ${item.name} in ${orderCity}:`, stockResult);
           stockDeductionResults.push({ 
             item: item.name, 
-            success: true, 
+            success: true,
+            city: orderCity,
             ...stockResult 
           });
           
           // Check for low stock alert
-          if (stockResult.low_stock_alert) {
-            console.warn(`⚠️ LOW STOCK ALERT: ${item.name} - Current stock: ${stockResult.new_stock}`);
+          if (stockResult.new_stock <= 5) {
+            console.warn(`⚠️ LOW STOCK ALERT in ${orderCity}: ${item.name} - Current stock: ${stockResult.new_stock}`);
             // You could send notification here
           }
         }
       } catch (err) {
-        console.error(`Error deducting stock for ${item.name}:`, err);
+        console.error(`Error deducting stock for ${item.name} in ${orderCity}:`, err);
         stockDeductionResults.push({ 
-          item: item.name, 
+          item: item.name,
+          city: orderCity,
           success: false, 
           error: String(err) 
         });
@@ -226,6 +257,7 @@ export async function POST(request: NextRequest) {
           delivery_notes: deliveryNotes || null,
           transaction_reference: transactionReference || null,
           quantity_ordered: quantityOrdered,
+          delivery_city: orderCity, // Add city to order
           items: JSON.stringify(items),
           subtotal,
           delivery_fee: deliveryFee || 0,

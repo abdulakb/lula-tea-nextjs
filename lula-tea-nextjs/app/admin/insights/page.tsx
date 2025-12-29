@@ -118,16 +118,11 @@ export default function InsightsDashboard() {
         </div>
 
         {/* Visitor Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Total Visitors</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{data.visitors.total.toLocaleString()}</p>
-            <p className="text-sm text-green-600 mt-2">👤 {data.visitors.unique.toLocaleString()} unique</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">New Visitors</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{data.visitors.new.toLocaleString()}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{((data.visitors.new / data.visitors.total) * 100).toFixed(1)}% of total</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Unique Visitors</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">{data.visitors.unique.toLocaleString()}</p>
+            <p className="text-sm text-green-600 mt-2">📊 {data.visitors.new.toLocaleString()} new</p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Page Views</p>
@@ -137,7 +132,12 @@ export default function InsightsDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Conversion Rate</p>
             <p className="text-3xl font-bold text-green-600">{data.shopping.conversionRate}%</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{data.shopping.checkoutCompleted} completed orders</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Visitor to Purchase</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Cart Conversion</p>
+            <p className="text-3xl font-bold text-blue-600">{data.shopping.cartConversionRate}%</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Cart to Purchase</p>
           </div>
         </div>
 

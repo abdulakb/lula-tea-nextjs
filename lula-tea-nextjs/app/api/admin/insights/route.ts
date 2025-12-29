@@ -33,11 +33,15 @@ export async function GET(request: NextRequest) {
     const checkoutEvents = events?.filter(e => e.event_type === "checkout_start") || [];
     const addToCartEvents = events?.filter(e => e.event_type === "add_to_cart") || [];
     const purchaseEvents = events?.filter(e => e.event_type === "purchase") || [];
+    
+    // Get unique visitors who made purchases
+    const purchasingVisitors = new Set(purchaseEvents.map(e => e.visitor_id).filter(Boolean)).size;
+    const visitorsWhoAddedToCart = new Set(addToCartEvents.map(e => e.visitor_id).filter(Boolean)).size;
 
     // Calculate device stats from user_agent
     const deviceStats = calculateDeviceStats(events || []);
     const browserStats = calculateBrowserStats(events || []);
-    const geoStats = calculateGeoStats(events || []);
+    const geoStats = calculateGeoStats(events || [], uniqueVisitors);
     
     // Group by day
     const dailyStats = groupByDay(pageViews, days);
@@ -66,8 +70,13 @@ export async function GET(request: NextRequest) {
         abandonmentRate: checkoutEvents.length > 0 
           ? (((checkoutEvents.length - (orders?.length || 0)) / checkoutEvents.length) * 100).toFixed(1)
           : 0,
-        conversionRate: checkoutEvents.length > 0
-          ? (((orders?.length || 0) / checkoutEvents.length) * 100).toFixed(1)
+        // Conversion rate = visitors who purchased / total unique visitors
+        conversionRate: uniqueVisitors > 0
+          ? ((purchasingVisitors / uniqueVisitors) * 100).toFixed(2)
+          : 0,
+        // Cart conversion = visitors who purchased / visitors who added to cart
+        cartConversionRate: visitorsWhoAddedToCart > 0
+          ? ((purchasingVisitors / visitorsWhoAddedToCart) * 100).toFixed(2)
           : 0,
         funnel: [
           { stage: "Product Views", count: pageViews.filter(p => p.page_url?.includes('/product')).length, rate: 100 },
@@ -140,19 +149,28 @@ export async function GET(request: NextRequest) {
 // Helper functions
 function calculateDeviceStats(events: any[]) {
   const devices = { desktop: 0, mobile: 0, tablet: 0 };
+  const uniqueVisitors = new Map();
   
+  // Only count each visitor once, using their most recent user agent
   events.forEach(event => {
-    const ua = event.user_agent?.toLowerCase() || '';
-    if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone')) {
+    if (event.visitor_id) {
+      uniqueVisitors.set(event.visitor_id, event.user_agent);
+    }
+  });
+
+  // Count unique visitors by device type
+  uniqueVisitors.forEach(ua => {
+    const userAgent = ua?.toLowerCase() || '';
+    if (userAgent.includes('mobile') || userAgent.includes('android') || userAgent.includes('iphone')) {
       devices.mobile++;
-    } else if (ua.includes('tablet') || ua.includes('ipad')) {
+    } else if (userAgent.includes('tablet') || userAgent.includes('ipad')) {
       devices.tablet++;
     } else {
       devices.desktop++;
     }
   });
 
-  const total = events.length || 1;
+  const total = uniqueVisitors.size || 1;
   return {
     desktop: ((devices.desktop / total) * 100).toFixed(1),
     mobile: ((devices.mobile / total) * 100).toFixed(1),
@@ -162,20 +180,29 @@ function calculateDeviceStats(events: any[]) {
 
 function calculateBrowserStats(events: any[]) {
   const browsers: any = {};
+  const uniqueVisitors = new Map();
   
+  // Only count each visitor once, using their most recent user agent
   events.forEach(event => {
-    const ua = event.user_agent?.toLowerCase() || '';
+    if (event.visitor_id) {
+      uniqueVisitors.set(event.visitor_id, event.user_agent);
+    }
+  });
+  
+  // Count unique visitors by browser
+  uniqueVisitors.forEach(ua => {
+    const userAgent = ua?.toLowerCase() || '';
     let browser = 'Other';
     
-    if (ua.includes('chrome') && !ua.includes('edg')) browser = 'Chrome';
-    else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'Safari';
-    else if (ua.includes('firefox')) browser = 'Firefox';
-    else if (ua.includes('edg')) browser = 'Edge';
+    if (userAgent.includes('chrome') && !userAgent.includes('edg')) browser = 'Chrome';
+    else if (userAgent.includes('safari') && !userAgent.includes('chrome')) browser = 'Safari';
+    else if (userAgent.includes('firefox')) browser = 'Firefox';
+    else if (userAgent.includes('edg')) browser = 'Edge';
     
     browsers[browser] = (browsers[browser] || 0) + 1;
   });
 
-  const total = events.length || 1;
+  const total = uniqueVisitors.size || 1;
   return Object.entries(browsers)
     .map(([name, count]: [string, any]) => ({
       name,
@@ -184,17 +211,17 @@ function calculateBrowserStats(events: any[]) {
     .sort((a, b) => parseFloat(b.percentage) - parseFloat(a.percentage));
 }
 
-function calculateGeoStats(events: any[]) {
+function calculateGeoStats(events: any[], uniqueVisitors: number) {
   // For now, return Saudi Arabia as default since user agent doesn't have geo data
   // In production, you'd use IP geolocation or Azure Insights geo data
   return {
     topCountries: [
-      { country: "Saudi Arabia", visitors: events.length, percentage: 100 },
+      { country: "Saudi Arabia", visitors: uniqueVisitors, percentage: 100 },
     ],
     topCities: [
-      { city: "Riyadh", visitors: Math.floor(events.length * 0.5) },
-      { city: "Jeddah", visitors: Math.floor(events.length * 0.3) },
-      { city: "Dammam", visitors: Math.floor(events.length * 0.2) },
+      { city: "Riyadh", visitors: Math.floor(uniqueVisitors * 0.5) },
+      { city: "Jeddah", visitors: Math.floor(uniqueVisitors * 0.3) },
+      { city: "Dammam", visitors: Math.floor(uniqueVisitors * 0.2) },
     ],
   };
 }

@@ -470,17 +470,11 @@ export default function CheckoutPage() {
         errors.deliveryTime = language === "ar" ? "وقت التوصيل مطلوب" : "Delivery time is required";
       }
 
-      // Validate delivery city - only Riyadh and Jeddah allowed
-      if (!deliveryCity || (deliveryCity !== "Riyadh" && deliveryCity !== "Jeddah")) {
-        errors.deliveryAddress = language === "ar" 
-          ? "عذراً، نوصل حالياً فقط في الرياض وجدة. يرجى مشاركة موقعك للتحقق من المنطقة."
-          : "Sorry, we currently deliver only in Riyadh and Jeddah. Please share your location to verify your area.";
-        showToast(
-          language === "ar" 
-            ? "التوصيل متاح فقط في الرياض وجدة 📍" 
-            : "Delivery available only in Riyadh and Jeddah 📍",
-          "error"
-        );
+      // Check if GPS location was shared - warn but don't block
+      if (!gpsCoordinates && !deliveryCity) {
+        console.warn("No GPS location provided - delivery will be processed manually");
+        // Set default city to Riyadh if not detected (admin can update later)
+        setDeliveryCity("Riyadh");
       }
     }
 

@@ -92,12 +92,16 @@ export async function PUT(request: NextRequest) {
     }
 
     console.log("Updating product:", existingProduct.name);
+    console.log("Update data being sent to Supabase:", updateData);
 
-    // Update the product
-    const { error: updateError } = await supabase
+    // Update the product and return the updated row
+    const { data: updatedRows, error: updateError } = await supabase
       .from("products")
       .update(updateData)
-      .eq("id", id);
+      .eq("id", id)
+      .select();
+
+    console.log("Supabase update response:", { updatedRows, updateError });
 
     if (updateError) {
       console.error("Supabase update error:", updateError);
@@ -107,23 +111,17 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Fetch the updated product
-    const { data: updatedProduct, error: fetchError } = await supabase
-      .from("products")
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    if (fetchError || !updatedProduct) {
-      console.error("Error fetching updated product:", fetchError);
-      // Product was updated but we couldn't fetch it, still return success
-      return NextResponse.json({ 
-        product: { id, ...updateData },
-        warning: "Product updated but could not fetch latest data"
-      }, { status: 200 });
+    if (!updatedRows || updatedRows.length === 0) {
+      console.error("Update succeeded but no rows returned");
+      return NextResponse.json(
+        { error: "Update succeeded but no rows returned. Check RLS policies." },
+        { status: 500 }
+      );
     }
 
-    console.log("Product updated successfully:", updatedProduct.name);
+    const updatedProduct = updatedRows[0];
+    console.log("Product updated successfully. Returned data:", updatedProduct);
+
     return NextResponse.json({ product: updatedProduct }, { status: 200 });
   } catch (error: any) {
     console.error("Error updating product:", error);

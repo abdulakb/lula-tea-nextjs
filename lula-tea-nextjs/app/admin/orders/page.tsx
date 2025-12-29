@@ -281,6 +281,66 @@ function OrdersManagementContent() {
     }
   };
 
+  const exportToExcel = () => {
+    // Prepare data for export
+    const exportData = filteredOrders.map((order) => {
+      let items = [];
+      try {
+        items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+      } catch (e) {
+        items = [];
+      }
+
+      const itemsList = items.map((item: any) => 
+        `${item.name || item.nameAr || 'Product'} (${item.quantity}x ${item.price} SAR)`
+      ).join('; ');
+
+      return {
+        'Order ID': order.order_id,
+        'Date': new Date(order.created_at).toLocaleDateString('en-US'),
+        'Time': new Date(order.created_at).toLocaleTimeString('en-US'),
+        'Customer Name': order.customer_name,
+        'Phone': order.customer_phone,
+        'Address': order.customer_address,
+        'Items': itemsList,
+        'Total (SAR)': order.total,
+        'Payment Method': order.payment_method === 'cod' ? 'Cash on Delivery' : 
+                         order.payment_method === 'stcpay' ? 'STC Pay' : 'WhatsApp',
+        'Status': order.status.toUpperCase(),
+        'Delivered': order.status === 'delivered' ? 'YES' : 'NO',
+        'Payment Received': '', // Empty column for manual tracking
+        'Notes': order.notes || ''
+      };
+    });
+
+    // Convert to CSV
+    const headers = Object.keys(exportData[0] || {});
+    const csvContent = [
+      headers.join(','),
+      ...exportData.map(row => 
+        headers.map(header => {
+          const value = row[header as keyof typeof row] || '';
+          // Escape quotes and wrap in quotes if contains comma/newline
+          const escaped = String(value).replace(/"/g, '""');
+          return escaped.includes(',') || escaped.includes('\n') ? `"${escaped}"` : escaped;
+        }).join(',')
+      )
+    ].join('\n');
+
+    // Create blob and download
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const dateStr = new Date().toISOString().split('T')[0];
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `orders_export_${dateStr}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const filteredOrders = orders.filter((order) => {
     const matchesFilter = filter === "all" || order.status === filter;
     const matchesPaymentFilter = paymentFilter === "all" || order.payment_method === paymentFilter;
@@ -349,12 +409,23 @@ function OrdersManagementContent() {
             </h1>
             <p className="text-tea-brown">View and manage all customer orders</p>
           </div>
-          <Link
-            href="/admin"
-            className="bg-tea-brown text-white px-6 py-2 rounded-lg hover:bg-tea-brown/90 transition-colors"
-          >
-            Back to Dashboard
-          </Link>
+          <div className="flex gap-3">
+            <button
+              onClick={exportToExcel}
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export to Excel
+            </button>
+            <Link
+              href="/admin"
+              className="bg-tea-brown text-white px-6 py-2 rounded-lg hover:bg-tea-brown/90 transition-colors"
+            >
+              Back to Dashboard
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}

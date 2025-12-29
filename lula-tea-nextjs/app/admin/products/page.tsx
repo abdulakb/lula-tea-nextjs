@@ -108,6 +108,10 @@ export default function ProductsManagement() {
           console.error("Server error response:", errorData);
           throw new Error(errorData.error || "Failed to update product");
         }
+
+        const result = await response.json();
+        console.log("Product updated successfully:", result);
+        alert("Product updated successfully!");
       } else {
         // Create new product
         console.log("Sending product create:", productData);

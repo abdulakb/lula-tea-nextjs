@@ -118,6 +118,12 @@ export default function ProductsManagement() {
 
         const result = await response.json();
         console.log("Product updated successfully:", result);
+        
+        // Update the product in local state immediately
+        setProducts(products.map(p => 
+          p.id === editingProduct.id ? result.product : p
+        ));
+        
         alert("Product updated successfully!");
       } else {
         // Create new product

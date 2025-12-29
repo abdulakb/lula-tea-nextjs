@@ -96,22 +96,32 @@ export default function ProductsManagement() {
 
       if (editingProduct) {
         // Update existing product
+        console.log("Sending product update:", { id: editingProduct.id, ...productData });
         const response = await fetch("/api/admin/products", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: editingProduct.id, ...productData }),
         });
 
-        if (!response.ok) throw new Error("Failed to update product");
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Server error response:", errorData);
+          throw new Error(errorData.error || "Failed to update product");
+        }
       } else {
         // Create new product
+        console.log("Sending product create:", productData);
         const response = await fetch("/api/admin/products", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(productData),
         });
 
-        if (!response.ok) throw new Error("Failed to create product");
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Server error response:", errorData);
+          throw new Error(errorData.error || "Failed to create product");
+        }
       }
 
       setShowModal(false);

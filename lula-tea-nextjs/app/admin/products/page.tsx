@@ -118,13 +118,12 @@ export default function ProductsManagement() {
 
         const result = await response.json();
         console.log("Product updated successfully:", result);
-        
-        // Update the product in local state immediately
-        setProducts(products.map(p => 
-          p.id === editingProduct.id ? result.product : p
-        ));
+        console.log("Updated product data:", result.product);
         
         alert("Product updated successfully!");
+        
+        // Refetch products to ensure we have the latest data
+        await fetchProducts();
       } else {
         // Create new product
         console.log("Sending product create:", productData);

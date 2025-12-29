@@ -330,6 +330,11 @@ export async function POST(request: NextRequest) {
             customerEmail: customerEmail || null,
             customerPhone,
             deliveryAddress: customerAddress,
+            propertyType: body.propertyType,
+            villaNumber: body.villaNumber,
+            buildingNumber: body.buildingNumber,
+            floorNumber: body.floorNumber,
+            apartmentNumber: body.apartmentNumber,
             deliveryTime,
             gpsCoordinates,
             items,
@@ -368,10 +373,21 @@ export async function POST(request: NextRequest) {
       // Create Google Maps link from address
       const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(customerAddress)}`;
       
-      // Build address line with building number if provided
-      const fullAddress = body.buildingNumber 
-        ? `${customerAddress} (${language === "ar" ? "مبنى" : "Building"} ${body.buildingNumber})`
-        : customerAddress;
+      // Build detailed address with property info
+      let fullAddress = customerAddress;
+      if (body.propertyType === 'villa' && body.villaNumber) {
+        fullAddress += language === "ar" 
+          ? ` | 🏠 فيلا رقم ${body.villaNumber}`
+          : ` | 🏠 Villa #${body.villaNumber}`;
+      } else if (body.propertyType === 'apartment') {
+        const aptDetails = [];
+        if (body.buildingNumber) aptDetails.push((language === "ar" ? "مبنى" : "Building") + ` ${body.buildingNumber}`);
+        if (body.floorNumber) aptDetails.push((language === "ar" ? "طابق" : "Floor") + ` ${body.floorNumber}`);
+        if (body.apartmentNumber) aptDetails.push((language === "ar" ? "شقة" : "Apt") + ` ${body.apartmentNumber}`);
+        if (aptDetails.length > 0) {
+          fullAddress += ` | 🏢 ${aptDetails.join(', ')}`;
+        }
+      }
       
       // Only include amount for COD orders
       const amountLine = paymentMethod === "cod" 

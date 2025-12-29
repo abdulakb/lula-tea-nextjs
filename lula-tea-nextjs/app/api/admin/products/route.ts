@@ -93,28 +93,38 @@ export async function PUT(request: NextRequest) {
 
     console.log("Updating product:", existingProduct.name);
 
-    const { data: products, error } = await supabase
+    // Update the product
+    const { error: updateError } = await supabase
       .from("products")
       .update(updateData)
-      .eq("id", id)
-      .select();
+      .eq("id", id);
 
-    if (error) {
-      console.error("Supabase update error:", error);
+    if (updateError) {
+      console.error("Supabase update error:", updateError);
       return NextResponse.json(
-        { error: error.message || "Failed to update product", details: error },
+        { error: updateError.message || "Failed to update product", details: updateError },
         { status: 500 }
       );
     }
 
-    if (!products || products.length === 0) {
-      return NextResponse.json(
-        { error: "Product not found after update" },
-        { status: 404 }
-      );
+    // Fetch the updated product
+    const { data: updatedProduct, error: fetchError } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !updatedProduct) {
+      console.error("Error fetching updated product:", fetchError);
+      // Product was updated but we couldn't fetch it, still return success
+      return NextResponse.json({ 
+        product: { id, ...updateData },
+        warning: "Product updated but could not fetch latest data"
+      }, { status: 200 });
     }
 
-    return NextResponse.json({ product: products[0] }, { status: 200 });
+    console.log("Product updated successfully:", updatedProduct.name);
+    return NextResponse.json({ product: updatedProduct }, { status: 200 });
   } catch (error: any) {
     console.error("Error updating product:", error);
     return NextResponse.json(

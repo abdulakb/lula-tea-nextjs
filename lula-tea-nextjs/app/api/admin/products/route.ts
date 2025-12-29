@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseAdmin } from "@/lib/supabaseClient";
 
 // GET - Fetch all products (admin can see all, public sees only available)
 export async function GET(request: NextRequest) {
@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const adminView = searchParams.get("admin") === "true";
 
-    let query = supabase
+    let query = supabaseAdmin
       .from("products")
       .select("*")
       .order("created_at", { ascending: false });
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   try {
     const productData = await request.json();
 
-    const { data: product, error } = await supabase
+    const { data: product, error } = await supabaseAdmin
       .from("products")
       .insert([productData])
       .select()
@@ -77,7 +77,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // First check if product exists
-    const { data: existingProduct, error: checkError } = await supabase
+    const { data: existingProduct, error: checkError } = await supabaseAdmin
       .from("products")
       .select("id, name")
       .eq("id", id)
@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest) {
     console.log("Update data being sent to Supabase:", updateData);
 
     // Update the product and return the updated row
-    const { data: updatedRows, error: updateError } = await supabase
+    const { data: updatedRows, error: updateError } = await supabaseAdmin
       .from("products")
       .update(updateData)
       .eq("id", id)
@@ -145,7 +145,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("products")
       .delete()
       .eq("id", id);

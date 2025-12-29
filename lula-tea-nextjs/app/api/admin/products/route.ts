@@ -93,12 +93,11 @@ export async function PUT(request: NextRequest) {
 
     console.log("Updating product:", existingProduct.name);
 
-    const { data: product, error } = await supabase
+    const { data: products, error } = await supabase
       .from("products")
       .update(updateData)
       .eq("id", id)
-      .select()
-      .single();
+      .select();
 
     if (error) {
       console.error("Supabase update error:", error);
@@ -108,7 +107,14 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ product }, { status: 200 });
+    if (!products || products.length === 0) {
+      return NextResponse.json(
+        { error: "Product not found after update" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ product: products[0] }, { status: 200 });
   } catch (error: any) {
     console.error("Error updating product:", error);
     return NextResponse.json(

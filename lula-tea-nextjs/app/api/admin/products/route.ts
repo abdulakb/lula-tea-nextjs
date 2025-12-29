@@ -42,13 +42,19 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return NextResponse.json(
+        { error: error.message || "Failed to create product", details: error },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ product }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating product:", error);
     return NextResponse.json(
-      { error: "Failed to create product" },
+      { error: error.message || "Failed to create product", details: error },
       { status: 500 }
     );
   }
@@ -73,13 +79,19 @@ export async function PUT(request: NextRequest) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase update error:", error);
+      return NextResponse.json(
+        { error: error.message || "Failed to update product", details: error },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ product }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating product:", error);
     return NextResponse.json(
-      { error: "Failed to update product" },
+      { error: error.message || "Failed to update product", details: error },
       { status: 500 }
     );
   }

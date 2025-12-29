@@ -118,9 +118,10 @@ export default function ProductsManagement() {
       setEditingProduct(null);
       resetForm();
       fetchProducts();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving product:", error);
-      alert("Failed to save product");
+      const errorMessage = error?.message || "Failed to save product";
+      alert(`Failed to save product: ${errorMessage}\n\nCheck console for details.`);
     }
   };
 

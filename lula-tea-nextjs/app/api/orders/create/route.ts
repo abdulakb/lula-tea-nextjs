@@ -418,8 +418,11 @@ export async function POST(request: NextRequest) {
       if (whatsappResult.success && whatsappResult.whatsappUrl) {
         console.log("✅ WhatsApp notification link generated:", whatsappResult.whatsappUrl);
       }
-    } catch (adminWhatsappError) {
-      console.error("Admin WhatsApp notification error:", adminWhatsappError);
+    } catch (adminWhatsappError: any) {
+      console.error("❌ Admin WhatsApp notification failed:", adminWhatsappError);
+      console.error("Error details:", adminWhatsappError.message || adminWhatsappError);
+      console.error("ADMIN_WHATSAPP env:", process.env.ADMIN_WHATSAPP ? "Set" : "NOT SET");
+      console.error("TWILIO_WHATSAPP_NUMBER env:", process.env.TWILIO_WHATSAPP_NUMBER ? "Set" : "NOT SET");
       // Don't fail the order if admin notification fails
     }
 

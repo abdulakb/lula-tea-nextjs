@@ -65,12 +65,33 @@ export async function PUT(request: NextRequest) {
   try {
     const { id, ...updateData } = await request.json();
 
+    console.log("=== Product Update Request ===");
+    console.log("Product ID:", id);
+    console.log("Update data:", JSON.stringify(updateData, null, 2));
+
     if (!id) {
       return NextResponse.json(
         { error: "Product ID is required" },
         { status: 400 }
       );
     }
+
+    // First check if product exists
+    const { data: existingProduct, error: checkError } = await supabase
+      .from("products")
+      .select("id, name")
+      .eq("id", id)
+      .single();
+
+    if (checkError || !existingProduct) {
+      console.error("Product not found:", id);
+      return NextResponse.json(
+        { error: "Product not found", productId: id },
+        { status: 404 }
+      );
+    }
+
+    console.log("Updating product:", existingProduct.name);
 
     const { data: product, error } = await supabase
       .from("products")

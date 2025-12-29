@@ -85,7 +85,11 @@ export default function CheckoutPage() {
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [propertyType, setPropertyType] = useState<"villa" | "apartment" | "">("");
+  const [villaNumber, setVillaNumber] = useState("");
   const [buildingNumber, setBuildingNumber] = useState("");
+  const [floorNumber, setFloorNumber] = useState("");
+  const [apartmentNumber, setApartmentNumber] = useState("");
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
   const [giftMessage, setGiftMessage] = useState("");
@@ -481,11 +485,8 @@ export default function CheckoutPage() {
     }
 
     // Validate transaction reference for STC Pay
-    if (paymentMethod === "stcpay" && !transactionReference.trim()) {
-      errors.transactionReference = language === "ar" ? "رقم المعاملة مطلوب" : "Transaction reference required";
-    } else if (paymentMethod === "stcpay" && transactionReference.trim().length < 4) {
-      errors.transactionReference = language === "ar" ? "رقم المعاملة غير صالح" : "Invalid transaction reference";
-    }
+    // Transaction reference is now optional for STC Pay
+    // Users can send proof of payment via WhatsApp instead
     
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -554,7 +555,11 @@ export default function CheckoutPage() {
         customerEmail,
         customerPhone,
         customerAddress: deliveryMethod === "pickup" ? pickupLocationText : deliveryAddress,
+        propertyType: deliveryMethod === "pickup" ? "" : propertyType,
+        villaNumber: deliveryMethod === "pickup" ? "" : villaNumber,
         buildingNumber: deliveryMethod === "pickup" ? "" : buildingNumber,
+        floorNumber: deliveryMethod === "pickup" ? "" : floorNumber,
+        apartmentNumber: deliveryMethod === "pickup" ? "" : apartmentNumber,
         deliveryNotes: deliveryMethod === "pickup"
           ? `PICKUP ORDER - Location: ${pickupLocationText}\nContact via WhatsApp for exact location.${paymentMethod === "stcpay" ? `\n\n💳 Transaction Ref: ${transactionReference}` : ''}${isGift && giftMessage ? `\n\n🎁 Gift Message: ${giftMessage}` : ''}`
           : paymentMethod === "stcpay" 
@@ -1502,6 +1507,184 @@ export default function CheckoutPage() {
                       </button>
                     </div>
 
+                    {/* Property Type Selection for STC Pay */}
+                    <div>
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                        {language === "ar" ? "نوع العقار *" : "Property Type *"}
+                      </label>
+                      <select
+                        value={propertyType}
+                        onChange={(e) => {
+                          setPropertyType(e.target.value as "villa" | "apartment" | "");
+                          if (fieldErrors.propertyType) {
+                            const newErrors = {...fieldErrors};
+                            delete newErrors.propertyType;
+                            setFieldErrors(newErrors);
+                          }
+                        }}
+                        required
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-base !text-gray-900 dark:!text-white ${
+                          fieldErrors.propertyType 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
+                        }`}
+                        style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                      >
+                        <option value="">{language === "ar" ? "اختر نوع العقار" : "Select property type"}</option>
+                        <option value="villa">{language === "ar" ? "🏠 فيلا" : "🏠 Villa"}</option>
+                        <option value="apartment">{language === "ar" ? "🏢 شقة" : "🏢 Apartment"}</option>
+                      </select>
+                      {fieldErrors.propertyType && (
+                        <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                          <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {fieldErrors.propertyType}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Conditional Fields based on Property Type for STC Pay */}
+                    {propertyType === "villa" && (
+                      <div>
+                        <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                          {language === "ar" ? "رقم الفيلا *" : "Villa Number *"}
+                        </label>
+                        <input
+                          type="text"
+                          value={villaNumber}
+                          onChange={(e) => {
+                            setVillaNumber(e.target.value);
+                            if (fieldErrors.villaNumber) {
+                              const newErrors = {...fieldErrors};
+                              delete newErrors.villaNumber;
+                              setFieldErrors(newErrors);
+                            }
+                          }}
+                          required
+                          className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                            fieldErrors.villaNumber 
+                              ? 'border-red-500 focus:ring-red-500' 
+                              : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
+                          }`}
+                          placeholder={language === "ar" ? "مثال: 123" : "e.g., 123"}
+                        />
+                        {fieldErrors.villaNumber && (
+                          <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                            <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            {fieldErrors.villaNumber}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {propertyType === "apartment" && (
+                      <>
+                        <div>
+                          <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                            {language === "ar" ? "رقم المبنى *" : "Building Number *"}
+                          </label>
+                          <input
+                            type="text"
+                            value={buildingNumber}
+                            onChange={(e) => {
+                              setBuildingNumber(e.target.value);
+                              if (fieldErrors.buildingNumber) {
+                                const newErrors = {...fieldErrors};
+                                delete newErrors.buildingNumber;
+                                setFieldErrors(newErrors);
+                              }
+                            }}
+                            required
+                            className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                              fieldErrors.buildingNumber 
+                                ? 'border-red-500 focus:ring-red-500' 
+                                : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
+                            }`}
+                            placeholder={language === "ar" ? "مثال: 1234" : "e.g., 1234"}
+                          />
+                          {fieldErrors.buildingNumber && (
+                            <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                              <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                              {fieldErrors.buildingNumber}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                              {language === "ar" ? "رقم الطابق *" : "Floor Number *"}
+                            </label>
+                            <input
+                              type="text"
+                              value={floorNumber}
+                              onChange={(e) => {
+                                setFloorNumber(e.target.value);
+                                if (fieldErrors.floorNumber) {
+                                  const newErrors = {...fieldErrors};
+                                  delete newErrors.floorNumber;
+                                  setFieldErrors(newErrors);
+                                }
+                              }}
+                              required
+                              className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                                fieldErrors.floorNumber 
+                                  ? 'border-red-500 focus:ring-red-500' 
+                                  : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
+                              }`}
+                              placeholder={language === "ar" ? "مثال: 3" : "e.g., 3"}
+                            />
+                            {fieldErrors.floorNumber && (
+                              <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                                <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {fieldErrors.floorNumber}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                              {language === "ar" ? "رقم الشقة *" : "Apartment No. *"}
+                            </label>
+                            <input
+                              type="text"
+                              value={apartmentNumber}
+                              onChange={(e) => {
+                                setApartmentNumber(e.target.value);
+                                if (fieldErrors.apartmentNumber) {
+                                  const newErrors = {...fieldErrors};
+                                  delete newErrors.apartmentNumber;
+                                  setFieldErrors(newErrors);
+                                }
+                              }}
+                              required
+                              className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+                                fieldErrors.apartmentNumber 
+                                  ? 'border-red-500 focus:ring-red-500' 
+                                  : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
+                              }`}
+                              placeholder={language === "ar" ? "مثال: 12" : "e.g., 12"}
+                            />
+                            {fieldErrors.apartmentNumber && (
+                              <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                                <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {fieldErrors.apartmentNumber}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
                     <div>
                       <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                         {t("deliveryTime")} *
@@ -1604,45 +1787,52 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-700 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-yellow-800 dark:text-yellow-200 font-semibold mb-2">
+                  <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-400 dark:border-green-700 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-green-800 dark:text-green-200 font-semibold mb-2">
                       {language === "ar" 
-                        ? "📲 هل استلمت رسالة تأكيد الدفع من البنك؟"
-                        : "📲 Did you receive payment confirmation SMS from your bank?"}
+                        ? "✅ بعد الدفع، أرسل إثبات الدفع عبر واتساب"
+                        : "✅ After payment, send proof of payment via WhatsApp"}
                     </p>
-                    <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                    <p className="text-xs text-green-700 dark:text-green-300 mb-3">
                       {language === "ar" 
-                        ? "بعد مسح رمز QR والدفع، ستصلك رسالة نصية من البنك تؤكد التحويل. تأكد من استلامها قبل تأكيد الطلب."
-                        : "After scanning the QR code and paying, you'll receive an SMS from your bank confirming the transfer. Make sure you received it before confirming the order."}
+                        ? "بعد مسح رمز QR والدفع، أرسل لنا لقطة شاشة لتأكيد التحويل من البنك عبر واتساب."
+                        : "After scanning the QR code and paying, send us a screenshot of the bank transfer confirmation via WhatsApp."}
                     </p>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          {language === "ar" ? "تواصل معنا" : "Contact us"}
+                        </p>
+                        <a href="https://wa.me/966539666654" target="_blank" rel="noopener noreferrer" className="text-green-600 font-bold text-lg">+966 53 966 6654</a>
+                      </div>
+                      <div className="w-20 h-20">
+                        <Image src="/images/whatsapp-barcode.jpg" alt="WhatsApp QR" width={80} height={80} className="rounded" />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Transaction Reference Input */}
+                  {/* Transaction Reference Input - Optional */}
                   <div className="mb-6">
                     <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {language === "ar" 
-                        ? "رقم المعاملة / رمز التحويل *"
-                        : "Transaction Reference / Transfer Code *"}
+                        ? "رقم المعاملة / رمز التحويل (اختياري)"
+                        : "Transaction Reference / Transfer Code (Optional)"}
                     </label>
                     <input
                       type="text"
                       value={transactionReference}
                       onChange={(e) => setTransactionReference(e.target.value)}
-                      required
                       placeholder={language === "ar" 
-                        ? "أدخل رقم المعاملة من رسالة البنك"
-                        : "Enter transaction reference from bank SMS"}
+                        ? "يمكنك إرسال إثبات الدفع عبر واتساب بدلاً من ذلك"
+                        : "You can send proof of payment via WhatsApp instead"}
                       className="w-full px-4 py-4 sm:py-3 border-2 border-purple-400 dark:border-purple-600 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
                       dir="ltr"
                     />
-                    <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                      <p className="text-xs text-blue-800 dark:text-blue-200">
-                        <strong>💡 {language === "ar" ? "مثال" : "Example"}:</strong><br/>
-                        {language === "ar" 
-                          ? "في رسالة البنك، ابحث عن:\n• رقم المعاملة\n• رمز التحويل\n• Transaction ID\n• Reference Number"
-                          : "In your bank SMS, look for:\n• Transaction ID\n• Transfer Code\n• Reference Number\n• Any unique code/number"}
-                      </p>
-                    </div>
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      {language === "ar" 
+                        ? "💡 إذا كان لديك رقم المعاملة، أدخله هنا. وإلا، أرسل إثبات الدفع عبر واتساب."
+                        : "💡 If you have the transaction reference, enter it here. Otherwise, send proof of payment via WhatsApp."}
+                    </p>
                   </div>
 
                   <button
@@ -1798,19 +1988,85 @@ export default function CheckoutPage() {
                   {/* Building Number Field */}
                   <div>
                     <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
-                      {language === "ar" ? "رقم المبنى" : "Building Number"}
+                      {language === "ar" ? "نوع العقار *" : "Property Type *"}
                     </label>
-                    <input
-                      type="text"
-                      value={buildingNumber}
-                      onChange={(e) => setBuildingNumber(e.target.value)}
-                      className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
-                      placeholder={language === "ar" ? "مثال: 1234" : "e.g., 1234"}
-                    />
-                    <p className="mt-2 text-sm sm:text-xs text-gray-500">
-                      {language === "ar" ? "يساعد السائق في العثور على موقعك بسهولة" : "Helps the driver find your location easily"}
-                    </p>
+                    <select
+                      value={propertyType}
+                      onChange={(e) => setPropertyType(e.target.value as "villa" | "apartment" | "")}
+                      required
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800 font-semibold"
+                      style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                    >
+                      <option value="">{language === "ar" ? "اختر نوع العقار" : "Select property type"}</option>
+                      <option value="villa">{language === "ar" ? "🏠 فيلا" : "🏠 Villa"}</option>
+                      <option value="apartment">{language === "ar" ? "🏢 شقة" : "🏢 Apartment"}</option>
+                    </select>
                   </div>
+
+                  {/* Conditional Fields based on Property Type */}
+                  {propertyType === "villa" && (
+                    <div>
+                      <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
+                        {language === "ar" ? "رقم الفيلا *" : "Villa Number *"}
+                      </label>
+                      <input
+                        type="text"
+                        value={villaNumber}
+                        onChange={(e) => setVillaNumber(e.target.value)}
+                        required
+                        className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                        placeholder={language === "ar" ? "مثال: 123" : "e.g., 123"}
+                      />
+                    </div>
+                  )}
+
+                  {propertyType === "apartment" && (
+                    <>
+                      <div>
+                        <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
+                          {language === "ar" ? "رقم المبنى *" : "Building Number *"}
+                        </label>
+                        <input
+                          type="text"
+                          value={buildingNumber}
+                          onChange={(e) => setBuildingNumber(e.target.value)}
+                          required
+                          className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                          placeholder={language === "ar" ? "مثال: 1234" : "e.g., 1234"}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
+                            {language === "ar" ? "رقم الطابق *" : "Floor Number *"}
+                          </label>
+                          <input
+                            type="text"
+                            value={floorNumber}
+                            onChange={(e) => setFloorNumber(e.target.value)}
+                            required
+                            className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                            placeholder={language === "ar" ? "مثال: 3" : "e.g., 3"}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">
+                            {language === "ar" ? "رقم الشقة *" : "Apartment No. *"}
+                          </label>
+                          <input
+                            type="text"
+                            value={apartmentNumber}
+                            onChange={(e) => setApartmentNumber(e.target.value)}
+                            required
+                            className="w-full px-4 py-4 sm:py-2 border-2 border-gray-400 dark:border-gray-500 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green text-gray-900 dark:text-white bg-white dark:bg-gray-800"
+                            placeholder={language === "ar" ? "مثال: 12" : "e.g., 12"}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   <div>
                     <label className="block text-base sm:text-sm font-semibold text-deep-brown mb-3">

@@ -4,6 +4,11 @@ interface AdminNotificationData {
   customerEmail?: string;
   customerPhone: string;
   deliveryAddress: string;
+  propertyType?: string;
+  villaNumber?: string;
+  buildingNumber?: string;
+  floorNumber?: string;
+  apartmentNumber?: string;
   deliveryTime?: string;
   gpsCoordinates?: string;
   items: Array<{
@@ -134,6 +139,42 @@ export function generateAdminOrderNotification(data: AdminNotificationData) {
                   <td style="color: #6b7280; font-weight: 600; width: 140px; vertical-align: top;">Address:</td>
                   <td style="color: #1f2937; font-weight: 500;">${data.deliveryAddress}</td>
                 </tr>
+                ${data.propertyType === 'villa' && data.villaNumber ? `
+                <tr>
+                  <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Property Type:</td>
+                  <td style="color: #1f2937; font-weight: 500;">
+                    <span style="background-color: #e0f2fe; color: #0c4a6e; padding: 4px 12px; border-radius: 12px; font-weight: 600; font-size: 14px;">
+                      🏠 Villa - #${data.villaNumber}
+                    </span>
+                  </td>
+                </tr>
+                ` : ''}
+                ${data.propertyType === 'apartment' && data.buildingNumber ? `
+                <tr>
+                  <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Property Type:</td>
+                  <td style="color: #1f2937; font-weight: 500;">
+                    <span style="background-color: #e0f2fe; color: #0c4a6e; padding: 4px 12px; border-radius: 12px; font-weight: 600; font-size: 14px;">
+                      🏢 Apartment
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Building #:</td>
+                  <td style="color: #1f2937; font-weight: 500; font-size: 16px; font-weight: 700;">${data.buildingNumber}</td>
+                </tr>
+                ${data.floorNumber ? `
+                <tr>
+                  <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Floor #:</td>
+                  <td style="color: #1f2937; font-weight: 500; font-size: 16px; font-weight: 700;">${data.floorNumber}</td>
+                </tr>
+                ` : ''}
+                ${data.apartmentNumber ? `
+                <tr>
+                  <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Apartment #:</td>
+                  <td style="color: #1f2937; font-weight: 500; font-size: 16px; font-weight: 700;">${data.apartmentNumber}</td>
+                </tr>
+                ` : ''}
+                ` : ''}
                 ${data.deliveryTime ? `
                 <tr>
                   <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Preferred Time:</td>

@@ -53,10 +53,14 @@ function OrdersManagementContent() {
 
   const fetchOrders = async () => {
     try {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/admin/orders?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      const { orders: data, error } = await response.json();
 
       if (error) throw error;
       setOrders(data || []);

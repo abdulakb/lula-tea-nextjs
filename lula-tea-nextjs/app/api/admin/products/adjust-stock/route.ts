@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseAdmin } from "@/lib/supabaseClient";
 
 /**
  * Adjust product stock with audit trail
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current product stock
-    const { data: product, error: fetchError } = await supabase
+    const { data: product, error: fetchError } = await supabaseAdmin
       .from("products")
       .select("stock_quantity, name")
       .eq("id", productId)
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update product stock
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from("products")
       .update({ 
         stock_quantity: newStock,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create audit trail in stock_movements
-    const { error: auditError } = await supabase
+    const { error: auditError } = await supabaseAdmin
       .from("stock_movements")
       .insert([{
         product_id: productId,

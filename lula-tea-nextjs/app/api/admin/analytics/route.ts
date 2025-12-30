@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseAdmin } from "@/lib/supabaseClient";
 
 export async function GET(request: Request) {
   try {
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     }
 
     // Fetch orders for the selected period
-    const { data: orders, error: ordersError } = await supabase
+    const { data: orders, error: ordersError } = await supabaseAdmin
       .from("orders")
       .select("*")
       .gte("created_at", startDate.toISOString())
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     if (ordersError) throw ordersError;
 
     // Fetch ALL orders for all-time stats
-    const { data: allTimeOrders, error: allTimeError } = await supabase
+    const { data: allTimeOrders, error: allTimeError } = await supabaseAdmin
       .from("orders")
       .select("*")
       .order("created_at", { ascending: false });

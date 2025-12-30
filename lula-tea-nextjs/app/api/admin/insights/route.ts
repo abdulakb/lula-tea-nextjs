@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseAdmin } from "@/lib/supabaseClient";
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     startDate.setDate(startDate.getDate() - days);
 
     // Fetch analytics events from database
-    const { data: events, error } = await supabase
+    const { data: events, error } = await supabaseAdmin
       .from("analytics_events")
       .select("*")
       .gte("created_at", startDate.toISOString())
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch orders for shopping funnel
-    const { data: orders } = await supabase
+    const { data: orders } = await supabaseAdmin
       .from("orders")
       .select("*")
       .gte("created_at", startDate.toISOString());

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseAdmin } from "@/lib/supabaseClient";
 import { generateInvoice, InvoiceData } from "@/lib/invoiceGenerator";
 import { generateOrderConfirmationEmail } from "@/lib/emailTemplates";
 import { generateAdminOrderNotification } from "@/lib/adminEmailTemplate";
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
     for (const item of items) {
       try {
         // Call the city-specific deduct_city_product_stock function
-        const { data: stockResult, error: stockError } = await supabase
+        const { data: stockResult, error: stockError } = await supabaseAdmin
           .rpc('deduct_city_product_stock', {
             p_product_id: item.id,
             p_quantity: item.quantity,
@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
         : '+966' + customerPhone;
       
       // Try to find customer by phone
-      const { data: customerData } = await supabase
+      const { data: customerData } = await supabaseAdmin
         .from('customers')
         .select('id')
         .eq('phone', sanitizedPhone)
@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save order to Supabase with all customer form data
-    const { data: orderData, error: orderError } = await supabase
+    const { data: orderData, error: orderError } = await supabaseAdmin
       .from("orders")
       .insert([
         {

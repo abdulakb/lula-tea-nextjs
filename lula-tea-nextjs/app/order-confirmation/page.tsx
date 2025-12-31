@@ -16,12 +16,10 @@ function OrderConfirmationContent() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [invoiceBase64, setInvoiceBase64] = useState<string | null>(null);
   const [hasEmail, setHasEmail] = useState(false);
-  const [hasEmail, setHasEmail] = useState(false);
 
   useEffect(() => {
     const id = searchParams.get("orderId");
     const invoice = searchParams.get("invoice");
-    const emailParam = searchParams.get("hasEmail");
     const emailParam = searchParams.get("hasEmail");
     
     if (!id) {

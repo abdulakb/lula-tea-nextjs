@@ -472,9 +472,20 @@ export default function CheckoutPage() {
 
       // Check if GPS location was shared - warn but don't block
       if (!gpsCoordinates && !deliveryCity) {
-        console.warn("No GPS location provided - delivery will be processed manually");
-        // Set default city to Riyadh if not detected (admin can update later)
-        setDeliveryCity("Riyadh");
+        console.warn("No GPS location provided - attempting to detect city from address");
+        // Try to detect city from address text
+        const addressLower = deliveryAddress.toLowerCase();
+        if (addressLower.includes('jeddah') || addressLower.includes('جدة')) {
+          setDeliveryCity("Jeddah");
+          console.log("Detected city from address: Jeddah");
+        } else if (addressLower.includes('riyadh') || addressLower.includes('الرياض')) {
+          setDeliveryCity("Riyadh");
+          console.log("Detected city from address: Riyadh");
+        } else {
+          // Default to Riyadh if no city detected
+          setDeliveryCity("Riyadh");
+          console.log("No city detected in address, defaulting to Riyadh");
+        }
       }
     }
 
@@ -497,10 +508,24 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Detect city from address if not already set
+    let detectedCity = deliveryCity;
+    if (deliveryMethod !== "pickup" && !detectedCity && deliveryAddress) {
+      const addressLower = deliveryAddress.toLowerCase();
+      if (addressLower.includes('jeddah') || addressLower.includes('جدة')) {
+        detectedCity = "Jeddah";
+      } else if (addressLower.includes('riyadh') || addressLower.includes('الرياض')) {
+        detectedCity = "Riyadh";
+      } else {
+        detectedCity = "Riyadh"; // Default
+      }
+      setDeliveryCity(detectedCity);
+    }
+
     // Validate city-specific stock availability before submitting
     const orderCity = deliveryMethod === "pickup" 
       ? (pickupLocation === "riyadh" ? "Riyadh" : "Jeddah")
-      : deliveryCity;
+      : detectedCity;
 
     if (orderCity && (orderCity === "Riyadh" || orderCity === "Jeddah")) {
       try {
@@ -605,7 +630,7 @@ export default function CheckoutPage() {
         pickupLocation: deliveryMethod === "pickup" ? pickupLocationText : undefined,
         deliveryTime,
         gpsCoordinates,
-        deliveryCity,
+        deliveryCity: detectedCity,
         items: orderItems,
         subtotal,
         deliveryFee,

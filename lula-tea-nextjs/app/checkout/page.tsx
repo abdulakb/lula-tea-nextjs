@@ -599,7 +599,12 @@ export default function CheckoutPage() {
             deliveryFee = 20; // Default to Riyadh fee if coordinates unclear
           }
         } else {
-          deliveryFee = 20; // Default to Riyadh fee if no GPS
+          // No GPS - use detected city from address
+          if (detectedCity === "Jeddah") {
+            deliveryFee = 15; // Jeddah standard fee
+          } else {
+            deliveryFee = 20; // Riyadh fee (default)
+          }
         }
       }
       const totalAmount = subtotal + deliveryFee;

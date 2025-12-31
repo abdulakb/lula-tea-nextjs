@@ -15,10 +15,14 @@ function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const [orderId, setOrderId] = useState<string | null>(null);
   const [invoiceBase64, setInvoiceBase64] = useState<string | null>(null);
+  const [hasEmail, setHasEmail] = useState(false);
+  const [hasEmail, setHasEmail] = useState(false);
 
   useEffect(() => {
     const id = searchParams.get("orderId");
     const invoice = searchParams.get("invoice");
+    const emailParam = searchParams.get("hasEmail");
+    const emailParam = searchParams.get("hasEmail");
     
     if (!id) {
       router.push("/");
@@ -27,6 +31,8 @@ function OrderConfirmationContent() {
 
     setOrderId(id);
     setInvoiceBase64(invoice);
+    setHasEmail(emailParam === 'true');
+    setHasEmail(emailParam === 'true');
 
     // Clear cart after successful order (using CartContext to update both state and localStorage)
     clearCart();
@@ -87,7 +93,8 @@ function OrderConfirmationContent() {
             {t("orderSuccessMessage", language)}
           </p>
 
-          {/* Email Notice */}
+          {/* Email Notice - only show if email was provided */}
+          {hasEmail && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <div className="flex items-start gap-3">
               <svg className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,6 +112,8 @@ function OrderConfirmationContent() {
               </div>
             </div>
           </div>
+          )}
+          )}
 
           {/* Download Invoice Button */}
           {invoiceBase64 && (

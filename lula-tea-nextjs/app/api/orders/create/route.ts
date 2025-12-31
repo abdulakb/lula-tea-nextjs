@@ -440,6 +440,7 @@ export async function POST(request: NextRequest) {
       orderId,
       invoiceBase64: base64Invoice,
       orderData: orderData?.[0],
+      hasEmail: !!customerEmail,
     });
   } catch (error) {
     console.error("=== Order Creation Failed ===");

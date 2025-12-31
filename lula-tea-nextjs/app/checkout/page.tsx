@@ -651,7 +651,7 @@ export default function CheckoutPage() {
       // The order confirmation page will clear it after mounting
 
       // Redirect to confirmation page with order details
-      router.push(`/order-confirmation?orderId=${result.orderId}&invoice=${result.invoiceBase64}`);
+      router.push(`/order-confirmation?orderId=${result.orderId}&invoice=${result.invoiceBase64}&hasEmail=${result.hasEmail || false}`);
     } catch (err) {
       console.error("Order submission error:", err);
       setError(language === "ar" ? "فشل إنشاء الطلب. يرجى المحاولة مرة أخرى." : "Failed to create order. Please try again.");

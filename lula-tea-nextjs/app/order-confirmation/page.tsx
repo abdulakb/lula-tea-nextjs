@@ -113,7 +113,6 @@ function OrderConfirmationContent() {
             </div>
           </div>
           )}
-          )}
 
           {/* Download Invoice Button */}
           {invoiceBase64 && (

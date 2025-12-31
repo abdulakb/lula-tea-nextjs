@@ -9,6 +9,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     console.log("=== Order Creation Started ===");
+    console.log("Using supabaseAdmin:", !!supabaseAdmin);
+    console.log("Has service role key:", !!process.env.SUPABASE_SERVICE_ROLE_KEY);
     console.log("Order data received:", {
       customerName: body.customerName,
       customerEmail: body.customerEmail,

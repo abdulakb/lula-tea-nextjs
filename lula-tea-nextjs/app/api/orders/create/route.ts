@@ -274,17 +274,26 @@ export async function POST(request: NextRequest) {
       .select();
 
     if (orderError) {
-      console.error("Supabase error:", orderError);
-      // Continue even if DB fails - at least return the invoice
+      console.error("❌ DATABASE INSERT FAILED:", orderError);
+      console.error("Order details:", { orderId, customerName, customerPhone, total });
+      
+      // CRITICAL: Order must be saved to database
       return NextResponse.json({
-        success: true,
-        orderId,
-        invoiceBase64: base64Invoice,
-        warning: "Order saved locally but database sync failed",
-      });
+        success: false,
+        error: "Failed to save order. Please try again or contact support.",
+        details: orderError.message,
+      }, { status: 500 });
     }
     
-    console.log("Order saved to database successfully:", orderData?.[0]?.id);
+    if (!orderData || orderData.length === 0) {
+      console.error("❌ Order saved but no data returned");
+      return NextResponse.json({
+        success: false,
+        error: "Order creation failed - no data returned"
+      }, { status: 500 });
+    }
+    
+    console.log("✅ Order saved to database successfully:", orderData[0].id);
 
     // Send confirmation email (if configured)
     console.log("Checking email configuration...", { 

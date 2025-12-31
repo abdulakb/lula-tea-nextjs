@@ -29,6 +29,13 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Supabase error:', error);
+      
+      // If table doesn't exist, return empty array instead of error
+      if (error.message.includes('reviews') && error.message.includes('schema cache')) {
+        console.warn('Reviews table does not exist, returning empty array');
+        return NextResponse.json({ reviews: [] });
+      }
+      
       return NextResponse.json(
         { error: 'Failed to fetch reviews', details: error.message },
         { status: 500 }

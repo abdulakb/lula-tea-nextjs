@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const approved = searchParams.get('approved') === 'true';
     const featured = searchParams.get('featured') === 'true';
+    const limit = searchParams.get('limit');
 
     let query = supabase
       .from('reviews')
@@ -23,6 +24,10 @@ export async function GET(request: NextRequest) {
 
     if (featured) {
       query = query.eq('featured', true);
+    }
+
+    if (limit) {
+      query = query.limit(parseInt(limit, 10));
     }
 
     const { data, error } = await query;

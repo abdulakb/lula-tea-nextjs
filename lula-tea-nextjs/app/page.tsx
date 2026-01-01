@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { useCart } from "@/context/CartContext";
+import FeaturedReviews from "./components/FeaturedReviews";
 
 export default function Home() {
   const [quantity, setQuantity] = useState(1);
@@ -649,6 +650,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Featured Reviews Section */}
+      <FeaturedReviews />
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-tea-green text-white">

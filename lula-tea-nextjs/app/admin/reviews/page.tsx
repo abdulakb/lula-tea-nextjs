@@ -106,6 +106,31 @@ export default function AdminReviewsPage() {
     return true;
   });
 
+  // Calculate analytics
+  const analytics = {
+    total: reviews.length,
+    approved: reviews.filter(r => r.approved).length,
+    pending: reviews.filter(r => !r.approved).length,
+    featured: reviews.filter(r => r.featured).length,
+    averageOverall: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.overall_rating, 0) / reviews.length).toFixed(1) : 0,
+    averageTaste: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.taste_rating, 0) / reviews.length).toFixed(1) : 0,
+    averageQuality: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.quality_rating, 0) / reviews.length).toFixed(1) : 0,
+    averageDelivery: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.delivery_rating, 0) / reviews.length).toFixed(1) : 0,
+  };
+
+  // Identify improvement areas
+  const getImprovementPriority = () => {
+    if (reviews.length === 0) return null;
+    const ratings = [
+      { name: 'Taste', score: parseFloat(analytics.averageTaste), icon: '🍵' },
+      { name: 'Quality', score: parseFloat(analytics.averageQuality), icon: '✨' },
+      { name: 'Delivery', score: parseFloat(analytics.averageDelivery), icon: '🚚' }
+    ];
+    return ratings.sort((a, b) => a.score - b.score);
+  };
+
+  const improvementPriority = getImprovementPriority();
+
   if (loading) {
     return (
       <div className="min-h-screen bg-warm-cream dark:bg-gray-900 flex items-center justify-center">
@@ -128,6 +153,77 @@ export default function AdminReviewsPage() {
             Back to Admin
           </button>
         </div>
+
+        {/* Analytics Dashboard */}
+        {reviews.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Average Overall Rating */}
+            <div className="bg-gradient-to-br from-tea-green to-tea-green/80 text-white rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold uppercase opacity-90">Overall Rating</h3>
+                <span className="text-3xl">⭐</span>
+              </div>
+              <p className="text-4xl font-bold">{analytics.averageOverall}</p>
+              <p className="text-sm opacity-90 mt-1">Based on {analytics.total} reviews</p>
+            </div>
+
+            {/* Taste Rating */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold uppercase text-gray-600 dark:text-gray-400">Taste</h3>
+                <span className="text-3xl">🍵</span>
+              </div>
+              <p className="text-4xl font-bold text-deep-brown dark:text-white">{analytics.averageTaste}</p>
+              <div className="mt-2">
+                <StarDisplay rating={Math.round(parseFloat(analytics.averageTaste))} />
+              </div>
+            </div>
+
+            {/* Quality Rating */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold uppercase text-gray-600 dark:text-gray-400">Quality</h3>
+                <span className="text-3xl">✨</span>
+              </div>
+              <p className="text-4xl font-bold text-deep-brown dark:text-white">{analytics.averageQuality}</p>
+              <div className="mt-2">
+                <StarDisplay rating={Math.round(parseFloat(analytics.averageQuality))} />
+              </div>
+            </div>
+
+            {/* Delivery Rating */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold uppercase text-gray-600 dark:text-gray-400">Delivery</h3>
+                <span className="text-3xl">🚚</span>
+              </div>
+              <p className="text-4xl font-bold text-deep-brown dark:text-white">{analytics.averageDelivery}</p>
+              <div className="mt-2">
+                <StarDisplay rating={Math.round(parseFloat(analytics.averageDelivery))} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Improvement Priority Alert */}
+        {improvementPriority && improvementPriority[0].score < 4.5 && (
+          <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-6 rounded-lg mb-8">
+            <div className="flex items-start gap-4">
+              <span className="text-3xl">⚠️</span>
+              <div>
+                <h3 className="text-lg font-bold text-amber-900 dark:text-amber-200 mb-2">
+                  Priority Improvement Area
+                </h3>
+                <p className="text-amber-800 dark:text-amber-300">
+                  <strong>{improvementPriority[0].icon} {improvementPriority[0].name}</strong> has the lowest rating at <strong>{improvementPriority[0].score}/5.0</strong>
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-400 mt-2">
+                  Focus on improving this area to boost customer satisfaction
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Filter Tabs */}
         <div className="flex gap-4 mb-6">

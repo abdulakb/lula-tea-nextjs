@@ -80,10 +80,14 @@ function ReviewPageContent() {
         }),
       });
 
+      const result = await response.json();
+      console.log("Review submission response:", result);
+
       if (response.ok) {
         setSubmitted(true);
       } else {
-        throw new Error("Failed to submit review");
+        console.error("Review submission failed:", result);
+        throw new Error(result.error || "Failed to submit review");
       }
     } catch (error) {
       console.error("Error submitting review:", error);

@@ -3,6 +3,9 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(req: NextRequest) {
   try {
+    const body = await req.json();
+    console.log("Review submission request body:", body);
+    
     const {
       orderId,
       customerName,
@@ -12,10 +15,11 @@ export async function POST(req: NextRequest) {
       deliveryRating,
       comments,
       language,
-    } = await req.json();
+    } = body;
 
     // Validation
     if (!overallRating || !tasteRating || !qualityRating || !deliveryRating) {
+      console.error("Missing ratings:", { overallRating, tasteRating, qualityRating, deliveryRating });
       return NextResponse.json(
         { error: "All ratings are required" },
         { status: 400 }

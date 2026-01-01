@@ -158,11 +158,23 @@ function ReviewPageContent() {
             <h1 className="text-3xl md:text-4xl font-bold text-deep-brown dark:text-white mb-4">
               {language === "ar" ? "⭐ قيّم تجربتك" : "⭐ Rate Your Experience"}
             </h1>
-            <p className="text-lg text-tea-brown dark:text-gray-300">
+            <p className="text-lg text-tea-brown dark:text-gray-300 mb-3">
               {language === "ar"
                 ? `مرحباً ${customerName || ""}! نحب نسمع رأيك`
                 : `Hello ${customerName || ""}! We'd love your feedback`}
             </p>
+            
+            {/* Privacy Notice */}
+            <div className="inline-flex items-center gap-2 bg-tea-green/10 border border-tea-green/30 rounded-full px-4 py-2 text-sm">
+              <svg className="w-4 h-4 text-tea-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <span className="text-tea-brown dark:text-gray-300">
+                {language === "ar" 
+                  ? "خصوصيتك مهمة - سنعرض فقط اسمك الأول وحرف من اسم العائلة" 
+                  : "Privacy protected - Only your first name and last initial will be shown publicly"}
+              </span>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit}>

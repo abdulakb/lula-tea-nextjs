@@ -20,9 +20,12 @@ interface AdminNotificationData {
   }>;
   subtotal: number;
   deliveryFee: number;
+  giftPackagingFee?: number;
   total: number;
   paymentMethod: string;
   qualifiesForFreeDelivery?: boolean;
+  isGift?: boolean;
+  giftMessage?: string;
 }
 
 export function generateAdminOrderNotification(data: AdminNotificationData) {
@@ -80,6 +83,18 @@ export function generateAdminOrderNotification(data: AdminNotificationData) {
           <!-- Order Summary -->
           <tr>
             <td style="padding: 30px;">
+              ${data.isGift ? `
+              <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin-bottom: 24px; border-radius: 4px;">
+                <h2 style="margin: 0 0 12px 0; color: #92400e; font-size: 20px;">🎁 GIFT ORDER - Special Packaging Required</h2>
+                <p style="margin: 0; color: #78350f; font-weight: 600;">This order requires gift packaging (+${data.giftPackagingFee} SAR)</p>
+                ${data.giftMessage ? `
+                <div style="margin-top: 12px; padding: 12px; background-color: #fffbeb; border-radius: 4px;">
+                  <p style="margin: 0 0 4px 0; color: #92400e; font-size: 12px; font-weight: 600;">Gift Message:</p>
+                  <p style="margin: 0; color: #78350f; font-style: italic;">${data.giftMessage}</p>
+                </div>
+                ` : ''}
+              </div>
+              ` : ''}
               <div style="background-color: #f9fafb; border-left: 4px solid #7a9b76; padding: 20px; margin-bottom: 24px; border-radius: 4px;">
                 <h2 style="margin: 0 0 12px 0; color: #1f2937; font-size: 20px;">Order Summary</h2>
                 <table width="100%" style="margin-top: 12px;">
@@ -228,6 +243,26 @@ export function generateAdminOrderNotification(data: AdminNotificationData) {
                     </td>
                     <td style="padding: 16px; text-align: right; font-weight: bold; color: #1f2937;">
                       ${data.deliveryFee} SAR
+                    </td>
+                  </tr>
+                  ` : ''}
+                  ${data.giftPackagingFee && data.giftPackagingFee > 0 ? `
+                  <tr style="background-color: #fef3c7;">
+                    <td colspan="2" style="padding: 16px; text-align: right; font-weight: bold; color: #92400e;">
+                      🎁 Gift Packaging:
+                    </td>
+                    <td style="padding: 16px; text-align: right; font-weight: bold; color: #92400e;">
+                      ${data.giftPackagingFee} SAR
+                    </td>
+                  </tr>
+                  ` : ''}
+                  ${data.giftPackagingFee && data.giftPackagingFee > 0 ? `
+                  <tr style="background-color: #fef3c7;">
+                    <td colspan="2" style="padding: 16px; text-align: right; font-weight: bold; color: #92400e;">
+                      🎁 Gift Packaging:
+                    </td>
+                    <td style="padding: 16px; text-align: right; font-weight: bold; color: #92400e;">
+                      ${data.giftPackagingFee} SAR
                     </td>
                   </tr>
                   ` : ''}

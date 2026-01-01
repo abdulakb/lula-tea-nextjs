@@ -352,9 +352,12 @@ export async function POST(request: NextRequest) {
             items,
             subtotal,
             deliveryFee: deliveryFee || 0,
+            giftPackagingFee: body.giftPackagingFee || 0,
             total,
             paymentMethod,
             qualifiesForFreeDelivery: qualifiesForFreeDelivery || false,
+            isGift: body.isGift || false,
+            giftMessage: body.giftMessage || null,
           });
 
           const adminEmailResponse = await fetch(`${process.env.SITE_URL || 'http://localhost:3000'}/api/emails/send`, {

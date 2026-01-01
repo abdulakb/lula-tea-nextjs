@@ -607,7 +607,15 @@ export default function CheckoutPage() {
           }
         }
       }
-      const totalAmount = subtotal + deliveryFee;
+      
+      // Add gift packaging fee for Riyadh orders (5 SAR per bag)
+      let giftPackagingFee = 0;
+      if (isGift && (detectedCity === "Riyadh" || deliveryAddress.toLowerCase().includes('riyadh') || deliveryAddress.toLowerCase().includes('الرياض'))) {
+        const totalBags = items.reduce((sum, item) => sum + item.quantity, 0);
+        giftPackagingFee = totalBags * 5;
+      }
+      
+      const totalAmount = subtotal + deliveryFee + giftPackagingFee;
 
       // Prepare pickup location string
       const pickupLocationText = pickupLocation === "riyadh" 
@@ -639,6 +647,7 @@ export default function CheckoutPage() {
         items: orderItems,
         subtotal,
         deliveryFee,
+        giftPackagingFee,
         total: totalAmount,
         paymentMethod,
         transactionReference: paymentMethod === "stcpay" ? transactionReference : undefined,
@@ -1787,7 +1796,8 @@ export default function CheckoutPage() {
                       )}
                     </div>
 
-                    {/* Gift Message Option */}
+                    {/* Gift Message Option - Only for Riyadh */}
+                    {(deliveryCity === "Riyadh" || (!deliveryCity && deliveryAddress.toLowerCase().includes('riyadh') || deliveryAddress.toLowerCase().includes('الرياض'))) && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
@@ -1835,6 +1845,7 @@ export default function CheckoutPage() {
                         </motion.div>
                       )}
                     </motion.div>
+                    )}
 
                     <div>
                       <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
@@ -1935,13 +1946,18 @@ export default function CheckoutPage() {
                 <p className="text-tea-brown mb-6 text-center">{t("scanQR")}</p>
                 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-6 flex justify-center">
-                  <div className="relative w-64 h-64">
+                  <div className="relative w-64 h-64 overflow-hidden rounded-xl">
                     <Image
                       src="/images/whatsapp-barcode.jpg"
                       alt="WhatsApp QR Code"
                       fill
-                      className="object-cover rounded-xl"
+                      className="object-cover"
                       priority
+                      style={{ 
+                        objectPosition: 'center center',
+                        transform: 'scale(2)',
+                        transformOrigin: 'center center'
+                      }}
                     />
                   </div>
                 </div>

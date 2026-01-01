@@ -1876,7 +1876,7 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Transaction Reference Input - Optional */}
-                  <div className="mb-6">
+                  <div className="mb-6 bg-purple-50 dark:bg-purple-900/10 p-4 rounded-xl">
                     <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
                       {language === "ar" 
                         ? "رقم المعاملة / رمز التحويل (اختياري)"
@@ -1887,10 +1887,13 @@ export default function CheckoutPage() {
                       value={transactionReference}
                       onChange={(e) => setTransactionReference(e.target.value)}
                       placeholder={language === "ar" 
-                        ? "يمكنك إرسال إثبات الدفع عبر واتساب بدلاً من ذلك"
-                        : "You can send proof of payment via WhatsApp instead"}
+                        ? "اختياري - أدخل رقم المعاملة إذا كان متوفراً"
+                        : "Optional - Enter transaction reference if available"}
                       className="w-full px-4 py-4 sm:py-3 border-2 border-purple-400 dark:border-purple-600 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono"
                       dir="ltr"
+                      autoComplete="off"
+                      data-lpignore="true"
+                      data-form-type="other"
                     />
                     <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                       {language === "ar" 
@@ -1931,13 +1934,13 @@ export default function CheckoutPage() {
               <div>
                 <p className="text-tea-brown mb-6 text-center">{t("scanQR")}</p>
                 
-                <div className="bg-warm-cream rounded-2xl p-6 mb-6">
-                  <div className="relative w-full max-w-xs mx-auto aspect-square">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-6 flex justify-center">
+                  <div className="relative w-64 h-64">
                     <Image
                       src="/images/whatsapp-barcode.jpg"
                       alt="WhatsApp QR Code"
                       fill
-                      className="object-contain"
+                      className="object-cover rounded-xl"
                       priority
                     />
                   </div>

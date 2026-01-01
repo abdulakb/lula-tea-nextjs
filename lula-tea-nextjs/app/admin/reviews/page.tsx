@@ -112,10 +112,10 @@ export default function AdminReviewsPage() {
     approved: reviews.filter(r => r.approved).length,
     pending: reviews.filter(r => !r.approved).length,
     featured: reviews.filter(r => r.featured).length,
-    averageOverall: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.overall_rating, 0) / reviews.length).toFixed(1) : 0,
-    averageTaste: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.taste_rating, 0) / reviews.length).toFixed(1) : 0,
-    averageQuality: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.quality_rating, 0) / reviews.length).toFixed(1) : 0,
-    averageDelivery: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.delivery_rating, 0) / reviews.length).toFixed(1) : 0,
+    averageOverall: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.overall_rating, 0) / reviews.length).toFixed(1) : "0",
+    averageTaste: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.taste_rating, 0) / reviews.length).toFixed(1) : "0",
+    averageQuality: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.quality_rating, 0) / reviews.length).toFixed(1) : "0",
+    averageDelivery: reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.delivery_rating, 0) / reviews.length).toFixed(1) : "0",
   };
 
   // Identify improvement areas

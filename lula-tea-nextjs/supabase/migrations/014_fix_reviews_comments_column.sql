@@ -1,53 +1,31 @@
--- Ensure all required columns exist in reviews table
--- This fixes missing columns that weren't applied in production
+-- Recreate reviews table with all required columns
+-- Drop and recreate to ensure clean schema
 
-DO $$ 
-BEGIN
-    -- Add comments column if missing
-    IF NOT EXISTS (
-        SELECT 1 
-        FROM information_schema.columns 
-        WHERE table_name = 'reviews' 
-        AND column_name = 'comments'
-    ) THEN
-        ALTER TABLE reviews ADD COLUMN comments TEXT;
-    END IF;
+DROP TABLE IF EXISTS reviews CASCADE;
 
-    -- Add language column if missing
-    IF NOT EXISTS (
-        SELECT 1 
-        FROM information_schema.columns 
-        WHERE table_name = 'reviews' 
-        AND column_name = 'language'
-    ) THEN
-        ALTER TABLE reviews ADD COLUMN language TEXT DEFAULT 'ar';
-    END IF;
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  order_id TEXT,
+  customer_name TEXT,
+  overall_rating INTEGER NOT NULL CHECK (overall_rating >= 1 AND overall_rating <= 5),
+  taste_rating INTEGER NOT NULL CHECK (taste_rating >= 1 AND taste_rating <= 5),
+  quality_rating INTEGER NOT NULL CHECK (quality_rating >= 1 AND quality_rating <= 5),
+  delivery_rating INTEGER NOT NULL CHECK (delivery_rating >= 1 AND delivery_rating <= 5),
+  comments TEXT,
+  language TEXT DEFAULT 'ar',
+  approved BOOLEAN DEFAULT false,
+  featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-    -- Add approved column if missing
-    IF NOT EXISTS (
-        SELECT 1 
-        FROM information_schema.columns 
-        WHERE table_name = 'reviews' 
-        AND column_name = 'approved'
-    ) THEN
-        ALTER TABLE reviews ADD COLUMN approved BOOLEAN DEFAULT false;
-    END IF;
+-- Create indexes for better performance
+CREATE INDEX idx_reviews_approved ON reviews(approved);
+CREATE INDEX idx_reviews_featured ON reviews(featured);
+CREATE INDEX idx_reviews_created_at ON reviews(created_at DESC);
+CREATE INDEX idx_reviews_order_id ON reviews(order_id);
 
-    -- Add featured column if missing
-    IF NOT EXISTS (
-        SELECT 1 
-        FROM information_schema.columns 
-        WHERE table_name = 'reviews' 
-        AND column_name = 'featured'
-    ) THEN
-        ALTER TABLE reviews ADD COLUMN featured BOOLEAN DEFAULT false;
-    END IF;
-END $$;
-
--- Create indexes if they don't exist
-CREATE INDEX IF NOT EXISTS idx_reviews_approved ON reviews(approved);
-CREATE INDEX IF NOT EXISTS idx_reviews_featured ON reviews(featured);
-CREATE INDEX IF NOT EXISTS idx_reviews_created_at ON reviews(created_at DESC);
+-- Add comment to table
+COMMENT ON TABLE reviews IS 'Customer reviews with interactive star ratings (Arabic & English)';
 
 -- Refresh schema cache
 NOTIFY pgrst, 'reload schema';

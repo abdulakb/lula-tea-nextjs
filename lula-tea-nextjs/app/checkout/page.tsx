@@ -1951,13 +1951,8 @@ export default function CheckoutPage() {
                       src="/images/whatsapp-barcode.jpg"
                       alt="WhatsApp QR Code"
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       priority
-                      style={{ 
-                        objectPosition: 'center 45%',
-                        transform: 'scale(2.5)',
-                        transformOrigin: 'center center'
-                      }}
                     />
                   </div>
                 </div>

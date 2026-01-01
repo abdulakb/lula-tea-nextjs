@@ -43,28 +43,42 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert review into database
+    const insertData = {
+      order_id: orderId,
+      customer_name: customerName,
+      overall_rating: overallRating,
+      taste_rating: tasteRating,
+      quality_rating: qualityRating,
+      delivery_rating: deliveryRating,
+      comments: comments || null,
+      language: language || 'ar',
+      approved: false,
+      featured: false,
+      created_at: new Date().toISOString(),
+    };
+    
+    console.log("Attempting to insert review:", insertData);
+    
     const { data, error } = await supabase
       .from("reviews")
-      .insert({
-        order_id: orderId,
-        customer_name: customerName,
-        overall_rating: overallRating,
-        taste_rating: tasteRating,
-        quality_rating: qualityRating,
-        delivery_rating: deliveryRating,
-        comments: comments || null,
-        language: language || 'ar',
-        approved: false,
-        featured: false,
-        created_at: new Date().toISOString(),
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (error) {
-      console.error("Error inserting review:", error);
+      console.error("Supabase error inserting review:", {
+        error,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
       return NextResponse.json(
-        { error: "Failed to submit review" },
+        { 
+          error: "Failed to submit review",
+          details: error.message,
+          code: error.code 
+        },
         { status: 500 }
       );
     }

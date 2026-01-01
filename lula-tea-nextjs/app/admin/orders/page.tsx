@@ -15,6 +15,7 @@ interface Order {
   customer_address: string;
   email?: string;
   total: number;
+  delivery_fee?: number;
   payment_method: string;
   status: string;
   created_at: string;
@@ -35,6 +36,8 @@ function OrdersManagementContent() {
   const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState("");
   const [showBulkActions, setShowBulkActions] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+  const [editForm, setEditForm] = useState({ subtotal: 0, delivery_fee: 0, total: 0, quantity_ordered: 0 });
 
   useEffect(() => {
     if (!isAdminAuthenticated()) {
@@ -101,7 +104,62 @@ function OrdersManagementContent() {
       alert("Failed to delete order");
     }
   };
+  const openEditModal = (order: Order) => {
+    setEditingOrder(order);
+    // Parse items to get quantity if it's stored as JSON
+    let quantity = 0;
+    try {
+      const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+      quantity = items.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0);
+    } catch (e) {
+      quantity = 0;
+    }
 
+    setEditForm({
+      subtotal: order.total - (order.delivery_fee || 0),
+      delivery_fee: order.delivery_fee || 0,
+      total: order.total,
+      quantity_ordered: quantity
+    });
+  };
+
+  const closeEditModal = () => {
+    setEditingOrder(null);
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingOrder) return;
+
+    try {
+      const response = await fetch(`/api/admin/orders/${editingOrder.order_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update order');
+      }
+
+      const { order: updatedOrder } = await response.json();
+
+      // Update local state
+      setOrders(orders.map(order => 
+        order.order_id === editingOrder.order_id 
+          ? { ...order, ...editForm }
+          : order
+      ));
+
+      alert("Order updated successfully!");
+      closeEditModal();
+      fetchOrders(); // Refresh to get latest data
+    } catch (err) {
+      console.error("Error updating order:", err);
+      alert("Failed to update order");
+    }
+  };
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -649,6 +707,13 @@ function OrdersManagementContent() {
                           >
                             View
                           </Link>
+                          <button
+                            onClick={() => openEditModal(order)}
+                            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                            title="Edit order amounts"
+                          >
+                            Edit
+                          </button>
                           <select
                             value={order.status}
                             onChange={(e) => updateOrderStatus(order.id, e.target.value)}
@@ -689,6 +754,105 @@ function OrdersManagementContent() {
           </div>
         </div>
       </div>
+
+      {/* Edit Order Modal */}
+      {editingOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold text-deep-brown mb-4">
+              Edit Order {editingOrder.order_id}
+            </h3>
+            <form onSubmit={handleEditSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Subtotal (SAR)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editForm.subtotal}
+                    onChange={(e) => {
+                      const subtotal = parseFloat(e.target.value) || 0;
+                      setEditForm({
+                        ...editForm,
+                        subtotal,
+                        total: subtotal + editForm.delivery_fee
+                      });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-tea-green"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Delivery Fee (SAR)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editForm.delivery_fee}
+                    onChange={(e) => {
+                      const delivery_fee = parseFloat(e.target.value) || 0;
+                      setEditForm({
+                        ...editForm,
+                        delivery_fee,
+                        total: editForm.subtotal + delivery_fee
+                      });
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-tea-green"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Total (SAR)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editForm.total}
+                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 text-gray-600"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Calculated automatically</p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Quantity Ordered
+                  </label>
+                  <input
+                    type="number"
+                    value={editForm.quantity_ordered}
+                    onChange={(e) => setEditForm({ ...editForm, quantity_ordered: parseInt(e.target.value) || 0 })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-tea-green"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="submit"
+                  className="flex-1 bg-tea-green text-white px-4 py-2 rounded hover:bg-tea-green/90 transition-colors font-medium"
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

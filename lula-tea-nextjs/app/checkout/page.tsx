@@ -1797,7 +1797,7 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Gift Message Option - Only for Riyadh */}
-                    {(deliveryCity === "Riyadh" || (!deliveryCity && deliveryAddress.toLowerCase().includes('riyadh') || deliveryAddress.toLowerCase().includes('الرياض'))) && (
+                    {deliveryAddress && (deliveryCity === "Riyadh" || (!deliveryCity && (deliveryAddress.toLowerCase().includes('riyadh') || deliveryAddress.toLowerCase().includes('الرياض')))) && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
@@ -1954,8 +1954,8 @@ export default function CheckoutPage() {
                       className="object-cover"
                       priority
                       style={{ 
-                        objectPosition: 'center center',
-                        transform: 'scale(2)',
+                        objectPosition: 'center 45%',
+                        transform: 'scale(2.5)',
                         transformOrigin: 'center center'
                       }}
                     />

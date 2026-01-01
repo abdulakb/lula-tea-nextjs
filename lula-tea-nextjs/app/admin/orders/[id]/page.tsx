@@ -13,6 +13,7 @@ interface Order {
   customer_phone: string;
   customer_address: string;
   delivery_notes: string;
+  delivery_city?: string;
   total: number;
   subtotal: number;
   delivery_fee: number;
@@ -280,6 +281,14 @@ ${invoiceUrl}
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Delivery Address</p>
               <p className="text-lg text-gray-900 dark:text-white">{order.customer_address}</p>
             </div>
+            {order.delivery_city && (
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Delivery City</p>
+                <p className="text-lg font-semibold text-tea-green dark:text-tea-green">
+                  {order.delivery_city}
+                </p>
+              </div>
+            )}
             {order.delivery_notes && (
               <div className="md:col-span-2">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Delivery Notes</p>

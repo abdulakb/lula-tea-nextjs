@@ -477,22 +477,13 @@ export default function CheckoutPage() {
         errors.deliveryTime = language === "ar" ? "وقت التوصيل مطلوب" : "Delivery time is required";
       }
 
-      // Check if GPS location was shared - warn but don't block
+      // Require city selection if GPS not used
       if (!gpsCoordinates && !deliveryCity) {
-        console.warn("No GPS location provided - attempting to detect city from address");
-        // Try to detect city from address text
-        const addressLower = deliveryAddress.toLowerCase();
-        if (addressLower.includes('jeddah') || addressLower.includes('جدة')) {
-          setDeliveryCity("Jeddah");
-          console.log("Detected city from address: Jeddah");
-        } else if (addressLower.includes('riyadh') || addressLower.includes('الرياض')) {
-          setDeliveryCity("Riyadh");
-          console.log("Detected city from address: Riyadh");
-        } else {
-          // Default to Riyadh if no city detected
-          setDeliveryCity("Riyadh");
-          console.log("No city detected in address, defaulting to Riyadh");
-        }
+        errors.deliveryCity = language === "ar" ? "يرجى اختيار المدينة" : "Please select a city";
+        showToast(
+          language === "ar" ? "يرجى اختيار المدينة من القائمة" : "Please select a city from the dropdown",
+          "error"
+        );
       }
     }
 
@@ -2136,6 +2127,58 @@ export default function CheckoutPage() {
                       )}
                     </button>
                   </div>
+
+                  {/* City Selector - Required for manual address entry */}
+                  {!gpsCoordinates && (
+                    <div>
+                      <label className="block text-base sm:text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                        {language === "ar" ? "المدينة" : "City"} *
+                      </label>
+                      <select
+                        value={deliveryCity}
+                        onChange={(e) => {
+                          setDeliveryCity(e.target.value);
+                          if (fieldErrors.deliveryCity) {
+                            const newErrors = {...fieldErrors};
+                            delete newErrors.deliveryCity;
+                            setFieldErrors(newErrors);
+                          }
+                        }}
+                        required
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl text-base focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold ${
+                          fieldErrors.deliveryCity 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-400 dark:border-gray-500 focus:ring-tea-green'
+                        }`}
+                        style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                      >
+                        <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">
+                          {language === "ar" ? "اختر المدينة" : "Select City"}
+                        </option>
+                        <option value="Riyadh" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">
+                          {language === "ar" ? "الرياض" : "Riyadh"}
+                        </option>
+                        <option value="Jeddah" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">
+                          {language === "ar" ? "جدة" : "Jeddah"}
+                        </option>
+                      </select>
+                      {fieldErrors.deliveryCity && (
+                        <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
+                          <svg className="w-5 h-5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          {fieldErrors.deliveryCity}
+                        </p>
+                      )}
+                      {!fieldErrors.deliveryCity && (
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                          {language === "ar" 
+                            ? "اختر المدينة لضمان خصم المخزون من الفرع الصحيح"
+                            : "Select city to ensure stock is deducted from the correct branch"}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Building Number Field */}
                   <div>

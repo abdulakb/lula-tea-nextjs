@@ -13,6 +13,7 @@ interface Order {
   customer_name: string;
   customer_phone: string;
   customer_address: string;
+  delivery_city?: string;
   email?: string;
   total: number;
   delivery_fee?: number;
@@ -647,6 +648,7 @@ function OrdersManagementContent() {
                   <th className="px-6 py-3 text-left text-sm font-semibold">Order ID</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Customer</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Phone</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold">City</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Total</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Payment</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">Status</th>
@@ -657,7 +659,7 @@ function OrdersManagementContent() {
               <tbody className="divide-y divide-gray-200">
                 {filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center text-tea-brown">
+                    <td colSpan={10} className="px-6 py-12 text-center text-tea-brown">
                       No orders found
                     </td>
                   </tr>
@@ -680,6 +682,19 @@ function OrdersManagementContent() {
                       </td>
                       <td className="px-6 py-4 text-sm text-tea-brown">
                         {order.customer_phone}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-tea-brown">
+                        {order.delivery_city ? (
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            order.delivery_city === 'Riyadh' 
+                              ? 'bg-blue-100 text-blue-800' 
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            {order.delivery_city}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">Not set</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-deep-brown">
                         {order.total} SAR

@@ -21,6 +21,46 @@ export async function PUT(
       );
     }
 
+    // Get current order data for audit log
+    const { data: currentOrder, error: fetchError } = await supabaseAdmin
+      .from("orders")
+      .select("subtotal, delivery_fee, total, quantity_ordered")
+      .eq("order_id", orderId)
+      .single();
+
+    if (fetchError || !currentOrder) {
+      console.error("Error fetching current order:", fetchError);
+      return NextResponse.json(
+        { error: "Order not found" },
+        { status: 404 }
+      );
+    }
+
+    // Log the change to order_history
+    const { error: historyError } = await supabaseAdmin
+      .from("order_history")
+      .insert({
+        order_id: orderId,
+        change_type: "amount_edit",
+        old_values: {
+          subtotal: currentOrder.subtotal,
+          delivery_fee: currentOrder.delivery_fee,
+          total: currentOrder.total,
+          quantity_ordered: currentOrder.quantity_ordered
+        },
+        new_values: {
+          subtotal,
+          delivery_fee: delivery_fee || 0,
+          total,
+          quantity_ordered: quantity_ordered || 0
+        }
+      });
+
+    if (historyError) {
+      console.error("Error logging to history:", historyError);
+      // Continue with update even if history fails
+    }
+
     // Update order in database
     const { data, error } = await supabaseAdmin
       .from("orders")
@@ -50,7 +90,7 @@ export async function PUT(
       );
     }
 
-    console.log("Order updated successfully:", data.id);
+    console.log("✅ Order updated successfully:", data.id);
 
     return NextResponse.json({
       success: true,

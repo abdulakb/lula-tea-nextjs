@@ -426,6 +426,13 @@ export default function CheckoutPage() {
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) {
+      console.log("Order already being submitted, ignoring duplicate request");
+      return;
+    }
+
     setError("");
     setFieldErrors({});
     
@@ -565,6 +572,24 @@ export default function CheckoutPage() {
     }
 
     setIsSubmitting(true);
+
+    // Generate a unique submission ID to prevent duplicates
+    const submissionKey = `order_${customerPhone}_${Date.now()}`;
+    const recentSubmission = localStorage.getItem('lastOrderSubmission');
+    const recentSubmissionTime = recentSubmission ? parseInt(recentSubmission) : 0;
+    
+    // Prevent duplicate submission within 10 seconds
+    if (Date.now() - recentSubmissionTime < 10000) {
+      console.log("Duplicate order attempt detected within 10 seconds");
+      alert(language === "ar" 
+        ? "لقد قمت بتقديم طلب مؤخراً. يرجى الانتظار قبل إرسال طلب جديد."
+        : "You've just submitted an order. Please wait before submitting a new one.");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    // Store submission timestamp
+    localStorage.setItem('lastOrderSubmission', Date.now().toString());
 
     try {
       // Prepare order data
@@ -1957,7 +1982,7 @@ export default function CheckoutPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center gap-3"
                   >
                     {isSubmitting ? (
                       <>
@@ -1965,7 +1990,7 @@ export default function CheckoutPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                         </svg>
-                        <span>{language === "ar" ? "جاري المعالجة..." : "Processing..."}</span>
+                        <span>{language === "ar" ? "جاري المعالجة... يرجى عدم الإغلاق" : "Processing... Please don't close"}</span>
                       </>
                     ) : (
                       <>
@@ -1973,6 +1998,14 @@ export default function CheckoutPage() {
                       </>
                     )}
                   </button>
+
+                  {isSubmitting && (
+                    <p className="text-center text-amber-600 dark:text-amber-400 font-semibold text-sm mt-3">
+                      {language === "ar" 
+                        ? "⚠️ جاري معالجة طلبك، يرجى عدم تحديث الصفحة أو الرجوع للخلف"
+                        : "⚠️ Processing your order, please don't refresh or go back"}
+                    </p>
+                  )}
 
                   <p className="text-sm text-center mt-3 text-yellow-600 dark:text-yellow-400 font-semibold">
                     ⚠️ {language === "ar" 
@@ -2222,12 +2255,28 @@ export default function CheckoutPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-tea-green hover:bg-tea-green/90 text-white px-6 py-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-tea-green hover:bg-tea-green/90 disabled:bg-gray-400 text-white px-6 py-4 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                   >
-                    {isSubmitting 
-                      ? (language === "ar" ? "جارٍ المعالجة..." : "Processing...") 
-                      : t("confirmOrder")}
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                        </svg>
+                        <span>{language === "ar" ? "جاري المعالجة..." : "Processing..."}</span>
+                      </>
+                    ) : (
+                      t("confirmOrder")
+                    )}
                   </button>
+
+                  {isSubmitting && (
+                    <p className="text-center text-amber-600 dark:text-amber-400 font-semibold text-sm mt-3">
+                      {language === "ar" 
+                        ? "⚠️ جاري معالجة طلبك، يرجى عدم تحديث الصفحة أو الرجوع للخلف"
+                        : "⚠️ Processing your order, please don't refresh or go back"}
+                    </p>
+                  )}
                 </div>
               </form>
             )}

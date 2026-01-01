@@ -23,6 +23,17 @@ export default function ProductReviews() {
   const [averageRating, setAverageRating] = useState(0);
   const { language, t } = useLanguage();
 
+  // Anonymize customer name for privacy (First name + Last initial)
+  const anonymizeName = (fullName: string): string => {
+    const parts = fullName.trim().split(' ');
+    if (parts.length === 1) {
+      return parts[0]; // Just first name
+    }
+    const firstName = parts[0];
+    const lastInitial = parts[parts.length - 1][0]; // Get first letter of last name
+    return `${firstName} ${lastInitial}.`;
+  };
+
   useEffect(() => {
     fetchReviews();
   }, []);
@@ -159,7 +170,7 @@ export default function ProductReviews() {
 
             <div className="flex items-start justify-between mb-3">
               <div>
-                <p className="font-bold text-deep-brown text-lg">{review.customer_name}</p>
+                <p className="font-bold text-deep-brown text-lg">{anonymizeName(review.customer_name)}</p>
                 <p className="text-sm text-tea-brown">{formatDate(review.created_at)}</p>
               </div>
               {renderStars(review.overall_rating)}

@@ -12,7 +12,7 @@ const ThemeToggle = dynamic(() => import("@/app/components/ThemeToggle"), {
 function ReviewPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const orderId = searchParams.get("order");
   const customerName = searchParams.get("name");
 
@@ -131,6 +131,27 @@ function ReviewPageContent() {
   return (
     <main className="min-h-screen bg-warm-cream dark:bg-gray-900 py-20 px-4">
       <ThemeToggle />
+      
+      {/* Language Toggle */}
+      <div className="fixed top-24 right-4 z-50 flex gap-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg">
+        <button
+          onClick={() => setLanguage("en")}
+          className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+            language === "en" ? "bg-tea-green text-white" : "text-deep-brown dark:text-gray-300 hover:bg-tea-green/10"
+          }`}
+        >
+          🇬🇧 EN
+        </button>
+        <button
+          onClick={() => setLanguage("ar")}
+          className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+            language === "ar" ? "bg-tea-green text-white" : "text-deep-brown dark:text-gray-300 hover:bg-tea-green/10"
+          }`}
+        >
+          🇸🇦 AR
+        </button>
+      </div>
+      
       <div className="max-w-2xl mx-auto">
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 md:p-12">
           <div className="text-center mb-8">

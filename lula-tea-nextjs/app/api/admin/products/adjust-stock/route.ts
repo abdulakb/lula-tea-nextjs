@@ -2,23 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseClient";
 
 /**
- * Adjust product stock with audit trail
+ * Adjust product stock with audit trail (city-specific)
  * POST /api/admin/products/adjust-stock
  * Body: { 
  *   productId: string, 
  *   adjustment: number (positive for add, negative for remove),
+ *   city: "riyadh" | "jeddah",
  *   reason: string,
  *   notes?: string
  * }
  */
 export async function POST(request: NextRequest) {
   try {
-    const { productId, adjustment, reason, notes } = await request.json();
+    const { productId, adjustment, city, reason, notes } = await request.json();
 
     // Validate input
-    if (!productId || adjustment === undefined || !reason) {
+    if (!productId || adjustment === undefined || !city || !reason) {
       return NextResponse.json(
-        { error: "Product ID, adjustment amount, and reason are required" },
+        { error: "Product ID, adjustment amount, city, and reason are required" },
+        { status: 400 }
+      );
+    }
+
+    if (city !== "riyadh" && city !== "jeddah") {
+      return NextResponse.json(
+        { error: "City must be 'riyadh' or 'jeddah'" },
         { status: 400 }
       );
     }
@@ -34,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Get current product stock
     const { data: product, error: fetchError } = await supabaseAdmin
       .from("products")
-      .select("stock_quantity, name")
+      .select("stock_quantity, riyadh_stock, jeddah_stock, name")
       .eq("id", productId)
       .single();
 
@@ -46,29 +54,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const currentStock = product.stock_quantity || 0;
-    const newStock = currentStock + adjustmentNum;
+    const cityStockField = city === "riyadh" ? "riyadh_stock" : "jeddah_stock";
+    const currentCityStock = product[cityStockField] || 0;
+    const newCityStock = currentCityStock + adjustmentNum;
 
     // Prevent negative stock
-    if (newStock < 0) {
+    if (newCityStock < 0) {
       return NextResponse.json(
         { 
-          error: `Cannot adjust stock. Current stock: ${currentStock}, Adjustment: ${adjustmentNum}. Result would be negative.`,
-          currentStock,
+          error: `Cannot adjust stock. Current ${city} stock: ${currentCityStock}, Adjustment: ${adjustmentNum}. Result would be negative.`,
+          currentStock: currentCityStock,
           adjustment: adjustmentNum,
-          newStock
+          newStock: newCityStock
         },
         { status: 400 }
       );
     }
 
-    // Update product stock
+    // Calculate new total stock
+    const otherCityStock = city === "riyadh" ? product.jeddah_stock : product.riyadh_stock;
+    const newTotalStock = newCityStock + (otherCityStock || 0);
+
+    // Update product stock for specific city and total
+    const updateData: any = {
+      [cityStockField]: newCityStock,
+      stock_quantity: newTotalStock,
+      updated_at: new Date().toISOString()
+    };
+
     const { error: updateError } = await supabaseAdmin
       .from("products")
-      .update({ 
-        stock_quantity: newStock,
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq("id", productId);
 
     if (updateError) {
@@ -87,9 +103,9 @@ export async function POST(request: NextRequest) {
         order_id: null,
         movement_type: adjustmentNum > 0 ? "restock" : "adjustment",
         quantity: adjustmentNum,
-        previous_stock: currentStock,
-        new_stock: newStock,
-        notes: notes ? `${reason}: ${notes}` : reason,
+        previous_stock: currentCityStock,
+        new_stock: newCityStock,
+        notes: notes ? `${city.toUpperCase()}: ${reason} - ${notes}` : `${city.toUpperCase()}: ${reason}`,
         created_by: "admin",
         created_at: new Date().toISOString()
       }]);
@@ -99,14 +115,16 @@ export async function POST(request: NextRequest) {
       // Don't fail the request if audit trail fails
     }
 
-    console.log(`✅ Stock adjusted for ${product.name}: ${currentStock} → ${newStock} (${adjustmentNum > 0 ? '+' : ''}${adjustmentNum})`);
+    console.log(`✅ Stock adjusted for ${product.name} (${city.toUpperCase()}): ${currentCityStock} → ${newCityStock} (${adjustmentNum > 0 ? '+' : ''}${adjustmentNum})`);
 
     return NextResponse.json({
       success: true,
       productName: product.name,
-      previousStock: currentStock,
+      city: city,
+      previousStock: currentCityStock,
       adjustment: adjustmentNum,
-      newStock: newStock,
+      newStock: newCityStock,
+      totalStock: newTotalStock,
       reason: reason
     }, { status: 200 });
 

@@ -44,10 +44,14 @@ export async function POST(req: NextRequest) {
       .insert({
         order_id: orderId,
         customer_name: customerName,
-        rating: overallRating, // Overall rating
+        overall_rating: overallRating,
+        taste_rating: tasteRating,
         quality_rating: qualityRating,
         delivery_rating: deliveryRating,
-        comment: comments || null, // Note: column is 'comment' not 'comments'
+        comments: comments || null,
+        language: language || 'ar',
+        approved: false,
+        featured: false,
         created_at: new Date().toISOString(),
       })
       .select()

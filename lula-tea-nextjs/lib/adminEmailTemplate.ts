@@ -10,6 +10,7 @@ interface AdminNotificationData {
   floorNumber?: string;
   apartmentNumber?: string;
   deliveryTime?: string;
+  deliveryNotes?: string;
   gpsCoordinates?: string;
   items: Array<{
     name: string;
@@ -179,6 +180,12 @@ export function generateAdminOrderNotification(data: AdminNotificationData) {
                 <tr>
                   <td style="color: #6b7280; font-weight: 600; vertical-align: top;">Preferred Time:</td>
                   <td style="color: #1f2937; font-weight: 500;">${data.deliveryTime}</td>
+                </tr>
+                ` : ''}
+                ${data.deliveryNotes ? `
+                <tr>
+                  <td style="color: #6b7280; font-weight: 600; vertical-align: top;">📝 Delivery Notes:</td>
+                  <td style="color: #1f2937; font-weight: 500; white-space: pre-wrap;">${data.deliveryNotes}</td>
                 </tr>
                 ` : ''}
                 ${data.gpsCoordinates ? `

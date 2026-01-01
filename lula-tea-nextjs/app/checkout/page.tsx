@@ -1775,9 +1775,7 @@ export default function CheckoutPage() {
                       >
                         <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
                         <option value={t("deliveryTimeMorning")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
-                        <option value={t("deliveryTimeAfternoon")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAfternoon")}</option>
                         <option value={t("deliveryTimeEvening")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
-                        <option value={t("deliveryTimeAnytime")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAnytime")}</option>
                       </select>
                       {fieldErrors.deliveryTime && (
                         <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">

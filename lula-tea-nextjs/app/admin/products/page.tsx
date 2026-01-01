@@ -41,6 +41,7 @@ export default function ProductsManagement() {
   const [showStockModal, setShowStockModal] = useState(false);
   const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
   const [stockAdjustment, setStockAdjustment] = useState("");
+  const [adjustmentCity, setAdjustmentCity] = useState<"riyadh" | "jeddah">("riyadh");
   const [adjustmentReason, setAdjustmentReason] = useState("");
   const [adjustmentNotes, setAdjustmentNotes] = useState("");
 
@@ -233,6 +234,7 @@ export default function ProductsManagement() {
   const openStockAdjustmentModal = (product: Product) => {
     setAdjustingProduct(product);
     setStockAdjustment("");
+    setAdjustmentCity("riyadh");
     setAdjustmentReason("restock");
     setAdjustmentNotes("");
     setShowStockModal(true);
@@ -259,6 +261,7 @@ export default function ProductsManagement() {
         body: JSON.stringify({
           productId: adjustingProduct.id,
           adjustment: adjustment,
+          city: adjustmentCity,
           reason: adjustmentReason,
           notes: adjustmentNotes || undefined,
         }),
@@ -896,9 +899,32 @@ export default function ProductsManagement() {
                   {adjustingProduct.name_ar && (
                     <p className="text-sm text-tea-brown dark:text-gray-400">{adjustingProduct.name_ar}</p>
                   )}
-                  <p className="text-sm text-tea-brown dark:text-gray-400 mt-2">
-                    Current Stock: <span className="font-bold text-tea-green">{adjustingProduct.stock_quantity}</span>
-                  </p>
+                  <div className="mt-3 space-y-1">
+                    <p className="text-sm text-tea-brown dark:text-gray-400">
+                      Riyadh Stock: <span className="font-bold text-blue-600">{adjustingProduct.riyadh_stock}</span>
+                    </p>
+                    <p className="text-sm text-tea-brown dark:text-gray-400">
+                      Jeddah Stock: <span className="font-bold text-purple-600">{adjustingProduct.jeddah_stock}</span>
+                    </p>
+                    <p className="text-sm text-tea-brown dark:text-gray-400">
+                      Total Stock: <span className="font-bold text-tea-green">{adjustingProduct.stock_quantity}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-deep-brown dark:text-gray-300 mb-2">
+                    City *
+                  </label>
+                  <select
+                    required
+                    value={adjustmentCity}
+                    onChange={(e) => setAdjustmentCity(e.target.value as "riyadh" | "jeddah")}
+                    className="w-full px-4 py-2 border border-tea-brown/30 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-700 text-deep-brown dark:text-white dark-transition"
+                  >
+                    <option value="riyadh">🏙️ Riyadh (Current: {adjustingProduct.riyadh_stock})</option>
+                    <option value="jeddah">🌊 Jeddah (Current: {adjustingProduct.jeddah_stock})</option>
+                  </select>
                 </div>
 
                 <div>
@@ -918,7 +944,7 @@ export default function ProductsManagement() {
                   </p>
                   {stockAdjustment && !isNaN(parseInt(stockAdjustment)) && (
                     <p className="text-sm font-semibold mt-2 text-tea-green dark:text-tea-green">
-                      New Stock: {adjustingProduct.stock_quantity + parseInt(stockAdjustment)}
+                      New {adjustmentCity === "riyadh" ? "Riyadh" : "Jeddah"} Stock: {(adjustmentCity === "riyadh" ? adjustingProduct.riyadh_stock : adjustingProduct.jeddah_stock) + parseInt(stockAdjustment)}
                     </p>
                   )}
                 </div>

@@ -347,6 +347,7 @@ export async function POST(request: NextRequest) {
             floorNumber: body.floorNumber,
             apartmentNumber: body.apartmentNumber,
             deliveryTime,
+            deliveryNotes,
             gpsCoordinates,
             items,
             subtotal,

@@ -339,19 +339,8 @@ export default function CheckoutPage() {
           const coordsString = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
           setGpsCoordinates(coordsString);
           
-          let notesText = `GPS: ${coordsString}\nMaps: https://maps.google.com/?q=${latitude},${longitude}`;
-          
-          // Add delivery info to notes
-          if (eligibility.nearWarehouse) {
-            notesText += `\n✅ FREE DELIVERY (Within ${eligibility.distance.toFixed(1)}km from warehouse)`;
-          } else if (eligibility.isNorthernJeddah) {
-            notesText += `\n💰 Delivery Fee: 25 SAR (Jeddah - Northern Area)`;
-          } else if (eligibility.city === "Riyadh") {
-            notesText += `\n💰 Delivery Fee: 20 SAR (Riyadh)`;
-          } else if (eligibility.city === "Jeddah") {
-            notesText += `\n💰 Delivery Fee: 15 SAR (Jeddah)`;
-          }
-          
+          // Set GPS info in delivery notes for reference
+          const notesText = `GPS: ${coordsString}\nMaps: https://maps.google.com/?q=${latitude},${longitude}`;
           setDeliveryNotes(notesText);
           
         } catch (err) {
@@ -1614,7 +1603,7 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-base !text-gray-900 dark:!text-white ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-base text-gray-900 dark:text-white ${
                           fieldErrors.propertyType 
                             ? 'border-red-500 focus:ring-red-500' 
                             : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
@@ -1791,16 +1780,16 @@ export default function CheckoutPage() {
                           }
                         }}
                         required
-                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-lg sm:text-base !text-gray-900 dark:!text-white ${
+                        className={`w-full px-4 py-4 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 font-semibold text-lg sm:text-base text-gray-900 dark:text-white ${
                           fieldErrors.deliveryTime 
                             ? 'border-red-500 focus:ring-red-500' 
                             : 'border-gray-400 dark:border-gray-500 focus:ring-purple-500'
                         }`}
                         style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                       >
-                        <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                        <option value={t("deliveryTimeMorning")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
-                        <option value={t("deliveryTimeEvening")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
+                        <option value="" className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                        <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
+                        <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
                       </select>
                       {fieldErrors.deliveryTime && (
                         <p className="mt-2 text-base sm:text-sm text-red-600 dark:text-red-400 flex items-center gap-1 font-medium">
@@ -2152,13 +2141,13 @@ export default function CheckoutPage() {
                         }`}
                         style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                       >
-                        <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">
+                        <option value="" className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">
                           {language === "ar" ? "اختر المدينة" : "Select City"}
                         </option>
-                        <option value="Riyadh" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">
+                        <option value="Riyadh" className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">
                           {language === "ar" ? "الرياض" : "Riyadh"}
                         </option>
-                        <option value="Jeddah" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">
+                        <option value="Jeddah" className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">
                           {language === "ar" ? "جدة" : "Jeddah"}
                         </option>
                       </select>
@@ -2271,14 +2260,13 @@ export default function CheckoutPage() {
                       value={deliveryTime}
                       onChange={(e) => setDeliveryTime(e.target.value)}
                       required
-                      className="w-full px-4 py-4 sm:py-2 border-2 border-tea-brown/50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 !text-gray-900 dark:!text-white font-semibold"
+                      className="w-full px-4 py-4 sm:py-2 border-2 border-tea-brown/50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-tea-green bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold"
                       style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                     >
-                      <option value="" className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
-                      <option value={t("deliveryTimeMorning")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
-                      <option value={t("deliveryTimeAfternoon")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAfternoon")}</option>
-                      <option value={t("deliveryTimeEvening")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
-                      <option value={t("deliveryTimeAnytime")} className="!text-gray-900 dark:!text-white bg-white dark:bg-gray-800">{t("deliveryTimeAnytime")}</option>
+                      <option value="" className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{language === "ar" ? "اختر الوقت المفضل" : "Select preferred time"}</option>
+                      <option value={t("deliveryTimeMorning")} className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{t("deliveryTimeMorning")}</option>
+                      <option value={t("deliveryTimeEvening")} className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{t("deliveryTimeEvening")}</option>
+                      <option value={t("deliveryTimeAnytime")} className="text-gray-900 dark:text-white bg-white dark:bg-gray-800">{t("deliveryTimeAnytime")}</option>
                     </select>
                   </div>
 

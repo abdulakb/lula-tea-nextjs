@@ -112,6 +112,7 @@ export const translations = {
     deliveryTime: "Preferred Delivery Time",
     deliveryTimeMorning: "Morning (9 AM - 12 PM)",
     deliveryTimeEvening: "Evening (6 PM - 9 PM)",
+    deliveryTimeAnytime: "Anytime",
     confirmOrder: "Confirm Order",
     
     // Order Confirmation
@@ -247,6 +248,7 @@ export const translations = {
     deliveryTime: "وقت التوصيل المفضل",
     deliveryTimeMorning: "صباحاً (9 ص - 12 م)",
     deliveryTimeEvening: "مساءً (6 م - 9 م)",
+    deliveryTimeAnytime: "أي وقت",
     confirmOrder: "تأكيد الطلب",
     
     // Order Confirmation
